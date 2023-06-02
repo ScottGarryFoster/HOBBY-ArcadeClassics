@@ -1,0 +1,2 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"E:/Development/ArcadeClassics/GameProject/ArcadeClassics/Mono.ContentTests/Content/Tests/TestImage.png","E:/Development/ArcadeClassics/GameProject/ArcadeClassics/Mono.ContentTests/Content/bin/DesktopGL/Tests/TestImage.xnb","TextureProcessor","Texture2DContent",4834,1638485,0.2037684

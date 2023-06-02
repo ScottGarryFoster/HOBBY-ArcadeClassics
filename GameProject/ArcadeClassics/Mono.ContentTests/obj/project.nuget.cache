@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "RN5iREVDicJPZqv7ouRld+rzFnUIK5Z5vKwnLfg9bYOpnduorPZnTSjcg1OTBN2YEIZII/Udjud9BGe8DetbAA==",
+  "success": true,
+  "projectFilePath": "E:\\Development\\ArcadeClassics\\GameProject\\ArcadeClassics\\Mono.ContentTests\\Mono.ContentTests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\scott\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\microsoft.codecoverage\\17.6.1\\microsoft.codecoverage.17.6.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\microsoft.net.test.sdk\\17.6.1\\microsoft.net.test.sdk.17.6.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.6.1\\microsoft.testplatform.objectmodel.17.6.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\microsoft.testplatform.testhost\\17.6.1\\microsoft.testplatform.testhost.17.6.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\moq\\4.18.4\\moq.4.18.4.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\mstest.testadapter\\3.0.4\\mstest.testadapter.3.0.4.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\mstest.testframework\\3.0.4\\mstest.testframework.3.0.4.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\nuget.frameworks\\6.6.0\\nuget.frameworks.6.6.0.nupkg.sha512",
+    "C:\\Users\\scott\\.nuget\\packages\\system.diagnostics.eventlog\\6.0.0\\system.diagnostics.eventlog.6.0.0.nupkg.sha512",
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}

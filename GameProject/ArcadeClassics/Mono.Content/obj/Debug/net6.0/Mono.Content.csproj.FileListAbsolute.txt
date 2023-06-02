@@ -1,0 +1,12 @@
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\bin\Debug\net6.0\Mono.Content.deps.json
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\bin\Debug\net6.0\Mono.Content.dll
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\bin\Debug\net6.0\Mono.Content.pdb
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.csproj.AssemblyReference.cache
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.GeneratedMSBuildEditorConfig.editorconfig
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.AssemblyInfoInputs.cache
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.AssemblyInfo.cs
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.csproj.CoreCompileInputs.cache
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.dll
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\refint\Mono.Content.dll
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\Mono.Content.pdb
+E:\Development\ArcadeClassics\GameProject\ArcadeClassics\Mono.Content\obj\Debug\net6.0\ref\Mono.Content.dll

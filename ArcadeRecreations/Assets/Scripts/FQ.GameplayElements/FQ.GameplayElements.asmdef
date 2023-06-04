@@ -1,0 +1,16 @@
+{
+    "name": "FQ.GameplayElements",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d13ee2b88602445fa182ab1d23c99067"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

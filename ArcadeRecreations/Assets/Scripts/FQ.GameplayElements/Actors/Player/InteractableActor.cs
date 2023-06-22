@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using FQ.GameplayInputs;
 using UnityEngine;
 
-namespace FQ.GameplayElements.Actors.Player
+namespace FQ.GameplayElements
 {
     /// <summary>
     /// General player with some actor behaviours.
@@ -35,6 +35,11 @@ namespace FQ.GameplayElements.Actors.Player
         /// <remarks>Injected. </remarks>
         internal IGameplayInputs gameplayInputs;
 
+        /// <summary>
+        /// Logic for an actor which moves.
+        /// </summary>
+        private IMovingActor movingActor;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -43,6 +48,9 @@ namespace FQ.GameplayElements.Actors.Player
 
             this.currentDirection = Direction.Down;
             this.receivedInput = false;
+
+            this.movingActor = new MovingActor();
+            this.movingActor.Setup(this.transform, movement: 1);
         }
 
         // Update is called once per frame
@@ -97,23 +105,7 @@ namespace FQ.GameplayElements.Actors.Player
 
                 if (this.receivedInput)
                 {
-                    switch (this.currentDirection)
-                    {
-                        case Direction.Down:
-                            this.gridPosition.y--;
-                            break;
-                        case Direction.Up:
-                            this.gridPosition.y++;
-                            break;
-                        case Direction.Left:
-                            this.gridPosition.x--;
-                            break;
-                        case Direction.Right:
-                            this.gridPosition.x++;
-                            break;
-                    }
-                    
-                    this.transform.position = new Vector3(this.gridPosition.x, this.gridPosition.y);
+                    this.movingActor.MoveActor(this.currentDirection);
                 }
             }
         }

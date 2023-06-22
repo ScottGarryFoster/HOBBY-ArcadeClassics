@@ -1,4 +1,4 @@
-﻿namespace FQ.GameplayElements.Actors
+﻿namespace FQ.GameplayElements
 {
     /// <summary>
     /// Describes direction on the 2D Plane.

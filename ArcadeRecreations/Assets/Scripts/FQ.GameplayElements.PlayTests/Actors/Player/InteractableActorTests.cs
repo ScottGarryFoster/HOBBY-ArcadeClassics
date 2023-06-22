@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using FQ.GameplayElements.Actors.Player;
 using FQ.GameplayInputs;
 using Moq;
 using NUnit.Framework;

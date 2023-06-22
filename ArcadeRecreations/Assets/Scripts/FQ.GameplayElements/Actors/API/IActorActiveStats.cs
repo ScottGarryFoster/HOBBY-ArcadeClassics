@@ -1,4 +1,4 @@
-﻿namespace FQ.GameplayElements.Actors
+﻿namespace FQ.GameplayElements
 {
     /// <summary>
     /// Describes what the actor is doing.

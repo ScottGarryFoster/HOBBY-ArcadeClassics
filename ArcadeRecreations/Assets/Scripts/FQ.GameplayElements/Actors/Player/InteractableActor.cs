@@ -56,43 +56,42 @@ namespace FQ.GameplayElements
         // Update is called once per frame
         void Update()
         {
-            if (this.gameplayInputs.KeyPressed(EGameplayButton.DirectionDown))
+            if ((!this.receivedInput || this.currentDirection != Direction.Up) && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionDown))
             {
                 this.currentDirection = Direction.Down;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyPressed(EGameplayButton.DirectionUp))
+            else if ((!this.receivedInput || this.currentDirection != Direction.Down) && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionUp))
             {
                 this.currentDirection = Direction.Up;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyPressed(EGameplayButton.DirectionLeft))
+            else if (this.currentDirection != Direction.Right && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionLeft))
             {
                 this.currentDirection = Direction.Left;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyPressed(EGameplayButton.DirectionRight))
+            else if (this.currentDirection != Direction.Left && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionRight))
             {
                 this.currentDirection = Direction.Right;
                 this.receivedInput = true;
             }
-            
-            if (this.gameplayInputs.KeyDown(EGameplayButton.DirectionDown))
+            else if ((!this.receivedInput || this.currentDirection != Direction.Up) && this.gameplayInputs.KeyDown(EGameplayButton.DirectionDown))
             {
                 this.currentDirection = Direction.Down;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyDown(EGameplayButton.DirectionUp))
+            else if ((!this.receivedInput || this.currentDirection != Direction.Down) && this.gameplayInputs.KeyDown(EGameplayButton.DirectionUp))
             {
                 this.currentDirection = Direction.Up;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyDown(EGameplayButton.DirectionLeft))
+            else if (this.currentDirection != Direction.Right && this.gameplayInputs.KeyDown(EGameplayButton.DirectionLeft))
             {
                 this.currentDirection = Direction.Left;
                 this.receivedInput = true;
             }
-            else if (this.gameplayInputs.KeyDown(EGameplayButton.DirectionRight))
+            else if (this.currentDirection != Direction.Left && this.gameplayInputs.KeyDown(EGameplayButton.DirectionRight))
             {
                 this.currentDirection = Direction.Right;
                 this.receivedInput = true;

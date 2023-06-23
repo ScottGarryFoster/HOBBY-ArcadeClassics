@@ -662,6 +662,454 @@ namespace FQ.GameplayElements.PlayTests.Actors.Player
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
+        #region MoveRightThenLeft
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        #endregion
+        
+        #region MoveLeftThenRight
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.x -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        #endregion
+        
+        #region MoveDownThenUp
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y -= 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        #endregion
+        
+        #region MoveUpThenDown
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyPressedSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        [UnityTest]
+        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyDownSecondTest()
+        {
+            Setup();
+            
+            // Arrange
+            KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
+            KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
+            yield return new WaitForEndOfFrame();
+            
+            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            expectedPosition.y += 2;
+
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            yield return RunUpdateCycle();
+            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+
+            // Act
+            yield return RunUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.interactableActor.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        #endregion
+
         #endregion
         
         private Vector3 CopyVector3(Vector3 toCopy)
@@ -673,5 +1121,33 @@ namespace FQ.GameplayElements.PlayTests.Actors.Player
         {
             return new WaitForSeconds(this.interactableActor.MovementSpeed);
         }
+        
+        private void MockKeyInput(KeyPressMethod method, EGameplayButton button, bool press = true)
+        {
+            switch (method)
+            {
+                case KeyPressMethod.KeyDown:
+                    this.mockGameplayInputs.Setup(
+                        x => x.KeyDown(button)).Returns(press);
+                    break;
+                case KeyPressMethod.KeyPressed:
+                    this.mockGameplayInputs.Setup(
+                        x => x.KeyPressed(button)).Returns(press);
+                    break;
+                case KeyPressMethod.KeyUp:
+                    this.mockGameplayInputs.Setup(
+                        x => x.KeyUp(button)).Returns(press);
+                    break;
+            }
+        }
+    }
+
+    public enum KeyPressMethod
+    {
+        KeyDown,
+        
+        KeyUp,
+        
+        KeyPressed,
     }
 }

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Object = System.Object;
 
-namespace FQ.GameplayElements.PlayTests.Actors
+namespace FQ.GameplayElements.PlayTests
 {
     public class MovingActorTests
     {

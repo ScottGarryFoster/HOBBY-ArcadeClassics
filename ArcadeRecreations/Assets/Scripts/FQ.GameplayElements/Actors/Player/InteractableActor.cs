@@ -40,6 +40,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private IMovingActor movingActor;
 
+        /// <summary>
+        /// Handles direction inputs from the input IO.
+        /// </summary>
+        private IDirectionInput directionInput;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -51,51 +56,35 @@ namespace FQ.GameplayElements
 
             this.movingActor = new MovingActor();
             this.movingActor.Setup(this.transform, movement: 1);
+
+            this.directionInput = new DirectionPressedOrDownInput();
+            this.directionInput.Setup(this.gameplayInputs);
         }
 
         // Update is called once per frame
         void Update()
         {
-            if ((!this.receivedInput || this.currentDirection != Direction.Up) && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionDown))
+            if ((!this.receivedInput || this.currentDirection != Direction.Up) && this.directionInput.PressingInputInDirection(Direction.Down))
             {
                 this.currentDirection = Direction.Down;
                 this.receivedInput = true;
             }
-            else if ((!this.receivedInput || this.currentDirection != Direction.Down) && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionUp))
+            else if ((!this.receivedInput || this.currentDirection != Direction.Down) && this.directionInput.PressingInputInDirection(Direction.Up))
             {
                 this.currentDirection = Direction.Up;
                 this.receivedInput = true;
             }
-            else if (this.currentDirection != Direction.Right && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionLeft))
+            else if (this.currentDirection != Direction.Right && this.directionInput.PressingInputInDirection(Direction.Left))
             {
                 this.currentDirection = Direction.Left;
                 this.receivedInput = true;
             }
-            else if (this.currentDirection != Direction.Left && this.gameplayInputs.KeyPressed(EGameplayButton.DirectionRight))
+            else if (this.currentDirection != Direction.Left && this.directionInput.PressingInputInDirection(Direction.Right))
             {
                 this.currentDirection = Direction.Right;
                 this.receivedInput = true;
             }
-            else if ((!this.receivedInput || this.currentDirection != Direction.Up) && this.gameplayInputs.KeyDown(EGameplayButton.DirectionDown))
-            {
-                this.currentDirection = Direction.Down;
-                this.receivedInput = true;
-            }
-            else if ((!this.receivedInput || this.currentDirection != Direction.Down) && this.gameplayInputs.KeyDown(EGameplayButton.DirectionUp))
-            {
-                this.currentDirection = Direction.Up;
-                this.receivedInput = true;
-            }
-            else if (this.currentDirection != Direction.Right && this.gameplayInputs.KeyDown(EGameplayButton.DirectionLeft))
-            {
-                this.currentDirection = Direction.Left;
-                this.receivedInput = true;
-            }
-            else if (this.currentDirection != Direction.Left && this.gameplayInputs.KeyDown(EGameplayButton.DirectionRight))
-            {
-                this.currentDirection = Direction.Right;
-                this.receivedInput = true;
-            }
+            
             
             this.deltaDelay += Time.deltaTime;
             if (this.deltaDelay >= MovementSpeed)

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Assert = UnityEngine.Assertions.Assert;
 
-namespace FQ.GameplayElements.PlayTests.Actors.Player
+namespace FQ.GameplayElements.PlayTests
 {
     public class InteractableActorTests
     {

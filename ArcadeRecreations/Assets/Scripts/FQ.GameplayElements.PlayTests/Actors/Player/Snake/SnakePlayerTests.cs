@@ -12,20 +12,23 @@ namespace FQ.GameplayElements.PlayTests
     {
         private GameObject playerObject;
         private Mock<IGameplayInputs> mockGameplayInputs;
-        private InteractableActor interactableActor;
+        private SnakePlayer snakePlayer;
         
         public void Setup()
         {
             this.playerObject = new GameObject();
-            this.interactableActor = this.playerObject.AddComponent<SnakePlayer>();
+            this.snakePlayer = this.playerObject.AddComponent<SnakePlayer>();
             
             // The only reason Movement Speed is internal is to speed up tests
             // We speed up Time delta and slow down frames.
-            this.interactableActor.movementSpeed = 0.025f;
+            this.snakePlayer.movementSpeed = 0.025f;
             Time.maximumDeltaTime = 0.0001f;
 
             this.mockGameplayInputs = new Mock<IGameplayInputs>();
-            this.interactableActor.gameplayInputs = this.mockGameplayInputs.Object;
+            this.snakePlayer.gameplayInputs = this.mockGameplayInputs.Object;
+            
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            this.snakePlayer.snakeTailPrefab = snakeTailPrefab;
         }
 
         [TearDown]
@@ -47,13 +50,13 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
 
             // Act
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -66,7 +69,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
@@ -76,7 +79,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -89,7 +92,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
@@ -102,7 +105,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -115,7 +118,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
@@ -128,7 +131,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -141,7 +144,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
@@ -151,7 +154,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -164,7 +167,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
@@ -177,7 +180,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -190,7 +193,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
@@ -203,7 +206,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -216,7 +219,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
@@ -226,7 +229,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -239,7 +242,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
@@ -252,7 +255,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -265,12 +268,12 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
-            yield return new WaitForSeconds(this.interactableActor.MovementSpeed / 2);
+            yield return new WaitForSeconds(this.snakePlayer.MovementSpeed / 2);
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
@@ -278,7 +281,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -291,7 +294,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
@@ -301,7 +304,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -314,7 +317,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
@@ -327,7 +330,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -340,7 +343,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
@@ -353,7 +356,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -370,7 +373,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
@@ -380,7 +383,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -393,7 +396,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
@@ -406,7 +409,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -419,7 +422,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
@@ -432,7 +435,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -445,7 +448,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
@@ -455,7 +458,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -468,7 +471,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
@@ -481,7 +484,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -494,7 +497,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
@@ -507,7 +510,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -520,7 +523,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
@@ -530,7 +533,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -543,7 +546,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
@@ -556,7 +559,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -569,7 +572,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
@@ -582,7 +585,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -595,7 +598,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = this.interactableActor.transform.position;
+            Vector2 expectedPosition = this.snakePlayer.transform.position;
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
@@ -605,7 +608,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -618,7 +621,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
@@ -631,7 +634,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -644,7 +647,7 @@ namespace FQ.GameplayElements.PlayTests
             // Arrange
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
@@ -657,7 +660,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -674,7 +677,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
@@ -686,7 +689,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -701,7 +704,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
@@ -713,7 +716,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -728,7 +731,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
@@ -740,7 +743,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -755,7 +758,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
@@ -767,7 +770,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -786,7 +789,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
@@ -798,7 +801,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -813,7 +816,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
@@ -825,7 +828,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -840,7 +843,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
@@ -852,7 +855,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -867,7 +870,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
@@ -879,7 +882,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -898,7 +901,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
@@ -910,7 +913,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -925,7 +928,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
@@ -937,7 +940,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -952,7 +955,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
@@ -964,7 +967,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -979,7 +982,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
@@ -991,7 +994,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1010,7 +1013,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
@@ -1022,7 +1025,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1037,7 +1040,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
@@ -1049,7 +1052,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1064,7 +1067,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
@@ -1076,7 +1079,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1091,7 +1094,7 @@ namespace FQ.GameplayElements.PlayTests
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
             yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
@@ -1103,7 +1106,7 @@ namespace FQ.GameplayElements.PlayTests
             yield return RunUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.interactableActor.transform.position;
+            Vector2 actualPosition = this.snakePlayer.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1111,6 +1114,70 @@ namespace FQ.GameplayElements.PlayTests
         #endregion
 
         #endregion
+
+        #region SnakeTail
+
+        [UnityTest]
+        public IEnumerator Setup_Creates199TailPieces_WhenGivenAPrefabTest()
+        {
+            Setup();
+            
+            // Arrange
+            int pieces = SnakePlayer.MaxTailSize;
+
+            // Act
+            yield return new WaitForEndOfFrame();
+
+            // Assert
+            Assert.IsNotNull(this.snakePlayer.SnakeTailPieces);
+            Assert.AreEqual(pieces, this.snakePlayer.SnakeTailPieces.Length);
+            for (int i = 0; i < pieces; ++i)
+            {
+                Assert.IsNotNull(this.snakePlayer.SnakeTailPieces[i]);
+            }
+        }
+        
+        [UnityTest]
+        public IEnumerator Setup_PlacesTailWithHeadPiece_WhenGivenAPrefabTest()
+        {
+            Setup();
+            
+            // Arrange
+            var givenPosition = new Vector3(1, 2, 3);
+            this.playerObject.transform.position = givenPosition;
+
+            // Act
+            yield return new WaitForEndOfFrame();
+
+            // Assert
+            for (int i = 0; i < SnakePlayer.MaxTailSize; ++i)
+            {
+                Assert.AreEqual(
+                    this.snakePlayer.SnakeTailPieces[i].transform.position, 
+                    givenPosition);
+            }
+        }
+        
+        [UnityTest]
+        public IEnumerator Setup_UnenablesTheTailPieces_WhenGivenAPrefabTest()
+        {
+            Setup();
+            
+            // Arrange
+
+            // Act
+            yield return new WaitForEndOfFrame();
+
+            // Assert
+            for (int i = 0; i < SnakePlayer.MaxTailSize; ++i)
+            {
+                Assert.IsFalse(this.snakePlayer.SnakeTailPieces[i].gameObject.activeSelf);
+            }
+        }
+
+        #endregion
+        
+        #region Helper Methods
         
         private Vector3 CopyVector3(Vector3 toCopy)
         {
@@ -1119,7 +1186,7 @@ namespace FQ.GameplayElements.PlayTests
 
         private object RunUpdateCycle()
         {
-            return new WaitForSeconds(this.interactableActor.MovementSpeed);
+            return new WaitForSeconds(this.snakePlayer.MovementSpeed);
         }
         
         private void MockKeyInput(KeyPressMethod method, GameplayButton button, bool press = true)
@@ -1140,6 +1207,8 @@ namespace FQ.GameplayElements.PlayTests
                     break;
             }
         }
+        
+        #endregion
     }
 
     public enum KeyPressMethod

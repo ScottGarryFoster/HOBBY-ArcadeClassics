@@ -1,6 +1,8 @@
-﻿namespace FQ.GameplayElements
+﻿using UnityEngine;
+
+namespace FQ.GameplayElements
 {
-    public class SnakeTail
+    public class SnakeTail : MonoBehaviour, ISnakeTail
     {
         
     }

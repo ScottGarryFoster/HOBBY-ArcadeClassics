@@ -9,6 +9,23 @@ namespace FQ.GameplayElements
     public class SnakePlayer : InteractableActor
     {
         /// <summary>
+        /// Pieces of the Snake's body which count as the tail.
+        /// </summary>
+        public SnakeTail[] SnakeTailPieces { get; private set; }
+
+        /// <summary>
+        /// How big the given tail may get. This does not include the head.
+        /// </summary>
+        public const int MaxTailSize = 199;
+        
+        /// <summary>
+        /// Prefab for the Snake's body.
+        /// </summary>
+        /// <remarks>Internal for testing. </remarks>
+        [SerializeField]
+        internal SnakeTail snakeTailPrefab;
+        
+        /// <summary>
         /// Logic for an actor which moves.
         /// </summary>
         private IMovingActor movingActor;
@@ -43,8 +60,30 @@ namespace FQ.GameplayElements
 
             this.directionInput = new DirectionPressedOrDownInput();
             this.directionInput.Setup(this.gameplayInputs);
+
+            SetupTail();
         }
-        
+
+        private void SetupTail()
+        {
+            if (this.snakeTailPrefab == null)
+            {
+                Debug.Log($"{typeof(SnakePlayer)}:" +
+                          $"{nameof(this.snakeTailPrefab)} was null. Not setting up tail.");
+                return;
+            }
+
+            this.SnakeTailPieces = new SnakeTail[MaxTailSize];
+            for (int i = 0; i < MaxTailSize; ++i)
+            {
+                SnakeTail snakeTail = Instantiate(snakeTailPrefab);
+                this.SnakeTailPieces[i] = snakeTail;
+
+                this.SnakeTailPieces[i].transform.position = this.transform.position;
+                this.SnakeTailPieces[i].gameObject.SetActive(false);
+            }
+        }
+
         protected override void ProtectedUpdate()
         {
             UpdateNewInputInAllDirections();

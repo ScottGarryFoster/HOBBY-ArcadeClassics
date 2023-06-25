@@ -16,6 +16,9 @@ namespace FQ.GameplayElements
         /// How fast the actor moves each time the actor moves.
         /// </summary>
         public float MovementSpeed => movementSpeed;
+
+        [SerializeField]
+        private LiveGameplayInputs input;
         
         /// <summary>
         /// How fast the actor moves each time the actor moves.
@@ -35,6 +38,10 @@ namespace FQ.GameplayElements
         /// </summary>
         private void Start()
         {
+            if (gameplayInputs == null)
+            {
+                gameplayInputs = input;
+            }
             ProtectedStart();
         }
         

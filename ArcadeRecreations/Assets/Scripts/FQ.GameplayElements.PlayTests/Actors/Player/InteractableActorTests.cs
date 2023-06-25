@@ -70,7 +70,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -93,10 +93,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionDown)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -119,10 +119,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionDown)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -145,7 +145,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -168,10 +168,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionUp)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -194,10 +194,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionUp)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -220,7 +220,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -243,10 +243,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionLeft)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -269,10 +269,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
             yield return new WaitForSeconds(this.interactableActor.MovementSpeed / 2);
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionLeft)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -295,7 +295,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -318,10 +318,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionRight)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -344,10 +344,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(EGameplayButton.DirectionRight)).Returns(false);
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -374,7 +374,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -397,10 +397,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionDown)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -423,10 +423,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionDown)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionDown)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -449,7 +449,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -472,10 +472,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionUp)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -498,10 +498,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionUp)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionUp)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -524,7 +524,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -547,10 +547,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionLeft)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -573,10 +573,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionLeft)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionLeft)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -599,7 +599,7 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
             yield return RunUpdateCycle();
@@ -622,10 +622,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
             yield return RunUpdateCycle();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionRight)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -648,10 +648,10 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionRight)).Returns(true);
+                x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
             yield return new WaitForEndOfFrame();
             this.mockGameplayInputs.Setup(
-                x => x.KeyDown(EGameplayButton.DirectionRight)).Returns(false);
+                x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
             yield return RunUpdateCycle();
@@ -677,10 +677,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
             yield return RunUpdateCycle();
@@ -704,10 +704,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
             yield return RunUpdateCycle();
@@ -731,10 +731,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
             yield return RunUpdateCycle();
@@ -758,10 +758,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionRight, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
             yield return RunUpdateCycle();
@@ -789,10 +789,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
             yield return RunUpdateCycle();
@@ -816,10 +816,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
             yield return RunUpdateCycle();
@@ -843,10 +843,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
             yield return RunUpdateCycle();
@@ -870,10 +870,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.x -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionLeft, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionRight);
+            MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
             yield return RunUpdateCycle();
@@ -901,10 +901,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
             yield return RunUpdateCycle();
@@ -928,10 +928,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
             yield return RunUpdateCycle();
@@ -955,10 +955,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
             yield return RunUpdateCycle();
@@ -982,10 +982,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y -= 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionDown, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
             yield return RunUpdateCycle();
@@ -1013,10 +1013,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
             yield return RunUpdateCycle();
@@ -1040,10 +1040,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
             yield return RunUpdateCycle();
@@ -1067,10 +1067,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
             yield return RunUpdateCycle();
@@ -1094,10 +1094,10 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = CopyVector3(this.interactableActor.transform.position);
             expectedPosition.y += 2;
 
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp);
             yield return RunUpdateCycle();
-            MockKeyInput(firstMethod, EGameplayButton.DirectionUp, press: false);
-            MockKeyInput(secondMethod, EGameplayButton.DirectionDown);
+            MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
+            MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
             yield return RunUpdateCycle();
@@ -1122,7 +1122,7 @@ namespace FQ.GameplayElements.PlayTests
             return new WaitForSeconds(this.interactableActor.MovementSpeed);
         }
         
-        private void MockKeyInput(KeyPressMethod method, EGameplayButton button, bool press = true)
+        private void MockKeyInput(KeyPressMethod method, GameplayButton button, bool press = true)
         {
             switch (method)
             {

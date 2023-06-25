@@ -36,6 +36,7 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <param name="direction">Direction to test. </param>
         /// <returns>True means direction is pressed. </returns>
+        /// <exception cref="System.Exception">When setup is unsuccessful or not called first. </exception>
         public bool PressingInputInDirection(Direction direction)
         {
             if (!this.haveRunSetup)
@@ -53,14 +54,22 @@ namespace FQ.GameplayElements
             return pressed;
         }
 
-        private EGameplayButton GameplayButtonFromDirection(Direction direction)
+        /// <summary>
+        /// Converts a <see cref="Direction"/> to a <see cref="GameplayButton"/>.
+        /// </summary>
+        /// <param name="direction">Direction to convert. </param>
+        /// <returns>The equivalent <see cref="GameplayButton"/>. </returns>
+        /// <exception cref="NotImplementedException">
+        /// Upon a <see cref="Direction"/> not having an equivalent.
+        /// </exception>
+        private GameplayButton GameplayButtonFromDirection(Direction direction)
         {
             switch (direction)
             {
-                case Direction.Down: return EGameplayButton.DirectionDown;
-                case Direction.Up: return EGameplayButton.DirectionUp;
-                case Direction.Left: return EGameplayButton.DirectionLeft;
-                case Direction.Right: return EGameplayButton.DirectionRight;
+                case Direction.Down: return GameplayButton.DirectionDown;
+                case Direction.Up: return GameplayButton.DirectionUp;
+                case Direction.Left: return GameplayButton.DirectionLeft;
+                case Direction.Right: return GameplayButton.DirectionRight;
                 default:
                     throw new NotImplementedException($"{typeof(DirectionPressedOrDownInput)}: " +
                         $"{nameof(GameplayButtonFromDirection)} not Implemented {direction.ToString()}.");

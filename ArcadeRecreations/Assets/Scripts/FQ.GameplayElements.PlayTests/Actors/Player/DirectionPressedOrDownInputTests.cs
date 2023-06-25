@@ -280,16 +280,16 @@ namespace FQ.GameplayElements.PlayTests
             Assert.IsFalse(actual3);
         }
 
-        EGameplayButton GameplayButtonFromDirection(Direction direction)
+        GameplayButton GameplayButtonFromDirection(Direction direction)
         {
             switch (direction)
             {
-                case Direction.Down: return EGameplayButton.DirectionDown;
-                case Direction.Left: return EGameplayButton.DirectionLeft;
-                case Direction.Right: return EGameplayButton.DirectionRight;
-                case Direction.Up: return EGameplayButton.DirectionUp;
+                case Direction.Down: return GameplayButton.DirectionDown;
+                case Direction.Left: return GameplayButton.DirectionLeft;
+                case Direction.Right: return GameplayButton.DirectionRight;
+                case Direction.Up: return GameplayButton.DirectionUp;
                 default:
-                    return EGameplayButton.None;
+                    return GameplayButton.None;
             }
         }
     }

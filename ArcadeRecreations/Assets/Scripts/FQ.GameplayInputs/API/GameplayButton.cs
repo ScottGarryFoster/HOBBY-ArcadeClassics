@@ -1,6 +1,6 @@
 ﻿namespace FQ.GameplayInputs
 {
-    public enum EGameplayButton
+    public enum GameplayButton
     {
         None = 0,
         

@@ -27,7 +27,7 @@ namespace FQ.GameplayInputs
         /// </summary>
         /// <param name="gameplayButton">Gameplay button to test for. </param>
         /// <returns>True means button is pressed. </returns>
-        public bool KeyPressed(EGameplayButton gameplayButton)
+        public bool KeyPressed(GameplayButton gameplayButton)
         {
             KeyCode gameplayAsKeycode = GetKeyAsGameplay(gameplayButton);
             if (gameplayAsKeycode == KeyCode.None)
@@ -43,7 +43,7 @@ namespace FQ.GameplayInputs
         /// </summary>
         /// <param name="gameplayButton">Gameplay button to test for. </param>
         /// <returns>True means button was pressed last frame. </returns>
-        public bool KeyUp(EGameplayButton gameplayButton)
+        public bool KeyUp(GameplayButton gameplayButton)
         {
             KeyCode gameplayAsKeycode = GetKeyAsGameplay(gameplayButton);
             if (gameplayAsKeycode == KeyCode.None)
@@ -59,7 +59,7 @@ namespace FQ.GameplayInputs
         /// </summary>
         /// <param name="gameplayButton">Gameplay button to test for. </param>
         /// <returns>True means button was pressed this frame. </returns>
-        public bool KeyDown(EGameplayButton gameplayButton)
+        public bool KeyDown(GameplayButton gameplayButton)
         {
             KeyCode gameplayAsKeycode = GetKeyAsGameplay(gameplayButton);
             if (gameplayAsKeycode == KeyCode.None)
@@ -75,15 +75,15 @@ namespace FQ.GameplayInputs
         /// </summary>
         /// <param name="gameplayButton">Gameplay button to convert. </param>
         /// <returns>Keycode which relates, or <see cref="KeyCode.None"/> if not supported. </returns>
-        private KeyCode GetKeyAsGameplay(EGameplayButton gameplayButton)
+        private KeyCode GetKeyAsGameplay(GameplayButton gameplayButton)
         {
             switch (gameplayButton)
             {
-                case EGameplayButton.None: return KeyCode.None;
-                case EGameplayButton.DirectionUp: return KeyCode.W;
-                case EGameplayButton.DirectionDown: return KeyCode.S;
-                case EGameplayButton.DirectionLeft: return KeyCode.A;
-                case EGameplayButton.DirectionRight: return KeyCode.D;
+                case GameplayButton.None: return KeyCode.None;
+                case GameplayButton.DirectionUp: return KeyCode.W;
+                case GameplayButton.DirectionDown: return KeyCode.S;
+                case GameplayButton.DirectionLeft: return KeyCode.A;
+                case GameplayButton.DirectionRight: return KeyCode.D;
             }
 
             return KeyCode.None;

@@ -19,6 +19,7 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <param name="direction">Direction to test. </param>
         /// <returns>True means direction is pressed. </returns>
+        /// <exception cref="System.Exception">When setup is unsuccessful or not called first. </exception>
         bool PressingInputInDirection(Direction direction);
     }
 }

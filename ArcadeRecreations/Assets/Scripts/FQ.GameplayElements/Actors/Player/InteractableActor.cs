@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ namespace FQ.GameplayElements
 
         [SerializeField]
         private LiveGameplayInputs input;
-        
+
         /// <summary>
         /// How fast the actor moves each time the actor moves.
         /// </summary>

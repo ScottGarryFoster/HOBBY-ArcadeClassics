@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using FQ.GameObjectPromises;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 namespace FQ.GameplayElements.EditorTests
 {
@@ -12,13 +14,19 @@ namespace FQ.GameplayElements.EditorTests
     {
         private ISnakeBehaviour testClass;
         private GameObject playerObject;
+        private StubObjectCreation stubObjectCreation;
         
         [SetUp]
         public void Setup()
         {
             this.playerObject = new GameObject();
-            this.testClass = new SnakeBehaviour(this.playerObject);
+            this.stubObjectCreation = new StubObjectCreation();
+            var t = new SnakeBehaviour(this.playerObject, this.stubObjectCreation);
             
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            t.snakeTailPrefab = snakeTailPrefab;
+
+            this.testClass = t;
             /*this.playerObject.tag = "Player";
             AddFullCollider(this.playerObject);
             this.snakePlayer = this.playerObject.AddComponent<SnakePlayer>();
@@ -35,6 +43,13 @@ namespace FQ.GameplayElements.EditorTests
             this.snakePlayer.snakeTailPrefab = snakeTailPrefab;*/
         }
 
+        [TearDown]
+        public void Teardown()
+        {
+            this.stubObjectCreation.CreatedGameObjects.ForEach(Object.DestroyImmediate);
+            this.stubObjectCreation.CreatedGameObjects.Clear();
+        }
+
         [Test]
         public void OnConstruction_ThrowsNullArgumentException_WhenNullGameObjectGivenTest()
         {
@@ -44,7 +59,20 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new SnakeBehaviour(given);
+                new SnakeBehaviour(given, this.stubObjectCreation);
+            });
+        }
+        
+        [Test]
+        public void OnConstruction_ThrowsNullArgumentException_WhenObjectCreationIsNullTest()
+        {
+            // Arrange
+            IObjectCreation given = null;
+            
+            // Act Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new SnakeBehaviour(new GameObject(), given);
             });
         }
         

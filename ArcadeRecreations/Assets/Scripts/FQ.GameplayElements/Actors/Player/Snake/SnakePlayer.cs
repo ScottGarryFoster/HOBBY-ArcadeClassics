@@ -49,6 +49,8 @@ namespace FQ.GameplayElements
         /// True means input has been received.
         /// </summary>
         private bool receivedInput;
+
+        private int snakeTailLength;
         
         protected override void ProtectedStart()
         {
@@ -64,6 +66,33 @@ namespace FQ.GameplayElements
             SetupTail();
         }
 
+        protected override void ProtectedUpdate()
+        {
+            UpdateNewInputInAllDirections();
+            
+            this.deltaDelay += Time.deltaTime;
+            if (this.deltaDelay >= MovementSpeed)
+            {
+                this.deltaDelay -= MovementSpeed;
+
+                if (this.receivedInput)
+                {
+                    UpdateTail();
+                    this.movingActor.MoveActor(this.currentDirection);
+                }
+            }
+        }
+
+        protected override void TriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("SnakeFood"))
+            {
+                Debug.Log("Eat");
+                other.gameObject.tag = "Untagged";
+                ++snakeTailLength;
+            }
+        }
+        
         private void SetupTail()
         {
             if (this.snakeTailPrefab == null)
@@ -81,22 +110,6 @@ namespace FQ.GameplayElements
 
                 this.SnakeTailPieces[i].transform.position = this.transform.position;
                 this.SnakeTailPieces[i].gameObject.SetActive(false);
-            }
-        }
-
-        protected override void ProtectedUpdate()
-        {
-            UpdateNewInputInAllDirections();
-            
-            this.deltaDelay += Time.deltaTime;
-            if (this.deltaDelay >= MovementSpeed)
-            {
-                this.deltaDelay -= MovementSpeed;
-
-                if (this.receivedInput)
-                {
-                    this.movingActor.MoveActor(this.currentDirection);
-                }
             }
         }
 
@@ -160,6 +173,22 @@ namespace FQ.GameplayElements
                 default:
                     throw new NotImplementedException($"{typeof(SnakePlayer)}: " +
                         $"{nameof(GetCounterDirection)} requires implementation for {direction.ToString()}.");
+            }
+        }
+        
+        private void UpdateTail()
+        {
+            Debug.Log("Move");
+            if (this.snakeTailLength == 2)
+            {
+                SnakeTailPieces[1].gameObject.SetActive(true);
+                SnakeTailPieces[1].gameObject.transform.position = SnakeTailPieces[0].gameObject.transform.position;
+            }
+            
+            if (this.snakeTailLength >= 1)
+            {
+                SnakeTailPieces[0].gameObject.SetActive(true);
+                SnakeTailPieces[0].gameObject.transform.position = this.transform.position;
             }
         }
     }

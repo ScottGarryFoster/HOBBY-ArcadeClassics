@@ -68,6 +68,16 @@ namespace FQ.GameplayElements
         {
             
         }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            TriggerEnter2D(other);
+        }
+
+        protected virtual void TriggerEnter2D(Collider2D other)
+        {
+            
+        }
     }
 
 }

@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using FQ.GameplayInputs;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Assert = UnityEngine.Assertions.Assert;
+using Object = UnityEngine.Object;
 
 namespace FQ.GameplayElements.PlayTests
 {
@@ -17,6 +20,8 @@ namespace FQ.GameplayElements.PlayTests
         public void Setup()
         {
             this.playerObject = new GameObject();
+            this.playerObject.tag = "Player";
+            AddFullCollider(this.playerObject);
             this.snakePlayer = this.playerObject.AddComponent<SnakePlayer>();
             
             // The only reason Movement Speed is internal is to speed up tests
@@ -53,7 +58,7 @@ namespace FQ.GameplayElements.PlayTests
             Vector2 expectedPosition = this.snakePlayer.transform.position;
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -76,7 +81,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -97,12 +102,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -128,7 +133,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -151,7 +156,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -172,12 +177,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -203,7 +208,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -226,7 +231,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -247,12 +252,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -278,7 +283,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -301,7 +306,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -322,12 +327,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -353,7 +358,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -380,7 +385,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -401,12 +406,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -432,7 +437,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -455,7 +460,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -476,12 +481,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -507,7 +512,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -530,7 +535,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -551,12 +556,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -582,7 +587,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -605,7 +610,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -626,12 +631,12 @@ namespace FQ.GameplayElements.PlayTests
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -657,7 +662,7 @@ namespace FQ.GameplayElements.PlayTests
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -681,12 +686,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -708,12 +713,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -735,12 +740,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -762,12 +767,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -793,12 +798,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -820,12 +825,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -847,12 +852,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -874,12 +879,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -905,12 +910,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -932,12 +937,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -959,12 +964,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -986,12 +991,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -1017,12 +1022,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -1044,12 +1049,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -1071,12 +1076,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -1098,12 +1103,12 @@ namespace FQ.GameplayElements.PlayTests
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunUpdateCycle();
+            yield return RunMovementUpdateCycle(this.snakePlayer);
 
             // Assert
             Vector2 actualPosition = this.snakePlayer.transform.position;
@@ -1169,10 +1174,179 @@ namespace FQ.GameplayElements.PlayTests
             yield return new WaitForEndOfFrame();
 
             // Assert
-            for (int i = 0; i < SnakePlayer.MaxTailSize; ++i)
-            {
-                Assert.IsFalse(this.snakePlayer.SnakeTailPieces[i].gameObject.activeSelf);
-            }
+            Assert.IsFalse(this.snakePlayer.SnakeTailPieces.Any(x => x.gameObject.activeSelf));
+        }
+        
+        /// <summary>
+        /// Should move to food but not grow until another update as Movement speed is not complete.
+        /// See <see href="https://docs.unity3d.com/Manual/ExecutionOrder.html"/> for details.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator CollideWithFood_DoesNotEnableTalkPiece_WhenFoodPlacedInFrontOfPlayerAndPlayerMovedInToTest()
+        {
+            //Setup();
+            GameObject po = new GameObject();
+            po.tag = "Player";
+            AddFullCollider(po);
+            var sp = po.AddComponent<SnakePlayer>();
+            
+            // The only reason Movement Speed is internal is to speed up tests
+            // We speed up Time delta and slow down frames.
+            sp.movementSpeed = 0.025f;
+            Time.maximumDeltaTime = 0.0001f;
+
+            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
+            sp.gameplayInputs = mockGameplayInputs2.Object;
+            
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            sp.snakeTailPrefab = snakeTailPrefab;
+            
+            // END SETUP
+            
+            // Arrange
+            yield return new WaitForEndOfFrame();
+            GameObject food = SetupSnakeToEatFood(po, mockGameplayInputs2);
+
+            // Act
+            yield return RunMovementUpdateCycle(sp);
+            yield return new WaitForFixedUpdate();
+
+            // Assert
+            Assert.AreEqual(sp.SnakeTailPieces.Count(x => x.gameObject.activeSelf), 0);
+            
+            // Cleanup
+            Object.DestroyImmediate(food);
+        }
+        
+        [UnityTest]
+        public IEnumerator CollideWithFood_CausesATailPieceToBeEnabled_WhenFoodPlacedInFrontOfPlayerAndPlayerOffFoodTest()
+        {
+            //Setup();
+            GameObject po = new GameObject();
+            po.tag = "Player";
+            AddFullCollider(po);
+            var sp = po.AddComponent<SnakePlayer>();
+            
+            // The only reason Movement Speed is internal is to speed up tests
+            // We speed up Time delta and slow down frames.
+            sp.movementSpeed = 0.025f;
+            Time.maximumDeltaTime = 0.0001f;
+
+            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
+            sp.gameplayInputs = mockGameplayInputs2.Object;
+            
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            sp.snakeTailPrefab = snakeTailPrefab;
+            
+            // END SETUP
+            
+            // Arrange
+            yield return new WaitForEndOfFrame();
+            GameObject foodObject = SetupSnakeToEatFood(po, mockGameplayInputs2);
+
+            // Act
+            // One to eat, One to Move and Keep the tail where it is.
+            yield return RunMovementUpdateCycle(sp);
+            yield return RunMovementUpdateCycle(sp);
+
+            // Assert
+            Assert.AreEqual(sp.SnakeTailPieces.Count(x => x.gameObject.activeSelf), 1);
+            Assert.IsTrue(sp.SnakeTailPieces[0].gameObject.activeSelf);
+            
+            // Tearodwn
+            Object.DestroyImmediate(foodObject);
+        }
+        
+        [UnityTest]
+        public IEnumerator CollideWithFood_TailPieceIsWhereFoodWas_WhenMovedOffFoodTest()
+        {
+            //Setup();
+            GameObject po = new GameObject();
+            po.tag = "Player";
+            AddFullCollider(po);
+            var sp = po.AddComponent<SnakePlayer>();
+            
+            // The only reason Movement Speed is internal is to speed up tests
+            // We speed up Time delta and slow down frames.
+            sp.movementSpeed = 0.025f;
+            Time.maximumDeltaTime = 0.0001f;
+
+            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
+            sp.gameplayInputs = mockGameplayInputs2.Object;
+            
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            sp.snakeTailPrefab = snakeTailPrefab;
+            
+            // END SETUP
+            
+            // Arrange
+            yield return new WaitForEndOfFrame();
+            GameObject food = SetupSnakeToEatFood(po, mockGameplayInputs2);
+
+            // Eat
+            yield return RunMovementUpdateCycle(sp);
+            Vector3 expectedPosition = CopyVector3(po.transform.position);
+
+            // Act
+            yield return RunMovementUpdateCycle(sp);
+
+            // Assert
+            Vector3 tailPiece = sp.SnakeTailPieces[0].gameObject.transform.position;
+            Assert.AreEqual(tailPiece, expectedPosition);
+            
+            // Teardown
+            Object.DestroyImmediate(food);
+        }
+        
+        [UnityTest]
+        public IEnumerator CollideWithFood_TailGrows_WhenMoreFoodIsEatenTest()
+        {
+            //Setup();
+            GameObject po = new GameObject();
+            po.tag = "Player";
+            AddFullCollider(po);
+            var sp = po.AddComponent<SnakePlayer>();
+            
+            // The only reason Movement Speed is internal is to speed up tests
+            // We speed up Time delta and slow down frames.
+            sp.movementSpeed = 0.025f;
+            Time.maximumDeltaTime = 0.0001f;
+
+            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
+            sp.gameplayInputs = mockGameplayInputs2.Object;
+            
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            sp.snakeTailPrefab = snakeTailPrefab;
+            
+            // END SETUP
+            
+            // Arrange
+            yield return new WaitForEndOfFrame();
+
+            // Eat
+            GameObject food = SetupSnakeToEatFood(po, mockGameplayInputs2);
+            yield return RunMovementUpdateCycle(sp);
+            Vector3 firstFoodEaten = CopyVector3(po.transform.position);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            
+            // Eat
+            GameObject food2 = SetupSnakeToEatFood(po, mockGameplayInputs2);
+            yield return RunMovementUpdateCycle(sp);
+            Vector3 secondFoodEaten = CopyVector3(po.transform.position);
+
+            // Act
+            yield return RunMovementUpdateCycle(sp);
+
+            // Assert
+            Vector3 tailPiece = sp.SnakeTailPieces[0].gameObject.transform.position;
+            Assert.AreEqual(tailPiece, secondFoodEaten, $"secondFoodEaten == tailPiece | {secondFoodEaten} == {tailPiece}");
+            Vector3 tailPiece2 = sp.SnakeTailPieces[1].gameObject.transform.position;
+            Assert.AreEqual(tailPiece2, firstFoodEaten, $"firstFoodEaten == tailPiece2 | {firstFoodEaten} == {tailPiece2}");
+            
+            // Teardown
+            Object.DestroyImmediate(food);
+            Object.DestroyImmediate(food2);
         }
 
         #endregion
@@ -1184,11 +1358,11 @@ namespace FQ.GameplayElements.PlayTests
             return new Vector3(toCopy.x, toCopy.y, toCopy.z);
         }
 
-        private object RunUpdateCycle()
+        private object RunMovementUpdateCycle(IActorActiveStats activeStats)
         {
-            return new WaitForSeconds(this.snakePlayer.MovementSpeed);
+            return new WaitForSeconds(activeStats.MovementSpeed);
         }
-        
+
         private void MockKeyInput(KeyPressMethod method, GameplayButton button, bool press = true)
         {
             switch (method)
@@ -1206,6 +1380,48 @@ namespace FQ.GameplayElements.PlayTests
                         x => x.KeyUp(button)).Returns(press);
                     break;
             }
+        }
+        
+        private GameObject CreateGameObject(Vector3 position, string tag = "")
+        {
+            var newGO = new GameObject();
+            newGO.transform.position = position;
+
+            if (!string.IsNullOrWhiteSpace(tag))
+            {
+                newGO.tag = "SnakeFood";
+            }
+
+            return newGO;
+        }
+
+        private BoxCollider2D CreateTriggerBoxCollider(GameObject go)
+        {
+            var bc2d = go.AddComponent<BoxCollider2D>();
+            bc2d.size = new Vector2(0.9f, 0.9f);
+            bc2d.isTrigger = true;
+
+            return bc2d;
+        }
+        
+        private void AddFullCollider(GameObject gameObject)
+        {
+            CreateTriggerBoxCollider(gameObject);
+            var ridgedBody = gameObject.AddComponent<Rigidbody2D>();
+            ridgedBody.gravityScale = 0;
+        }
+        
+        private GameObject SetupSnakeToEatFood(GameObject player, Mock<IGameplayInputs> mockGI)
+        {
+            Vector3 currentPosition = CopyVector3(player.transform.position);
+            var foodGo = CreateGameObject(position: new Vector3(0, currentPosition.y + 1, 0), tag: "SnakeFood");
+            foodGo.AddComponent<TestFood>();
+            CreateTriggerBoxCollider(foodGo);
+
+            mockGI.Setup(x => x.KeyPressed(GameplayButton.DirectionUp))
+                .Returns(true);
+
+            return foodGo;
         }
         
         #endregion

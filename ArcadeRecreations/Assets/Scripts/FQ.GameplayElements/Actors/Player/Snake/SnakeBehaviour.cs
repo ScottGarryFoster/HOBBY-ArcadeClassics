@@ -70,6 +70,8 @@ namespace FQ.GameplayElements
         private bool receivedInput;
 
         private int snakeTailLength;
+
+        private bool growingLag;
         
         public SnakeBehaviour(GameObject gameObject, IObjectCreation objectCreation, IGameplayInputs gameplayInputs)
         {
@@ -99,8 +101,7 @@ namespace FQ.GameplayElements
             this.directionInput = new DirectionPressedOrDownInput();
             this.directionInput.Setup(this.gameplayInputs);
             
-            //SetupTail();
-            //Log.Instance.Info($"Start");
+            SetupTail();
         }
 
         /// <summary>
@@ -109,7 +110,6 @@ namespace FQ.GameplayElements
         /// <param name="timeDelta">The time between frames. </param>
         public void Update(float timeDelta)
         {
-            //Log.Instance.Info($"Update{timeDelta}");
             UpdateNewInputInAllDirections();
             
             this.deltaDelay += timeDelta;
@@ -119,7 +119,7 @@ namespace FQ.GameplayElements
 
                 if (this.receivedInput)
                 {
-                    //UpdateTail();
+                    UpdateTail();
                     this.movingActor.MoveActor(this.currentDirection);
                 }
             }
@@ -131,7 +131,11 @@ namespace FQ.GameplayElements
         /// <param name="collider2D">Other collider. </param>
         public void OnTriggerEnter2D(Collider2D collider2D)
         {
-            
+            if (collider2D.CompareTag("SnakeFood"))
+            {
+                collider2D.gameObject.tag = "Untagged";
+                this.growingLag = true;
+            }
         }
 
         /// <summary>
@@ -232,6 +236,28 @@ namespace FQ.GameplayElements
 
                 this.SnakeTailPieces[i].transform.position = this.parent.transform.position;
                 this.SnakeTailPieces[i].gameObject.SetActive(false);
+            }
+        }
+        
+        private void UpdateTail()
+        {
+            if (this.snakeTailLength >= 1)
+            {
+                for (int i = this.snakeTailLength - 1; i > 0; --i)
+                {
+                    SnakeTailPieces[i].gameObject.SetActive(true);
+                    SnakeTailPieces[i].gameObject.transform.position =
+                        SnakeTailPieces[i - 1].gameObject.transform.position;
+                }
+
+                SnakeTailPieces[0].gameObject.SetActive(true);
+                SnakeTailPieces[0].gameObject.transform.position = this.parent.transform.position;
+            }
+
+            if (this.growingLag)
+            {
+                ++snakeTailLength;
+                this.growingLag = false;
             }
         }
     }

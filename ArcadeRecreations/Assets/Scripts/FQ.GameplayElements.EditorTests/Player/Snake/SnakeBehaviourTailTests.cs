@@ -157,150 +157,111 @@ namespace FQ.GameplayElements.EditorTests
         {
             // Arrange
             this.snakeBehaviour.Start();
-            SetupSnakeToEatFood(this.playerObject, this.mockGameplayInputs, out Collider2D collider2D);
-            this.snakeBehaviour.OnTriggerEnter2D(collider2D);
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
 
             // Act
             RunMovementUpdateCycle();
 
             // Assert
-            Assert.AreEqual(this.snakeBehaviour.SnakeTailPieces.Count(x => x.gameObject.activeSelf), 0);
+            Assert.IsFalse(this.snakeBehaviour.SnakeTailPieces.Any(x => x.gameObject.activeSelf));
         }
 
-        /*
-        [UnityTest]
-        public IEnumerator CollideWithFood_CausesATailPieceToBeEnabled_WhenFoodPlacedInFrontOfPlayerAndPlayerOffFoodTest()
+        
+        [Test]
+        public void CollideWithFood_CausesATailPieceToBeEnabled_WhenFoodPlacedInFrontOfPlayerAndPlayerOffFoodTest()
         {
-            //Setup();
-            GameObject po = new GameObject();
-            po.tag = "Player";
-            AddFullCollider(po);
-            var sp = po.AddComponent<SnakePlayer>();
-            
-            // The only reason Movement Speed is internal is to speed up tests
-            // We speed up Time delta and slow down frames.
-            sp.movementSpeed = 0.025f;
-            Time.maximumDeltaTime = 0.0001f;
-
-            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
-            sp.gameplayInputs = mockGameplayInputs2.Object;
-            
-            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            sp.snakeTailPrefab = snakeTailPrefab;
-            
-            // END SETUP
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            GameObject foodObject = SetupSnakeToEatFood(po, mockGameplayInputs2);
-
+            this.snakeBehaviour.Start();
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            
             // Act
             // One to eat, One to Move and Keep the tail where it is.
-            yield return RunMovementUpdateCycle(sp);
-            yield return RunMovementUpdateCycle(sp);
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
 
             // Assert
-            Assert.AreEqual(sp.SnakeTailPieces.Count(x => x.gameObject.activeSelf), 1);
-            Assert.IsTrue(sp.SnakeTailPieces[0].gameObject.activeSelf);
-            
-            // Tearodwn
-            Object.DestroyImmediate(foodObject);
+            Assert.AreEqual(1, this.snakeBehaviour.SnakeTailPieces.Count(x => x.gameObject.activeSelf));
+            Assert.IsTrue(this.snakeBehaviour.SnakeTailPieces[0].gameObject.activeSelf);
         }
         
-        [UnityTest]
-        public IEnumerator CollideWithFood_TailPieceIsWhereFoodWas_WhenMovedOffFoodTest()
+        
+        [Test]
+        public void CollideWithFood_TailPieceIsWhereFoodWas_WhenMovedOffFoodTest()
         {
-            //Setup();
-            GameObject po = new GameObject();
-            po.tag = "Player";
-            AddFullCollider(po);
-            var sp = po.AddComponent<SnakePlayer>();
-            
-            // The only reason Movement Speed is internal is to speed up tests
-            // We speed up Time delta and slow down frames.
-            sp.movementSpeed = 0.025f;
-            Time.maximumDeltaTime = 0.0001f;
-
-            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
-            sp.gameplayInputs = mockGameplayInputs2.Object;
-            
-            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            sp.snakeTailPrefab = snakeTailPrefab;
-            
-            // END SETUP
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            GameObject food = SetupSnakeToEatFood(po, mockGameplayInputs2);
-
-            // Eat
-            yield return RunMovementUpdateCycle(sp);
-            Vector3 expectedPosition = CopyVector3(po.transform.position);
+            this.snakeBehaviour.Start();
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            Vector3 expectedPosition = CopyVector3(this.playerObject.transform.position);
 
             // Act
-            yield return RunMovementUpdateCycle(sp);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector3 tailPiece = sp.SnakeTailPieces[0].gameObject.transform.position;
-            Assert.AreEqual(tailPiece, expectedPosition);
-            
-            // Teardown
-            Object.DestroyImmediate(food);
+            Vector3 tailPiece = this.snakeBehaviour.SnakeTailPieces[0].gameObject.transform.position;
+            Assert.AreEqual(expectedPosition, tailPiece);
         }
         
-        [UnityTest]
-        public IEnumerator CollideWithFood_TailGrows_WhenMoreFoodIsEatenTest()
+        
+        [Test]
+        public void CollideWithFood_TailGrows_WhenMoreFoodIsEatenTest()
         {
-            //Setup();
-            GameObject po = new GameObject();
-            po.tag = "Player";
-            AddFullCollider(po);
-            var sp = po.AddComponent<SnakePlayer>();
-            
-            // The only reason Movement Speed is internal is to speed up tests
-            // We speed up Time delta and slow down frames.
-            sp.movementSpeed = 0.025f;
-            Time.maximumDeltaTime = 0.0001f;
-
-            var mockGameplayInputs2 = new Mock<IGameplayInputs>();
-            sp.gameplayInputs = mockGameplayInputs2.Object;
-            
-            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            sp.snakeTailPrefab = snakeTailPrefab;
-            
-            // END SETUP
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
+            this.snakeBehaviour.Start();
 
             // Eat
-            GameObject food = SetupSnakeToEatFood(po, mockGameplayInputs2);
-            yield return RunMovementUpdateCycle(sp);
-            Vector3 firstFoodEaten = CopyVector3(po.transform.position);
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            RunMovementUpdateCycle();
+            Vector3 firstFoodEaten = CopyVector3(this.playerObject.transform.position);
+
             // Eat
-            GameObject food2 = SetupSnakeToEatFood(po, mockGameplayInputs2);
-            yield return RunMovementUpdateCycle(sp);
-            Vector3 secondFoodEaten = CopyVector3(po.transform.position);
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            RunMovementUpdateCycle();
+            Vector3 secondFoodEaten = CopyVector3(this.playerObject.transform.position);
 
             // Act
-            yield return RunMovementUpdateCycle(sp);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector3 tailPiece = sp.SnakeTailPieces[0].gameObject.transform.position;
-            Assert.AreEqual(tailPiece, secondFoodEaten, $"secondFoodEaten == tailPiece | {secondFoodEaten} == {tailPiece}");
-            Vector3 tailPiece2 = sp.SnakeTailPieces[1].gameObject.transform.position;
-            Assert.AreEqual(tailPiece2, firstFoodEaten, $"firstFoodEaten == tailPiece2 | {firstFoodEaten} == {tailPiece2}");
+            Vector3 tailPiece = this.snakeBehaviour.SnakeTailPieces[0].gameObject.transform.position;
+            Assert.AreEqual(secondFoodEaten, tailPiece, $"secondFoodEaten == tailPiece | {secondFoodEaten} == {tailPiece}");
+            Vector3 tailPiece2 = this.snakeBehaviour.SnakeTailPieces[1].gameObject.transform.position;
+            Assert.AreEqual(firstFoodEaten, tailPiece2, $"firstFoodEaten == tailPiece2 | {firstFoodEaten} == {tailPiece2}");
+        }
+        
+        [Test]
+        public void CollideWithFood_TailGrowsMore_WhenMoreFoodIsEatenTest()
+        {
+            // Arrange
+            this.snakeBehaviour.Start();
+
+            // Eat
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            RunMovementUpdateCycle();
+            Vector3 firstFoodEaten = CopyVector3(this.playerObject.transform.position);
+
+            // Eat
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            RunMovementUpdateCycle();
+            Vector3 secondFoodEaten = CopyVector3(this.playerObject.transform.position);
             
-            // Teardown
-            Object.DestroyImmediate(food);
-            Object.DestroyImmediate(food2);
+            // Eat
+            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
+            RunMovementUpdateCycle();
+            Vector3 thirdFoodEaten = CopyVector3(this.playerObject.transform.position);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Vector3 tailPiece = this.snakeBehaviour.SnakeTailPieces[0].gameObject.transform.position;
+            Assert.AreEqual(thirdFoodEaten, tailPiece, $"thirdFoodEaten == tailPiece | {thirdFoodEaten} == {tailPiece}");
+            Vector3 tailPiece2 = this.snakeBehaviour.SnakeTailPieces[1].gameObject.transform.position;
+            Assert.AreEqual(secondFoodEaten, tailPiece2, $"secondFoodEaten == tailPiece2 | {secondFoodEaten} == {tailPiece2}");
+            Vector3 tailPiece3 = this.snakeBehaviour.SnakeTailPieces[2].gameObject.transform.position;
+            Assert.AreEqual(firstFoodEaten, tailPiece3, $"firstFoodEaten == tailPiece3 | {firstFoodEaten} == {tailPiece3}");
         }
 
-        #endregion
-        
+/*
         #region Helper Methods
         
         private Vector3 CopyVector3(Vector3 toCopy)
@@ -404,13 +365,20 @@ namespace FQ.GameplayElements.EditorTests
         {
             Vector3 currentPosition = CopyVector3(player.transform.position);
             var foodGo = CreateGameObject(position: new Vector3(0, currentPosition.y + 1, 0), tag: "SnakeFood");
-            foodGo.AddComponent<TestFood>();
+            //foodGo.AddComponent<TestFood>();
             collider2D = CreateTriggerBoxCollider(foodGo);
 
             mockGI.Setup(x => x.KeyPressed(GameplayButton.DirectionUp))
                 .Returns(true);
 
             return foodGo;
+        }
+
+        private void EatFood(GameObject player, Mock<IGameplayInputs> mockGI, ISnakeBehaviour behaviour)
+        {
+            SetupSnakeToEatFood(this.playerObject, this.mockGameplayInputs, out Collider2D collider2D);
+            behaviour.OnTriggerEnter2D(collider2D);
+            behaviour.OnTriggerStay2D(collider2D);
         }
         
         private Vector3 CopyVector3(Vector3 toCopy)
@@ -425,7 +393,7 @@ namespace FQ.GameplayElements.EditorTests
 
             if (!string.IsNullOrWhiteSpace(tag))
             {
-                newGameObject.tag = "SnakeFood";
+                newGameObject.tag = tag;
             }
 
             return newGameObject;

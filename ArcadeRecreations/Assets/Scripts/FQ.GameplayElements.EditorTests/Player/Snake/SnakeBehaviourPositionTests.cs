@@ -24,10 +24,10 @@ namespace FQ.GameplayElements.EditorTests
         /// </summary>
         private const float SafeFloatTick = 0.0001f;
         
-        //[SetUp]
+        [SetUp]
         public void Setup()
         {
-            /*this.playerObject = new GameObject();
+            this.playerObject = new GameObject();
             this.stubObjectCreation = new StubObjectCreation();
             this.mockGameplayInputs = new Mock<IGameplayInputs>();
             var concreteSnakeBehaviour = new SnakeBehaviour(
@@ -38,20 +38,20 @@ namespace FQ.GameplayElements.EditorTests
                 MovementSpeed = 1
             };
             
-            //SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            //concreteSnakeBehaviour.snakeTailPrefab = snakeTailPrefab;
+            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            concreteSnakeBehaviour.snakeTailPrefab = snakeTailPrefab;
 
             this.snakeBehaviour = concreteSnakeBehaviour;
             
             // All the tests for position require start to have occured.
-            this.snakeBehaviour.Start();*/
+            this.snakeBehaviour.Start();
         }
 
-        //[TearDown]
+        [TearDown]
         public void Teardown()
         {
-            //this.stubObjectCreation.CreatedGameObjects.ForEach(Object.DestroyImmediate);
-            //this.stubObjectCreation.CreatedGameObjects.Clear();
+            this.stubObjectCreation.CreatedGameObjects.ForEach(Object.DestroyImmediate);
+            this.stubObjectCreation.CreatedGameObjects.Clear();
         }
         
         #region Position with Keypress
@@ -59,7 +59,7 @@ namespace FQ.GameplayElements.EditorTests
         [Test]
         public void Update_PlayerRemainsStill_WhenNoKeyPressedTest()
         {
-            /*// Arrange
+            // Arrange
             Vector2 expectedPosition = this.playerObject.transform.position;
 
             // Act
@@ -68,7 +68,7 @@ namespace FQ.GameplayElements.EditorTests
             // Assert
             Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
-                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");*/
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
             Assert.IsTrue(true);
         }
         
@@ -572,7 +572,7 @@ namespace FQ.GameplayElements.EditorTests
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            RunUpdateCycleButDoNotTriggerMovement();
+            RunMovementUpdateCycle();
 
             // Assert
             Vector2 actualPosition = this.playerObject.transform.position;

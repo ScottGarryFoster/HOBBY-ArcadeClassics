@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Assert = UnityEngine.Assertions.Assert;
 using Object = UnityEngine.Object;
-/*
+
 namespace FQ.GameplayElements.PlayTests
 {
     [Ignore("Uses Time Delta in Update. Not a great set of tests. Likely to be removed.")]
@@ -1197,4 +1197,3 @@ namespace FQ.GameplayElements.PlayTests
         KeyPressed,
     }
 }
-*/

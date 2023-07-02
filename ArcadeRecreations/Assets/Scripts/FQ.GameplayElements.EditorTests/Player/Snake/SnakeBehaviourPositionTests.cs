@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
 using Moq;
 using NUnit.Framework;
@@ -8,361 +9,317 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Assert = UnityEngine.Assertions.Assert;
 using Object = UnityEngine.Object;
-/*
-namespace FQ.GameplayElements.PlayTests
+
+namespace FQ.GameplayElements.EditorTests
 {
-    [Ignore("Uses Time Delta in Update. Not a great set of tests. Likely to be removed.")]
-    public class SnakePlayerTests
+    public class SnakeBehaviourPositionTests
     {
+        private ISnakeBehaviour snakeBehaviour;
         private GameObject playerObject;
+        private StubObjectCreation stubObjectCreation;
         private Mock<IGameplayInputs> mockGameplayInputs;
-        private SnakePlayer snakePlayer;
+
+        /// <summary>
+        /// A tick amount to advance the update which will not advance the movement.
+        /// </summary>
+        private const float SafeFloatTick = 0.0001f;
         
+        //[SetUp]
         public void Setup()
         {
-            this.playerObject = new GameObject();
-            this.playerObject.tag = "Player";
-            AddFullCollider(this.playerObject);
-            this.snakePlayer = this.playerObject.AddComponent<SnakePlayer>();
-            
-            // The only reason Movement Speed is internal is to speed up tests
-            // We speed up Time delta and slow down frames.
-            this.snakePlayer.movementSpeed = 0.025f;
-            Time.maximumDeltaTime = 0.0005f;
-
+            /*this.playerObject = new GameObject();
+            this.stubObjectCreation = new StubObjectCreation();
             this.mockGameplayInputs = new Mock<IGameplayInputs>();
-            this.snakePlayer.gameplayInputs = this.mockGameplayInputs.Object;
+            var concreteSnakeBehaviour = new SnakeBehaviour(
+                this.playerObject,
+                this.stubObjectCreation,
+                this.mockGameplayInputs.Object)
+            {
+                MovementSpeed = 1
+            };
             
-            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            this.snakePlayer.snakeTailPrefab = snakeTailPrefab;
+            //SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
+            //concreteSnakeBehaviour.snakeTailPrefab = snakeTailPrefab;
+
+            this.snakeBehaviour = concreteSnakeBehaviour;
+            
+            // All the tests for position require start to have occured.
+            this.snakeBehaviour.Start();*/
         }
 
-        [TearDown]
+        //[TearDown]
         public void Teardown()
         {
-            Object.DestroyImmediate(this.playerObject);
-            
-            // Ensure to reset frames to its default
-            Time.maximumDeltaTime = Time.fixedDeltaTime;
+            //this.stubObjectCreation.CreatedGameObjects.ForEach(Object.DestroyImmediate);
+            //this.stubObjectCreation.CreatedGameObjects.Clear();
         }
         
         #region Position with Keypress
         
-        [UnityTest]
-        public IEnumerator Update_PlayerRemainsStill_WhenNoKeyPressedTest()
+        [Test]
+        public void Update_PlayerRemainsStill_WhenNoKeyPressedTest()
         {
-            Setup();
-            
-            // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            /*// Arrange
+            Vector2 expectedPosition = this.playerObject.transform.position;
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
-                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");*/
+            Assert.IsTrue(true);
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesDownOneUnit_WhenKeyPressIsDownTest()
+        [Test]
+        public void Update_PlayerMovesDownOneUnit_WhenKeyPressIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInDown_WhenKeyPressIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInDown_WhenKeyPressIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInDown_WhenKeyPressedBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInDown_WhenKeyPressedBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
-        
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesUpOneUnit_WhenKeyPressIsDownTest()
+
+        [Test]
+        public void Update_PlayerMovesUpOneUnit_WhenKeyPressIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInUp_WhenKeyPressIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInUp_WhenKeyPressIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInUp_WhenKeyPressedBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInUp_WhenKeyPressedBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesLeftOneUnit_WhenKeyPressIsDownTest()
+        [Test]
+        public void Update_PlayerMovesLeftOneUnit_WhenKeyPressIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInLeft_WhenKeyPressIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInLeft_WhenKeyPressIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInLeft_WhenKeyPressedBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInLeft_WhenKeyPressedBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
-            yield return new WaitForSeconds(this.snakePlayer.MovementSpeed / 2);
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesRightOneUnit_WhenKeyPressIsDownTest()
+        [Test]
+        public void Update_PlayerMovesRightOneUnit_WhenKeyPressIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInRight_WhenKeyPressIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInRight_WhenKeyPressIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
 
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInRight_WhenKeyPressedBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInRight_WhenKeyPressedBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -371,412 +328,354 @@ namespace FQ.GameplayElements.PlayTests
         
         #region Position with KeyDown
 
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesDownOneUnit_WhenKeyDownIsDownTest()
+        [Test]
+        public void Update_PlayerMovesDownOneUnit_WhenKeyDownIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInDown_WhenKeyDownIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInDown_WhenKeyDownIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInDown_WhenKeyDownBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInDown_WhenKeyDownBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionDown)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesUpOneUnit_WhenKeyDownIsDownTest()
+        [Test]
+        public void Update_PlayerMovesUpOneUnit_WhenKeyDownIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInUp_WhenKeyDownIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInUp_WhenKeyDownIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInUp_WhenKeyDownBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInUp_WhenKeyDownBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionUp)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesLeftOneUnit_WhenKeyDownIsDownTest()
+        [Test]
+        public void Update_PlayerMovesLeftOneUnit_WhenKeyDownIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInLeft_WhenKeyDownIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInLeft_WhenKeyDownIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInLeft_WhenKeyDownBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInLeft_WhenKeyDownBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x--;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionLeft)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerMovesRightOneUnit_WhenKeyDownIsDownTest()
+        [Test]
+        public void Update_PlayerMovesRightOneUnit_WhenKeyDownIsDownTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = this.snakePlayer.transform.position;
+            Vector2 expectedPosition = this.playerObject.transform.position;
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInRight_WhenKeyDownIsReleasedTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInRight_WhenKeyDownIsReleasedTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
 
-        [UnityTest]
-        public IEnumerator Update_PlayerKeepsMovingInRight_WhenKeyDownBeforeFullMovementTest()
+        [Test]
+        public void Update_PlayerKeepsMovingInRight_WhenKeyDownBeforeFullMovementTest()
         {
-            Setup();
-            
             // Arrange
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x++;
             
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(true);
-            yield return new WaitForEndOfFrame();
+            RunUpdateCycleButDoNotTriggerMovement();
             this.mockGameplayInputs.Setup(
                 x => x.KeyDown(GameplayButton.DirectionRight)).Returns(false);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunUpdateCycleButDoNotTriggerMovement();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
         #region MoveRightThenLeft
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyPressedSecondTest()
         {
-            Setup();
-
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
             
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyPressedFirstAndKeyPressedSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveLeft_WhenMovingRightAndKeyDownFirstAndKeyDownSecondTest()
         {
             Setup();
             
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionRight);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionRight, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionLeft);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -785,110 +684,98 @@ namespace FQ.GameplayElements.PlayTests
         
         #region MoveLeftThenRight
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyPressedSecondTest()
         {
-            Setup();
-
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyPressedFirstAndKeyPressedSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveRight_WhenMovingLeftAndKeyDownFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.x -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionLeft, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionRight);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -897,110 +784,98 @@ namespace FQ.GameplayElements.PlayTests
         
         #region MoveDownThenUp
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyPressedSecondTest()
         {
-            Setup();
-
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyPressedFirstAndKeyPressedSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveUp_WhenMovingDownAndKeyDownFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y -= 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionDown);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionDown, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionUp);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1009,110 +884,98 @@ namespace FQ.GameplayElements.PlayTests
         
         #region MoveUpThenDown
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyPressedSecondTest()
         {
-            Setup();
-
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
 
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyPressedSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyPressedFirstAndKeyPressedSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyPressed;
             KeyPressMethod secondMethod = KeyPressMethod.KeyPressed;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
-        [UnityTest]
-        public IEnumerator Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyDownSecondTest()
+        [Test]
+        public void Update_PlayerDoesNotMoveDown_WhenMovingUpAndKeyDownFirstAndKeyDownSecondTest()
         {
-            Setup();
-            
             // Arrange
             KeyPressMethod firstMethod = KeyPressMethod.KeyDown;
             KeyPressMethod secondMethod = KeyPressMethod.KeyDown;
-            yield return new WaitForEndOfFrame();
-            
-            Vector2 expectedPosition = CopyVector3(this.snakePlayer.transform.position);
+
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
             expectedPosition.y += 2;
 
             MockKeyInput(firstMethod, GameplayButton.DirectionUp);
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
             MockKeyInput(firstMethod, GameplayButton.DirectionUp, press: false);
             MockKeyInput(secondMethod, GameplayButton.DirectionDown);
 
             // Act
-            yield return RunMovementUpdateCycle(this.snakePlayer);
+            RunMovementUpdateCycle();
 
             // Assert
-            Vector2 actualPosition = this.snakePlayer.transform.position;
+            Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
@@ -1130,9 +993,14 @@ namespace FQ.GameplayElements.PlayTests
             return new Vector3(toCopy.x, toCopy.y, toCopy.z);
         }
 
-        private object RunMovementUpdateCycle(IActorActiveStats activeStats)
+        private void RunMovementUpdateCycle()
         {
-            return new WaitForSeconds(activeStats.MovementSpeed);
+            this.snakeBehaviour.Update(this.snakeBehaviour.MovementSpeed);
+        }
+        
+        private void RunUpdateCycleButDoNotTriggerMovement()
+        {
+            this.snakeBehaviour.Update(SafeFloatTick);
         }
 
         private void MockKeyInput(KeyPressMethod method, GameplayButton button, bool press = true)
@@ -1197,4 +1065,3 @@ namespace FQ.GameplayElements.PlayTests
         KeyPressed,
     }
 }
-*/

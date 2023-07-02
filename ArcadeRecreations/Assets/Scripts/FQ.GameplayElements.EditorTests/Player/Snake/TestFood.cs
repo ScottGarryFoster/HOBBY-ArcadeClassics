@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace FQ.GameplayElements.PlayTests
+namespace FQ.GameplayElements.EditorTests
 {
     /// <summary>
     /// Exists to remove the collider similar to actual food.

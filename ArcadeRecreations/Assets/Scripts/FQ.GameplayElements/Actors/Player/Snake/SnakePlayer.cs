@@ -1,4 +1,6 @@
 ﻿using System;
+using FQ.GameObjectPromises;
+using FQ.GameplayInputs;
 using UnityEngine;
 
 namespace FQ.GameplayElements
@@ -17,58 +19,42 @@ namespace FQ.GameplayElements
         /// How big the given tail may get. This does not include the head.
         /// </summary>
         public const int MaxTailSize = 199;
-        
+
         /// <summary>
         /// Prefab for the Snake's body.
         /// </summary>
         /// <remarks>Internal for testing. </remarks>
         [SerializeField]
         internal SnakeTail snakeTailPrefab;
-        
-        /// <summary>
-        /// Logic for an actor which moves.
-        /// </summary>
-        private IMovingActor movingActor;
 
-        /// <summary>
-        /// Handles direction inputs from the input IO.
-        /// </summary>
-        private IDirectionInput directionInput;
-        
-        /// <summary>
-        /// Used to create a slower movement tick.
-        /// </summary>
-        private float deltaDelay;
-        
-        /// <summary>
-        /// Current direction player is moving in.
-        /// </summary>
-        private Direction currentDirection;
-        
-        /// <summary>
-        /// True means input has been received.
-        /// </summary>
-        private bool receivedInput;
-
-        private int snakeTailLength;
+        private ISnakeBehaviour snakeBehaviour;
         
         protected override void ProtectedStart()
         {
-            this.currentDirection = Direction.Down;
+            this.snakeBehaviour =
+                new SnakeBehaviour(
+                    this.gameObject, 
+                    new GameObjectCreation(), 
+                    this.gameplayInputs);
+            
+            this.snakeBehaviour.Start();
+            
+            /*this.currentDirection = Direction.Down;
             this.receivedInput = false;
 
             this.movingActor = new MovingActor();
             this.movingActor.Setup(this.transform, movement: 1);
 
             this.directionInput = new DirectionPressedOrDownInput();
-            this.directionInput.Setup(this.gameplayInputs);
+            this.directionInput.Setup(this.gameplayInputs);*/
 
-            SetupTail();
+            //SetupTail();
         }
 
         protected override void ProtectedUpdate()
         {
-            UpdateNewInputInAllDirections();
+            this.snakeBehaviour.Update(Time.deltaTime);
+            /*UpdateNewInputInAllDirections();
             
             this.deltaDelay += Time.deltaTime;
             if (this.deltaDelay >= MovementSpeed)
@@ -80,17 +66,17 @@ namespace FQ.GameplayElements
                     UpdateTail();
                     this.movingActor.MoveActor(this.currentDirection);
                 }
-            }
+            }*/
         }
 
         protected override void TriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("SnakeFood"))
+            /*if (other.CompareTag("SnakeFood"))
             {
                 Debug.Log("Eat");
                 other.gameObject.tag = "Untagged";
                 ++snakeTailLength;
-            }
+            }*/
         }
         
         private void SetupTail()
@@ -131,12 +117,12 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction to test turning in. </param>
         private void UpdateNewInputDirectionInDirection(Direction direction)
         {
-            Direction counterDirection = GetCounterDirection(direction);
+            /*Direction counterDirection = GetCounterDirection(direction);
             if (DetermineIfDirectionShouldUpdate(direction, counterDirection))
             {
                 this.currentDirection = direction;
                 this.receivedInput = true;
-            }
+            }*/
         }
 
         /// <summary>
@@ -147,11 +133,12 @@ namespace FQ.GameplayElements
         /// <returns>True means the given direction is likely a good direction to move in. </returns>
         private bool DetermineIfDirectionShouldUpdate(Direction direction, Direction counterDirection)
         {
-            bool haveNotMoved = !this.receivedInput;
+            /*bool haveNotMoved = !this.receivedInput;
             bool areNotMovingCounter = this.currentDirection != counterDirection;
             bool arePressingDirection = this.directionInput.PressingInputInDirection(direction);
 
-            return arePressingDirection && (haveNotMoved || areNotMovingCounter);
+            return arePressingDirection && (haveNotMoved || areNotMovingCounter);*/
+            return false;
         }
 
         /// <summary>
@@ -178,7 +165,7 @@ namespace FQ.GameplayElements
         
         private void UpdateTail()
         {
-            Debug.Log("Move");
+            /*Debug.Log("Move");
             if (this.snakeTailLength == 2)
             {
                 SnakeTailPieces[1].gameObject.SetActive(true);
@@ -189,7 +176,7 @@ namespace FQ.GameplayElements
             {
                 SnakeTailPieces[0].gameObject.SetActive(true);
                 SnakeTailPieces[0].gameObject.transform.position = this.transform.position;
-            }
+            }*/
         }
     }
 }

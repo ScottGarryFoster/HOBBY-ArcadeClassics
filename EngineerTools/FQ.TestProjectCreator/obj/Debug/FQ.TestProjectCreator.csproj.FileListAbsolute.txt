@@ -1,0 +1,9 @@
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\bin\Debug\FQ.TestProjectCreator.dll
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\bin\Debug\FQ.TestProjectCreator.pdb
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\bin\Debug\FQ.Libraries.Tools.HighLevelElements.dll
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\bin\Debug\FQ.Libraries.Tools.HighLevelElements.pdb
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\obj\Debug\FQ.TestProjectCreator.csproj.AssemblyReference.cache
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\obj\Debug\FQ.TestProjectCreator.csproj.CoreCompileInputs.cache
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\obj\Debug\FQ.TestProjectCreator.csproj.CopyComplete
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\obj\Debug\FQ.TestProjectCreator.dll
+E:\Development\ArcadeClassics\EngineerTools\FQ.TestProjectCreator\obj\Debug\FQ.TestProjectCreator.pdb

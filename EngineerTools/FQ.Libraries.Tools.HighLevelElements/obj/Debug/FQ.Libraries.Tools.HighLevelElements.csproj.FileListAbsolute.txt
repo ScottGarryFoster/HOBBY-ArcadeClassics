@@ -1,0 +1,6 @@
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\bin\Debug\FQ.Libraries.Tools.HighLevelElements.dll
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\bin\Debug\FQ.Libraries.Tools.HighLevelElements.pdb
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\obj\Debug\FQ.Libraries.Tools.HighLevelElements.csproj.AssemblyReference.cache
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\obj\Debug\FQ.Libraries.Tools.HighLevelElements.csproj.CoreCompileInputs.cache
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\obj\Debug\FQ.Libraries.Tools.HighLevelElements.dll
+E:\Development\ArcadeClassics\EngineerTools\FQ.Libraries.Tools.HighLevelElements\obj\Debug\FQ.Libraries.Tools.HighLevelElements.pdb

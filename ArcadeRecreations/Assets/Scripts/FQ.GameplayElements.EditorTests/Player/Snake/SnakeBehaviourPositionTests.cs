@@ -324,6 +324,34 @@ namespace FQ.GameplayElements.EditorTests
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
         }
         
+        [Test]
+        [Description("This test ensures that pressing counter directions does not lead to backwards motion.")]
+        public void Update_PlayerDoesNotDoubleBack_WhenMovingLeftAndPressingUpAndRightTest()
+        {
+            // Arrange
+            Vector2 expectedPosition = CopyVector3(this.playerObject.transform.position);
+            expectedPosition.x--;
+            expectedPosition.y++;
+
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
+            RunMovementUpdateCycle();
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(false);
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Vector2 actualPosition = this.playerObject.transform.position;
+            Assert.AreEqual(expectedPosition, actualPosition, 
+                $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+
         #endregion
         
         #region Position with KeyDown

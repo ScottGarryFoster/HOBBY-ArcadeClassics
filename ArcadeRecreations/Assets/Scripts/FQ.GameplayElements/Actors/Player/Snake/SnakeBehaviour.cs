@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Object = System.Object;
 
 namespace FQ.GameplayElements
@@ -63,6 +65,11 @@ namespace FQ.GameplayElements
         /// Current direction player is moving in.
         /// </summary>
         private Direction currentDirection;
+        
+        /// <summary>
+        /// Next direction to move in.
+        /// </summary>
+        private Direction nextDirection;
         
         /// <summary>
         /// True means input has been received.
@@ -127,7 +134,8 @@ namespace FQ.GameplayElements
                 if (this.receivedInput)
                 {
                     UpdateTail();
-                    this.movingActor.MoveActor(this.currentDirection);
+                    this.movingActor.MoveActor(this.nextDirection);
+                    this.currentDirection = this.nextDirection;
                 }
             }
         }
@@ -162,7 +170,7 @@ namespace FQ.GameplayElements
         {
             
         }
-        
+
         /// <summary>
         /// Tests the directions for turning. Will update the direction if another is found.
         /// </summary>
@@ -170,7 +178,11 @@ namespace FQ.GameplayElements
         {
             foreach (Direction direction in (Direction[]) Enum.GetValues(typeof(Direction)))
             {
-                UpdateNewInputDirectionInDirection(direction);
+                if (UpdateNewInputDirectionInDirection(direction))
+                {
+                    // Update is complete when direction is updated.
+                    return;
+                }
             }
         }
 
@@ -179,14 +191,20 @@ namespace FQ.GameplayElements
         /// is a correct fit for the new direction.
         /// </summary>
         /// <param name="direction">Direction to test turning in. </param>
-        private void UpdateNewInputDirectionInDirection(Direction direction)
+        /// <returns>True when found a new direction. </returns>
+        private bool UpdateNewInputDirectionInDirection(Direction direction)
         {
+            bool foundDirection = false;
+            
             Direction counterDirection = GetCounterDirection(direction);
             if (DetermineIfDirectionShouldUpdate(direction, counterDirection))
             {
-                this.currentDirection = direction;
+                this.nextDirection = direction;
                 this.receivedInput = true;
+                foundDirection = true;
             }
+
+            return foundDirection;
         }
 
         /// <summary>
@@ -199,9 +217,10 @@ namespace FQ.GameplayElements
         {
             bool haveNotMoved = !this.receivedInput;
             bool areNotMovingCounter = this.currentDirection != counterDirection;
+            bool wouldNotBeGoingCounter = direction != counterDirection;
             bool arePressingDirection = this.directionInput.PressingInputInDirection(direction);
 
-            return arePressingDirection && (haveNotMoved || areNotMovingCounter);
+            return arePressingDirection && (haveNotMoved || (areNotMovingCounter && wouldNotBeGoingCounter));
         }
         
         /// <summary>

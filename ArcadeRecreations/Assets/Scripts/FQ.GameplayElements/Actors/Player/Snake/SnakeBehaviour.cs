@@ -69,8 +69,15 @@ namespace FQ.GameplayElements
         /// </summary>
         private bool receivedInput;
 
+        /// <summary>
+        /// Current number of tail pieces.
+        /// </summary>
         private int snakeTailLength;
 
+        /// <summary>
+        /// True means add to the snake length.
+        /// This ensures the snake length is added where the food is and not the head.
+        /// </summary>
         private bool growingLag;
         
         public SnakeBehaviour(GameObject gameObject, IObjectCreation objectCreation, IGameplayInputs gameplayInputs)
@@ -219,6 +226,9 @@ namespace FQ.GameplayElements
             }
         }
         
+        /// <summary>
+        /// Creates and sets up the tail.
+        /// </summary>
         private void SetupTail()
         {
             if (this.snakeTailPrefab == null)
@@ -239,6 +249,9 @@ namespace FQ.GameplayElements
             }
         }
         
+        /// <summary>
+        /// Updates the tail positions.
+        /// </summary>
         private void UpdateTail()
         {
             if (this.snakeTailLength >= 1)

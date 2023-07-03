@@ -32,6 +32,9 @@ namespace FQ.GameplayElements
         [SerializeField]
         internal SnakeTail snakeTailPrefab;
 
+        /// <summary>
+        /// The player behaviour behind the Snake Player
+        /// </summary>
         private ISnakeBehaviour snakeBehaviour;
 
         protected override void ProtectedStart()

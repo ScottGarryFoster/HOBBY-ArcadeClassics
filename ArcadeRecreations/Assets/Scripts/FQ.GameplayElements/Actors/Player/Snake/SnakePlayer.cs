@@ -45,7 +45,7 @@ namespace FQ.GameplayElements
                     new GameObjectCreation(),
                     this.gameplayInputs)
                 {
-                    MovementSpeed = 0.25f,
+                    MovementSpeed = this.MovementSpeed,
                     snakeTailPrefab = this.snakeTailPrefab,
                 };
 

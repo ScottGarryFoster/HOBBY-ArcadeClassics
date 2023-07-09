@@ -1,0 +1,6 @@
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\bin\Debug\FQ.Downloader.dll
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\bin\Debug\FQ.Downloader.pdb
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\obj\Debug\FQ.Downloader.csproj.AssemblyReference.cache
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\obj\Debug\FQ.Downloader.csproj.CoreCompileInputs.cache
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\obj\Debug\FQ.Downloader.dll
+E:\Development\ArcadeClassics\FQ.BuildLauncher\FQ.Downloader\obj\Debug\FQ.Downloader.pdb

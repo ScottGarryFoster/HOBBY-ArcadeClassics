@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Empty.unity
+    guid: 73b3ad24b4e8f6f40937a5689f6298a7
+  - enabled: 1
+    path: Assets/Scenes/Controllers.unity
+    guid: 254424fb8aefec34d9153036f0ea9723
+  - enabled: 1
+    path: Assets/Scenes/SnakeGame/MainSnakeGame.unity
+    guid: 47376815e009e5d46a78e73f1d6e780e
   m_configObjects: {}

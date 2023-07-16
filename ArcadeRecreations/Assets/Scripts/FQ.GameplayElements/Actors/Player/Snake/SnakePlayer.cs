@@ -37,8 +37,9 @@ namespace FQ.GameplayElements
         /// </summary>
         private ISnakeBehaviour snakeBehaviour;
 
-        protected override void ProtectedStart()
+        protected override void BaseStart()
         {
+            base.BaseStart();
             this.snakeBehaviour =
                 new SnakeBehaviour(
                     this.gameObject,
@@ -48,17 +49,23 @@ namespace FQ.GameplayElements
                     MovementSpeed = this.MovementSpeed,
                     snakeTailPrefab = this.snakeTailPrefab,
                 };
-
+            
+            this.snakeBehaviour.StartTrigger += StartTrigger;
+            this.snakeBehaviour.EndTrigger += EndTrigger;
+            ResetElement += () => { this.snakeBehaviour.ResetElement?.Invoke(); };
+            
             this.snakeBehaviour.Start();
         }
 
-        protected override void ProtectedUpdate()
+        protected override void BaseUpdate()
         {
+            base.BaseUpdate();
             this.snakeBehaviour.Update(Time.deltaTime);
         }
-
-        protected override void TriggerEnter2D(Collider2D other)
+        
+        protected override void BaseOnTriggerEnter2D(Collider2D other)
         {
+            base.BaseOnTriggerEnter2D(other);
             this.snakeBehaviour.OnTriggerEnter2D(other);
         }
     }

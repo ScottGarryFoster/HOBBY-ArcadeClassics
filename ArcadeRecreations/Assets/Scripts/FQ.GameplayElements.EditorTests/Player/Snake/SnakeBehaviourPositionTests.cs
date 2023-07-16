@@ -71,7 +71,7 @@ namespace FQ.GameplayElements.EditorTests
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
             Assert.IsTrue(true);
         }
-        
+
         [Test]
         public void Update_PlayerMovesDownOneUnit_WhenKeyPressIsDownTest()
         {
@@ -1006,6 +1006,154 @@ namespace FQ.GameplayElements.EditorTests
             Vector2 actualPosition = this.playerObject.transform.position;
             Assert.AreEqual(expectedPosition, actualPosition, 
                 $"Expected {expectedPosition.ToString()} Actual {actualPosition.ToString()}");
+        }
+        
+        #endregion
+        
+        #region StartTrigger
+        
+        [Test]
+        public void FirstMovement_StartTriggerIsCalled_WhenDownIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
+
+            bool didTrigger = false;
+            this.snakeBehaviour.StartTrigger += () => { didTrigger = true; };
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(didTrigger);
+        }
+        
+        [Test]
+        public void FirstMovement_StartTriggerIsCalled_WhenUpIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
+
+            bool didTrigger = false;
+            this.snakeBehaviour.StartTrigger += () => { didTrigger = true; };
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(didTrigger);
+        }
+        
+        [Test]
+        public void FirstMovement_StartTriggerIsCalled_WhenLeftIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
+
+            bool didTrigger = false;
+            this.snakeBehaviour.StartTrigger += () => { didTrigger = true; };
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(didTrigger);
+        }
+        
+        [Test]
+        public void FirstMovement_StartTriggerIsCalled_WhenRightIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
+
+            bool didTrigger = false;
+            this.snakeBehaviour.StartTrigger += () => { didTrigger = true; };
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(didTrigger);
+        }
+        
+        [Test]
+        public void FirstMovement_DoesNotTriggerTwice_WhenDownIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
+
+            int actual = 0;
+            int expected = 1;
+            this.snakeBehaviour.StartTrigger += () => { ++actual; };
+
+            // Act
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void FirstMovement_DoesNotTriggerTwice_WhenRightIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
+
+            int actual = 0;
+            int expected = 1;
+            this.snakeBehaviour.StartTrigger += () => { ++actual; };
+
+            // Act
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void FirstMovement_DoesNotTriggerTwice_WhenLeftIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
+
+            int actual = 0;
+            int expected = 1;
+            this.snakeBehaviour.StartTrigger += () => { ++actual; };
+
+            // Act
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void FirstMovement_DoesNotTriggerTwice_WhenUpIsPressedTest()
+        {
+            // Arrange
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
+
+            int actual = 0;
+            int expected = 1;
+            this.snakeBehaviour.StartTrigger += () => { ++actual; };
+
+            // Act
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
         }
         
         #endregion

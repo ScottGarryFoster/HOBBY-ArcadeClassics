@@ -7,7 +7,6 @@ namespace FQ.GameObjectPromises
     /// </summary>
     public interface ICollidable2D
     {
-
         /// <summary>
         /// Occurs on a collision entered in 2D Space.
         /// </summary>

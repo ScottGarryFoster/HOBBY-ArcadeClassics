@@ -13,7 +13,7 @@ namespace FQ.GameplayElements.EditorTests
 {
     public class SnakeBehaviourTests
     {
-        /*private ISnakeBehaviour snakeBehaviour;
+        private ISnakeBehaviour snakeBehaviour;
         private GameObject playerObject;
         private StubObjectCreation stubObjectCreation;
         private Mock<IGameplayInputs> mockGameplayInputs;
@@ -40,19 +40,19 @@ namespace FQ.GameplayElements.EditorTests
         {
             this.stubObjectCreation.CreatedGameObjects.ForEach(Object.DestroyImmediate);
             this.stubObjectCreation.CreatedGameObjects.Clear();
-        }*/
+        }
 
         [Test]
         public void OnConstruction_ThrowsNullArgumentException_WhenNullGameObjectGivenTest()
         {
-            /*// Arrange
+            // Arrange
             GameObject given = null;
             
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
                 new SnakeBehaviour(given, this.stubObjectCreation, this.mockGameplayInputs.Object);
-            });*/
+            });
             Assert.IsTrue(true);
         }
         
@@ -60,29 +60,29 @@ namespace FQ.GameplayElements.EditorTests
         public void OnConstruction_ThrowsNullArgumentException_WhenObjectCreationIsNullTest()
         {
             // Arrange
-            /*IObjectCreation given = null;
+            IObjectCreation given = null;
             
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
                 new SnakeBehaviour(new GameObject(), given, this.mockGameplayInputs.Object);
-            });*/
+            });
         }
         
         [Test]
         public void OnConstruction_ThrowsNullArgumentException_WhenInputIsNullTest()
         {
             // Arrange
-            /*IGameplayInputs given = null;
+            IGameplayInputs given = null;
             
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
                 new SnakeBehaviour(new GameObject(), this.stubObjectCreation, given);
-            });*/
+            });
         }
 
-        /*#region HelperMethods
+        #region HelperMethods
 
         private void RunMovementUpdateCycle()
         {
@@ -139,6 +139,6 @@ namespace FQ.GameplayElements.EditorTests
             return newGameObject;
         }
 
-        #endregion*/
+        #endregion
     }
 }

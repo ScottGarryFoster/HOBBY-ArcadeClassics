@@ -11,7 +11,7 @@ namespace FQ.GameplayElements
     /// <summary>
     /// General player with some actor behaviours.
     /// </summary>
-    public class InteractableActor : MonoBehaviour, IActorActiveStats
+    public class InteractableActor : GameElement, IActorActiveStats
     {
         /// <summary>
         /// How fast the actor moves each time the actor moves.
@@ -33,51 +33,16 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <remarks>Injected. </remarks>
         internal IGameplayInputs gameplayInputs;
-        
+
         /// <summary>
         /// Start called by Unity.
         /// </summary>
-        private void Start()
+        protected override void BaseStart()
         {
             if (gameplayInputs == null)
             {
                 gameplayInputs = input;
             }
-            ProtectedStart();
-        }
-        
-        /// <summary>
-        /// Overriden by other players.
-        /// </summary>
-        protected virtual void ProtectedStart()
-        {
-            
-        }
-        
-        /// <summary>
-        /// Called every frame update.
-        /// </summary>
-        private void Update()
-        {
-            ProtectedUpdate();
-        }
-
-        /// <summary>
-        /// Overriden by over players. Called every frame.
-        /// </summary>
-        protected virtual void ProtectedUpdate()
-        {
-            
-        }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            TriggerEnter2D(other);
-        }
-
-        protected virtual void TriggerEnter2D(Collider2D other)
-        {
-            
         }
     }
 

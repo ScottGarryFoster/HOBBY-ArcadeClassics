@@ -8,6 +8,9 @@ using Object = System.Object;
 
 namespace FQ.GameplayElements
 {
+    /// <summary>
+    /// The player behaviour behind the Snake Player
+    /// </summary>
     public class SnakeBehaviour : ISnakeBehaviour
     {
         /// <summary>
@@ -19,6 +22,21 @@ namespace FQ.GameplayElements
         /// Pieces of the Snake's body which count as the tail.
         /// </summary>
         public SnakeTail[] SnakeTailPieces { get; private set; }
+        
+        /// <summary>
+        /// Called when a game element believes the session has started.
+        /// </summary>
+        public Action StartTrigger { get; set; }
+        
+        /// <summary>
+        /// Called when a game element believes the session has ended.
+        /// </summary>
+        public Action EndTrigger { get; set; }
+        
+        /// <summary>
+        /// Called when the element should reset it's state to the start of the session.
+        /// </summary>
+        public Action ResetElement { get; set; }
         
         /// <summary>
         /// How fast the actor moves each time the actor moves.
@@ -86,7 +104,12 @@ namespace FQ.GameplayElements
         /// This ensures the snake length is added where the food is and not the head.
         /// </summary>
         private bool growingLag;
-        
+
+        /// <summary>
+        /// True means we have told the game that the player has started.
+        /// </summary>
+        private bool didTriggerStart;
+
         public SnakeBehaviour(GameObject gameObject, IObjectCreation objectCreation, IGameplayInputs gameplayInputs)
         {
             this.parent = gameObject != null
@@ -106,6 +129,7 @@ namespace FQ.GameplayElements
         /// </summary>
         public void Start()
         {
+            ResetElement += OnResetElement;
             this.currentDirection = Direction.Down;
             this.receivedInput = false;
 
@@ -133,6 +157,12 @@ namespace FQ.GameplayElements
 
                 if (this.receivedInput)
                 {
+                    if (!didTriggerStart)
+                    {
+                        this.StartTrigger?.Invoke();
+                        didTriggerStart = true;
+                    }
+                    
                     UpdateTail();
                     this.movingActor.MoveActor(this.nextDirection);
                     this.currentDirection = this.nextDirection;
@@ -150,6 +180,10 @@ namespace FQ.GameplayElements
             {
                 collider2D.gameObject.tag = "Untagged";
                 this.growingLag = true;
+            }
+            else if (collider2D.CompareTag("SnakeTail"))
+            {
+                EndTrigger?.Invoke();
             }
         }
 
@@ -169,6 +203,22 @@ namespace FQ.GameplayElements
         public void OnTriggerStay2D(Collider2D collider2D)
         {
             
+        }
+        
+        /// <summary>
+        /// Reacts when element is to be reset.
+        /// </summary>
+        private void OnResetElement()
+        {
+            this.parent.transform.position = new Vector3();
+            foreach (SnakeTail snakeTailPiece in this.SnakeTailPieces)
+            {
+                snakeTailPiece.gameObject.SetActive(false);
+            }
+
+            this.snakeTailLength = 0;
+            this.didTriggerStart = false;
+            this.receivedInput = false;
         }
 
         /// <summary>

@@ -1,11 +1,9 @@
 {
-    "name": "FQ.GameplayElements.PlayTests",
+    "name": "FQ.GameObjectPromises.PlayTests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "FQ.GameplayElements",
-        "FQ.GameplayInputs",
         "FQ.GameObjectPromises"
     ],
     "includePlatforms": [],

@@ -1,4 +1,5 @@
-﻿using FQ.GameObjectPromises;
+﻿using System;
+using FQ.GameObjectPromises;
 
 namespace FQ.GameplayElements
 {
@@ -11,5 +12,20 @@ namespace FQ.GameplayElements
         /// Pieces of the Snake's body which count as the tail.
         /// </summary>
         public SnakeTail[] SnakeTailPieces { get; }
+        
+        /// <summary>
+        /// Called when a game element believes the session has started.
+        /// </summary>
+        Action StartTrigger { get; set; }
+        
+        /// <summary>
+        /// Called when a game element believes the session has ended.
+        /// </summary>
+        public Action EndTrigger { get; set; }
+        
+        /// <summary>
+        /// Called when the element should reset it's state to the start of the session.
+        /// </summary>
+        public Action ResetElement { get; set; }
     }
 }

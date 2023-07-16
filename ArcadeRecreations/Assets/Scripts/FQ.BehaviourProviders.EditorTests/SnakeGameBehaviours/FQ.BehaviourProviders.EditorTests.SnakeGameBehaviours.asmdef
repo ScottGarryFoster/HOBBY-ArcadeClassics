@@ -1,21 +1,24 @@
 {
-    "name": "FQ.GameplayElements.PlayTests",
+    "name": "FQ.BehaviourProviders.EditorTests.SnakeGameBehaviours",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "FQ.GameplayElements",
-        "FQ.GameplayInputs",
-        "FQ.GameObjectPromises"
+        "FQ.BehaviourProviders",
+        "FQ.GameObjectPromises",
+        "FQ.GameplayElements"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
         "Castle.Core.dll",
-        "Moq.dll"
+        "Moq.dll",
+        "log4netPlastic.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

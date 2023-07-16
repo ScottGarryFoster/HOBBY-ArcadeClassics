@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using FQ.GameObjectPromises;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,16 +9,16 @@ namespace FQ.GameplayElements.EditorTests
     /// <summary>
     /// Exists to remove the collider similar to actual food.
     /// </summary>
-    public class TestFood : MonoBehaviour
+    public class TestFood : GameElement
     {
         private bool areActive;
 
-        private void Start()
+        protected override void BaseStart()
         {
             this.areActive = true;
         }
 
-        private void FixedUpdate()
+        protected override void BaseFixedUpdate()
         {
             if (!this.areActive)
             {
@@ -29,7 +30,7 @@ namespace FQ.GameplayElements.EditorTests
             }
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        protected override void BaseOnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
             {

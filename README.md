@@ -10,7 +10,7 @@ The planned projects under this repository are as follows:
 ## Progress
 1. Snake Game 40%
 2. Pac-man 0%
-3. Space Invades 0%
+3. Space Invaders 0%
 
 ## Milestones / History
 This is a record of notable times in the project a snapshot was taken.

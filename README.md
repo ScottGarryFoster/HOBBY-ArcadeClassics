@@ -1,6 +1,5 @@
-
 # Arcade Classics
-This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
+This project is an attempt to prototype create basic arcade games in Unity. At a core level Unity is overkill for these projects but this project is about figuring out how basic game elements fit together on a programming and game engine level. To prototype these concepts, I’ve selected a few arcade games which span mechanics from basic player movement to AI. This is not intended to be shippable but instead a learning, teaching and reference tool.
 
 ## Projects
 The planned projects under this repository are as follows:
@@ -9,7 +8,7 @@ The planned projects under this repository are as follows:
 3. Space Invaders
 
 ## Progress
-1. Snake Game 20%
+1. Snake Game 40%
 2. Pac-man 0%
 3. Space Invades 0%
 

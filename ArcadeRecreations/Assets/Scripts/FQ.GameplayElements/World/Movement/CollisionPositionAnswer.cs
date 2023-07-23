@@ -15,7 +15,7 @@ namespace FQ.GameplayElements
         /// <summary>
         /// The new position they should take.
         /// </summary>
-        public Vector3 NewPosition;
+        public Vector2Int NewPosition;
 
         /// <summary>
         /// The new direction they should be in.

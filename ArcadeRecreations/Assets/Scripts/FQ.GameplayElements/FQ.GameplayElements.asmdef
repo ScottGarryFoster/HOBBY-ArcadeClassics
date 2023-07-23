@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "FQ.GameplayInputs",
-        "FQ.GameObjectPromises"
+        "FQ.GameObjectPromises",
+        "FQ.Log",
+        "FQ.Libraries.MonoSingleton"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

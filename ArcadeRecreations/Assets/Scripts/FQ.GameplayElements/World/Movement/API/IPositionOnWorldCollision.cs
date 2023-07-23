@@ -12,13 +12,11 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <param name="currentPosition">Where the actor is currently. </param>
         /// <param name="currentDirection">The direction they took to get here. </param>
-        /// <param name="newPosition">The new position they should take. </param>
-        /// <param name="newDirection">The new direction they should be in. </param>
-        /// <returns></returns>
-        ContextToPositionAnswer FindNewPositionForPlayer(
+        /// <returns>
+        /// Upon attempting to find a new position on collision with the world, this is the answer.
+        /// </returns>
+        CollisionPositionAnswer FindNewPositionForPlayer(
             Vector3 currentPosition,
-            Direction currentDirection, 
-            out Vector3 newPosition, 
-            out Direction newDirection);
+            Direction currentDirection);
     }
 }

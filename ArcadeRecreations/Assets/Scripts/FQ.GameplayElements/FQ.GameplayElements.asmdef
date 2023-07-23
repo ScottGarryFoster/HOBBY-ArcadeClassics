@@ -2,8 +2,8 @@
     "name": "FQ.GameplayElements",
     "rootNamespace": "",
     "references": [
-        "GUID:d13ee2b88602445fa182ab1d23c99067",
-        "GUID:10077b6f692226e40a14b2c3bc5549f8"
+        "FQ.GameplayInputs",
+        "FQ.GameObjectPromises"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

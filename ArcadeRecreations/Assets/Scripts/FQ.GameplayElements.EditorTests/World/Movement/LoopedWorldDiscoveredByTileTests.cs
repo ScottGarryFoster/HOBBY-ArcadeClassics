@@ -10,6 +10,9 @@ namespace FQ.GameplayElements.EditorTests
     public class LoopedWorldDiscoveredByTileTests
     {
         private const string TestGridLocation = "TestResources/World/TestGrid";
+        private const string TestGridWithTilesTouchingLocation = "TestResources/World/TestGrid-AllTouching";
+        private const string TestGridWithTiles1BorderApartLocation =  "TestResources/World/TestGrid-CloseBy1";
+        private const string TestGridWithTiles2BordersApartLocation = "TestResources/World/TestGrid-CloseBy2";
         private const string BorderTileLocation = "TestResources/World/TestBasicChecker-A/TestBasicChecker-A-Tile";
 
         private LoopedWorldDiscoveredByTile testClass;
@@ -37,7 +40,7 @@ namespace FQ.GameplayElements.EditorTests
         public void CalculateLoops_ReturnsTrue_WhenGivenAMapWithBorderTest()
         {
             // Arrange
-            Tilemap testTilemap = GetTestBorderTileMap();
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
             
             // Act
@@ -51,7 +54,7 @@ namespace FQ.GameplayElements.EditorTests
         public void CalculateLoops_ReturnsBorderLocations_WhenGivenAMapWithBorderTest()
         {
             // Arrange
-            Tilemap testTilemap = GetTestBorderTileMap();
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
             List<Vector2Int> expectedLocations = GetBorderLocationInTestMap();
             
@@ -68,7 +71,7 @@ namespace FQ.GameplayElements.EditorTests
         public void CalculateLoops_ReturnsCorrectDirections_WhenGivenAMapWithBordersTest()
         {
             // Arrange
-            Tilemap testTilemap = GetTestBorderTileMap();
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
             Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> expectedLocations =
                 GetCompleteTestAnswer();
@@ -78,6 +81,7 @@ namespace FQ.GameplayElements.EditorTests
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
+            Assert.AreEqual(expectedLocations.Keys.Count, actual.Keys.Count);
             foreach (var expectedLocation in expectedLocations)
             {
                 // Check the keys in the first dictionary
@@ -111,6 +115,167 @@ namespace FQ.GameplayElements.EditorTests
                 }
             }
         }
+        
+        [Test]
+        public void CalculateLoops_ReturnsCorrectDirections_WhenBordersHaveTwoEmptyBlocksTest()
+        {
+            // Arrange
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTiles2BordersApartLocation);
+            var borderTile = Resources.Load<Tile>(BorderTileLocation);
+
+            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            {
+                // Right side
+                {new Vector2Int(-3, -1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(Direction.Left, -3, 0)},
+                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(Direction.Left, -3, 1)},
+                {new Vector2Int(-3, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Left side
+                {new Vector2Int(0, -1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 0), MakeSimpleLoopAnswer(Direction.Right, 0, 0)},
+                {new Vector2Int(0, 1), MakeSimpleLoopAnswer(Direction.Right, 0, 1)},
+                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Top side
+                {new Vector2Int(-2, -1), MakeSimpleLoopAnswer(Direction.Up, -2, -1)},
+                {new Vector2Int(-1, -1), MakeSimpleLoopAnswer(Direction.Up, -1, -1)},
+
+                // Bottom side
+                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(Direction.Down, -2, 2)},
+                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(Direction.Down, -1, 2)},
+            };
+            
+            // Act
+            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+            
+            // Assert
+            Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
+            foreach (var expectedLocation in expected)
+            {
+                // Check the keys in the first dictionary
+                Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
+                actual.TryGetValue(expectedLocation.Key, 
+                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
+
+                foreach (var expectedValue in expectedLocation.Value)
+                {
+                    if (expectedValue.Value.Answer == ContextToPositionAnswer.NoValidMovement)
+                    {
+                        continue;
+                    }
+                    
+                    // Check the value in the first dictionary
+                    Assert.IsTrue(actualLocationValue.ContainsKey(expectedValue.Key),
+                        $"Does not contain direction {expectedLocation.Key}.{expectedValue.Key}");
+                    actualLocationValue.TryGetValue(expectedValue.Key, 
+                        out CollisionPositionAnswer actualCollisionAnswer);
+                    Assert.NotNull(actualCollisionAnswer, 
+                        "actualCollisionAnswer is null meaning direction exists but object does not.");
+                    
+                    // Check the final bit in the dictionary
+                    Assert.AreEqual(expectedLocation.Key, actualCollisionAnswer.NewDirection,
+                        $"Direction in final answer was incorrect. {expectedLocation.Key}.{expectedValue.Key}");
+                    Assert.AreEqual(ContextToPositionAnswer.NewPositionIsCorrect, actualCollisionAnswer.Answer,
+                        $"Enum Answer in final answer was incorrect. {expectedLocation.Key}.{expectedValue.Key}");
+                    Assert.AreEqual(expectedValue.Value.NewPosition, actualCollisionAnswer.NewPosition,
+                        $"Position in final answer was incorrect. {expectedLocation.Key}.{expectedValue.Key}");
+                }
+            }
+        }
+        
+        [Test]
+        public void CalculateLoops_DoesNotReturnAnyDirections_WhenBordersHasOneEmptyBlocksTest()
+        {
+            // Arrange
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTiles1BorderApartLocation);
+            var borderTile = Resources.Load<Tile>(BorderTileLocation);
+
+            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            {
+                // Right side
+                {new Vector2Int(-2, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Left side
+                {new Vector2Int(0, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+
+                // Top side
+                {new Vector2Int(-1, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+
+                // Bottom side
+                {new Vector2Int(-1, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+            };
+            
+            // Act
+            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+            
+            // Assert
+            Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
+            foreach (var expectedLocation in expected)
+            {
+                // Check the keys in the first dictionary
+                Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
+                actual.TryGetValue(expectedLocation.Key, 
+                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
+
+                Assert.IsFalse(expectedLocation.Value.Keys.Any(), $"{expectedLocation.Key} had a direction.");
+            }
+        }
+        
+        [Test]
+        public void CalculateLoops_DoesNotReturnAnyDirections_WhenAllBlocksAreTouchingTest()
+        {
+            // Arrange
+            Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTilesTouchingLocation);
+            var borderTile = Resources.Load<Tile>(BorderTileLocation);
+
+            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            {
+                // Right side
+                {new Vector2Int(-2, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Left side
+                {new Vector2Int(0, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+
+                // Top side
+                {new Vector2Int(-1, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+
+                // Bottom side
+                {new Vector2Int(-1, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Center
+                {new Vector2Int(-1, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+            };
+            
+            // Act
+            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+            
+            // Assert
+            Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
+            foreach (var expectedLocation in expected)
+            {
+                // Check the keys in the first dictionary
+                Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
+                actual.TryGetValue(expectedLocation.Key, 
+                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
+
+                Assert.IsFalse(expectedLocation.Value.Keys.Any(), $"{expectedLocation.Key} had a direction.");
+            }
+        }
 
         #region Helper Methods
         
@@ -128,11 +293,11 @@ namespace FQ.GameplayElements.EditorTests
             }
         }
 
-        private Tilemap GetTestBorderTileMap()
+        private Tilemap GetTestBorderTileMap(string map)
         {
             Tilemap returnTilemap = null;
             
-            GameObject borderObject = GetTestBorderObject();
+            GameObject borderObject = GetTestBorderObject(map);
             if (borderObject != null)
             {
                 returnTilemap = borderObject.GetComponent<Tilemap>();
@@ -141,9 +306,9 @@ namespace FQ.GameplayElements.EditorTests
             return returnTilemap;
         }
 
-        private GameObject GetTestBorderObject()
+        private GameObject GetTestBorderObject(string map)
         {
-            var gridGameObject = Resources.Load<GameObject>(TestGridLocation);
+            var gridGameObject = Resources.Load<GameObject>(map);
             for (int i = 0; i < gridGameObject.transform.childCount; ++i)
             {
                 Transform child = gridGameObject.transform.GetChild(i);

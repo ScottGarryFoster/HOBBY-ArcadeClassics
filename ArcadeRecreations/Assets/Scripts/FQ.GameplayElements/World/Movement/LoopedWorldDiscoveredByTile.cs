@@ -126,20 +126,11 @@ namespace FQ.GameplayElements
             
             if (direction == Direction.Left)
             {
-                int limit = 204;
-                int time = 0;
-                int steps = 0;
                 for (int x = position.x - 1; x < searchArea.min.x; --x)
                 {
-                    ++time; if(time > limit){ Debug.Log("You fucked up, LEFT"); break; }
-                    ++steps;
                     TileBase currentTile = tilemap.GetTile(new Vector3Int(x, position.y, position.z));
                     if (currentTile == tile)
                     {
-                        if (steps <= 2)
-                        {
-                            break;
-                        }
 
                         collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
                         collisionPositionAnswer.NewDirection = Direction.Right;
@@ -151,21 +142,11 @@ namespace FQ.GameplayElements
             }
             else if (direction == Direction.Right)
             {
-                int limit = 204;
-                int time = 0;
-                int steps = 0;
                 for (int x = position.x + 1; x < searchArea.max.x; ++x)
                 {
-                    ++steps;
                     TileBase currentTile = tilemap.GetTile(new Vector3Int(x, position.y, position.z));
                     if (currentTile == tile)
                     {
-                        ++time; if(time > limit){ Debug.Log("You fucked up, RIGHT"); break; }
-                        if (steps <= 2)
-                        {
-                            break;
-                        }
-
                         collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
                         collisionPositionAnswer.NewDirection = Direction.Left;
                         collisionPositionAnswer.NewPosition = new Vector2Int(x - 1, position.y);
@@ -176,21 +157,11 @@ namespace FQ.GameplayElements
             }
             else if (direction == Direction.Up)
             {
-                int limit = 204;
-                int time = 0;
-                int steps = 0;
                 for (int y = position.y + 1; y < searchArea.min.y; --y)
                 {
-                    ++steps;
                     TileBase currentTile = tilemap.GetTile(new Vector3Int(position.x, y, position.z));
                     if (currentTile == tile)
                     {
-                        ++time; if(time > limit){ Debug.Log("You fucked up, UP"); break; }
-                        if (steps <= 2)
-                        {
-                            break;
-                        }
-
                         collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
                         collisionPositionAnswer.NewDirection = Direction.Down;
                         collisionPositionAnswer.NewPosition = new Vector2Int(position.x, y + 1);
@@ -201,21 +172,11 @@ namespace FQ.GameplayElements
             }
             else if (direction == Direction.Down)
             {
-                int limit = 204;
-                int time = 0;
-                int steps = 0;
                 for (int y = position.y - 1; y < searchArea.max.y; ++y)
                 {
-                    ++time; if(time > limit){ Debug.Log("You fucked up, DOWN"); break; }
-                    ++steps;
                     TileBase currentTile = tilemap.GetTile(new Vector3Int(position.x, y, position.z));
                     if (currentTile == tile)
                     {
-                        if (steps <= 2)
-                        {
-                            break;
-                        }
-
                         collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
                         collisionPositionAnswer.NewDirection = Direction.Up;
                         collisionPositionAnswer.NewPosition = new Vector2Int(position.x, y - 1);

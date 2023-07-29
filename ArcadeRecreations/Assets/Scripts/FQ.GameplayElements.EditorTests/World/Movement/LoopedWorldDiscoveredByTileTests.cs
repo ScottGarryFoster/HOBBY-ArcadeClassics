@@ -73,8 +73,36 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
-            Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> expectedLocations =
-                GetCompleteTestAnswer();
+            var expectedLocations = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            {
+                // Right side
+                {new Vector2Int(-3, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, -2), MakeSimpleLoopAnswer(Direction.Left, 1, -2)},
+                {new Vector2Int(-3, -1), MakeSimpleLoopAnswer(Direction.Left, 1, -1)},
+                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(Direction.Left, 1, 0)},
+                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(Direction.Left, 1, 1)},
+                {new Vector2Int(-3, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Left side
+                {new Vector2Int(2, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(2, -2), MakeSimpleLoopAnswer(Direction.Right, -2, -2)},
+                {new Vector2Int(2, -1), MakeSimpleLoopAnswer(Direction.Right, -2, -1)},
+                {new Vector2Int(2, 0), MakeSimpleLoopAnswer(Direction.Right, -2, 0)},
+                {new Vector2Int(2, 1), MakeSimpleLoopAnswer(Direction.Right, -2, 1)},
+                {new Vector2Int(2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                
+                // Top side
+                {new Vector2Int(-2, -3), MakeSimpleLoopAnswer(Direction.Up, -2, 1)},
+                {new Vector2Int(-1, -3), MakeSimpleLoopAnswer(Direction.Up, -1, 1)},
+                {new Vector2Int(0, -3), MakeSimpleLoopAnswer(Direction.Up, 0, 1)},
+                {new Vector2Int(1, -3), MakeSimpleLoopAnswer(Direction.Up, 1, 1)},
+                
+                // Bottom side
+                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(Direction.Down, -2, -2)},
+                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(Direction.Down, -1, -2)},
+                {new Vector2Int(0, 2), MakeSimpleLoopAnswer(Direction.Down, 0, -2)},
+                {new Vector2Int(1, 2), MakeSimpleLoopAnswer(Direction.Down, 1, -2)}
+            };
             
             // Act
             this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
@@ -337,42 +365,6 @@ namespace FQ.GameplayElements.EditorTests
             }
 
             return testLocations;
-        }
-        
-        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> GetCompleteTestAnswer()
-        {
-            var answer = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
-            {
-                // Right side
-                {new Vector2Int(-3, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-3, -2), MakeSimpleLoopAnswer(Direction.Left, 1, -2)},
-                {new Vector2Int(-3, -1), MakeSimpleLoopAnswer(Direction.Left, 1, -1)},
-                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(Direction.Left, 1, 0)},
-                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(Direction.Left, 1, 1)},
-                {new Vector2Int(-3, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
-                
-                // Left side
-                {new Vector2Int(2, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(2, -2), MakeSimpleLoopAnswer(Direction.Right, -2, -2)},
-                {new Vector2Int(2, -1), MakeSimpleLoopAnswer(Direction.Right, -2, -1)},
-                {new Vector2Int(2, 0), MakeSimpleLoopAnswer(Direction.Right, -2, 0)},
-                {new Vector2Int(2, 1), MakeSimpleLoopAnswer(Direction.Right, -2, 1)},
-                {new Vector2Int(2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
-                
-                // Top side
-                {new Vector2Int(-2, -3), MakeSimpleLoopAnswer(Direction.Up, -2, 1)},
-                {new Vector2Int(-1, -3), MakeSimpleLoopAnswer(Direction.Up, -1, 1)},
-                {new Vector2Int(0, -3), MakeSimpleLoopAnswer(Direction.Up, 0, 1)},
-                {new Vector2Int(1, -3), MakeSimpleLoopAnswer(Direction.Up, 1, 1)},
-                
-                // Bottom side
-                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(Direction.Down, -2, -2)},
-                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(Direction.Down, -1, -2)},
-                {new Vector2Int(0, 2), MakeSimpleLoopAnswer(Direction.Down, 0, -2)},
-                {new Vector2Int(1, 2), MakeSimpleLoopAnswer(Direction.Down, 1, -2)}
-            };
-
-            return answer;
         }
 
         private Dictionary<Direction, CollisionPositionAnswer> MakeSimpleLoopAnswer(

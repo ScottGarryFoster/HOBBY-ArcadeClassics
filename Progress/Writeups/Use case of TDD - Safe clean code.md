@@ -1,3 +1,4 @@
+
 #technical #knowleadgebase #technologies #unity #tdd #testdrivendevelopment 
 
 |Owner|State|Last_update|
@@ -47,19 +48,19 @@ Four grids are used and entered into the tests along with null.
 
 ## TestGrid
 A grid with many loops.
-![[T-KB-T-U-TDD-005.png]]
+![TestGrid](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Writeups/LinkedFiles/T-KB-T-U-TDD-005.png?raw=true)
 
 ## TestGrid-CloseBy2
 A close grid but not too close.
-![[T-KB-T-U-TDD-006.png]]
+![TestGrid-CloseBy2](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Writeups/LinkedFiles/T-KB-T-U-TDD-006.png?raw=true)
 
 ## TestGrid-CloseBy1
 A grid with tiles too close but not all touching. There is a potential for the four middle ones to create loops.
-![[T-KB-T-U-TDD-007.png]]
+![TestGrid-CloseBy1](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Writeups/LinkedFiles/T-KB-T-U-TDD-007.png?raw=true)
 
 ## TestGrid-AllTouching
 A grid with everything touching.
-![[T-KB-T-U-TDD-008.png]]
+![TestGrid-AllTouching](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Writeups/LinkedFiles/T-KB-T-U-TDD-008.png?raw=true)
 
 ## Tests
 These are then the tests using these grids.

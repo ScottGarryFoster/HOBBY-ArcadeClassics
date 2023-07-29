@@ -1,12 +1,12 @@
 ﻿using FQ.Libraries.MonoSingleton;
 using UnityEngine;
 
-namespace FQ
+namespace FQ.Log
 {
     /// <summary>
     /// Logging out information
     /// </summary>
-    public class Log : MonoBehaviourSingleton<Log>, ILog
+    public class Logger : MonoBehaviourSingleton<Logger>, ILog
     {
         /// <summary>
         /// Logs info.

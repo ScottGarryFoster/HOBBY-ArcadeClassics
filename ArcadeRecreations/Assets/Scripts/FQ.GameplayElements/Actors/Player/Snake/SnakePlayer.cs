@@ -1,6 +1,6 @@
 ﻿using System;
-using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
+using FQ.GameObjectPromises;
 using UnityEngine;
 
 namespace FQ.GameplayElements

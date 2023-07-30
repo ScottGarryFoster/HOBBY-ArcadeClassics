@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FQ.Libraries;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,6 +12,11 @@ namespace FQ.GameplayElements
     /// </summary>
     public class LoopedWorldDiscoveredByTile : LoopingWorld, ILoopedWorldDiscoveredByTile
     {
+        /// <summary>
+        /// Values calculated last time loops were calculated.
+        /// </summary>
+        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> lastCalculatedLoops;
+        
         /// <summary>
         /// Calculates the looped positions based on the tilemap.
         /// </summary>
@@ -34,7 +40,39 @@ namespace FQ.GameplayElements
             }
             
             loopAnswer = CalculateLoopsForGivenTilemap(tilemap, centerTile, borderTile, widthHeight);
+            this.lastCalculatedLoops = loopAnswer;
             return loopAnswer.Keys.Any();
+        }
+        
+        /// <summary>
+        /// Finds a new position for the actor if they collide with the world.
+        /// </summary>
+        /// <param name="currentPosition">Where the actor is currently. </param>
+        /// <param name="currentDirection">The direction they took to get here. </param>
+        /// <returns>
+        /// Upon attempting to find a new position on collision with the world, this is the answer.
+        /// </returns>
+        public override CollisionPositionAnswer FindNewPositionForPlayer(
+            Vector2Int currentPosition,
+            Direction currentDirection)
+        {
+            if (this.lastCalculatedLoops == null)
+            {
+                throw new InvalidCallOrder($"{typeof(LoopedWorldDiscoveredByTile)}: " +
+                                           $"{nameof(CalculateLoops)} must be called successfully first.");
+            }
+
+            var returnAnswer = new CollisionPositionAnswer() { Answer = ContextToPositionAnswer.NoValidMovement };
+            if (this.lastCalculatedLoops.TryGetValue(
+                    currentPosition, out Dictionary<Direction, CollisionPositionAnswer> directionsAtLocation))
+            {
+                if (directionsAtLocation.TryGetValue(currentDirection, out CollisionPositionAnswer answer))
+                {
+                    returnAnswer = answer;
+                }
+            }
+
+            return returnAnswer;
         }
 
         /// <summary>
@@ -166,39 +204,36 @@ namespace FQ.GameplayElements
             bool didFindLoop = false;
             collisionPositionAnswer = new CollisionPositionAnswer()
             {
-                Answer = ContextToPositionAnswer.NoValidMovement
+                Answer = ContextToPositionAnswer.NoMovementNeeded
             };
             
-            Vector3Int previousPosition = new Vector3Int();
             Vector3Int loopPosition = new Vector3Int(position.x, position.y, position.z);
-            FindLoopLoopSearchAreaSetup(direction, ref loopPosition);
+            Vector3Int previousPosition = new Vector3Int(loopPosition.x, loopPosition.y, loopPosition.z);
+
             while (FindLoopLoopSearchArea(direction, searchArea, ref loopPosition))
             {
-                if (IsCurrentTileALoop(
-                        loopPosition, 
-                        previousPosition, 
-                        tilemap, 
-                        borderTile, 
-                        direction,
-                        out collisionPositionAnswer))
+                didFindLoop = IsCurrentTileALoop(
+                    position,
+                    loopPosition,
+                    previousPosition,
+                    tilemap,
+                    borderTile,
+                    direction,
+                    out collisionPositionAnswer);
+                if (didFindLoop)
                 {
-                    didFindLoop = true;
                     break;
-                };
+                }
+                
+                if(collisionPositionAnswer.Answer == ContextToPositionAnswer.NoValidMovement)
+                {
+                    break;
+                }
+                
                 previousPosition = loopPosition;
             }
             
             return didFindLoop;
-        }
-
-        /// <summary>
-        /// Starts the loop to search a given area based.
-        /// </summary>
-        /// <param name="direction">Direction to search. </param>
-        /// <param name="loopPosition">Position to setup. </param>
-        private void FindLoopLoopSearchAreaSetup(Direction direction, ref Vector3Int loopPosition)
-        {
-            FindLoopLoopSearchArea(direction, new Bounds(), ref loopPosition);
         }
 
         /// <summary>
@@ -213,18 +248,19 @@ namespace FQ.GameplayElements
         /// </exception>
         private bool FindLoopLoopSearchArea(Direction direction, Bounds searchArea, ref Vector3Int loopPosition)
         {
+            // Keep in mind we search in the opposite direction, search left when given right, up given down.
             switch (direction)
             {
-                case Direction.Left:
-                    --loopPosition.x;
-                    return loopPosition.x < searchArea.min.x;
                 case Direction.Right:
+                    --loopPosition.x;
+                    return loopPosition.x > searchArea.min.x;
+                case Direction.Left:
                     ++loopPosition.x;
                     return loopPosition.x < searchArea.max.x;
-                case Direction.Up:
-                    --loopPosition.y;
-                    return loopPosition.y < searchArea.min.y;
                 case Direction.Down:
+                    --loopPosition.y;
+                    return loopPosition.y > searchArea.min.y;
+                case Direction.Up:
                     ++loopPosition.y;
                     return loopPosition.y < searchArea.max.y;
                 default:
@@ -245,6 +281,7 @@ namespace FQ.GameplayElements
         /// <param name="collisionPositionAnswer">Answer to create. </param>
         /// <returns>True means border tile found and <see cref="CollisionPositionAnswer"/> created. </returns>
         private bool IsCurrentTileALoop(
+            Vector3Int originalPosition, 
             Vector3Int currentPosition, 
             Vector3Int previousPosition, 
             Tilemap tilemap, 
@@ -258,51 +295,22 @@ namespace FQ.GameplayElements
             TileBase currentTile = tilemap.GetTile(new Vector3Int(currentPosition.x, currentPosition.y, currentPosition.z));
             if (currentTile == borderTile)
             {
-                collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
-                collisionPositionAnswer.NewDirection = GetOppositeDirection(currentDirection);
-                collisionPositionAnswer.NewPosition = new Vector2Int(previousPosition.x, previousPosition.y);
-                isLoop = true;
+                int distance = Math.Abs(currentPosition.x - originalPosition.x) +
+                               Math.Abs(currentPosition.y - originalPosition.y);
+                if (distance > 2)
+                {
+                    collisionPositionAnswer.Answer = ContextToPositionAnswer.NewPositionIsCorrect;
+                    collisionPositionAnswer.NewDirection = currentDirection;
+                    collisionPositionAnswer.NewPosition = new Vector2Int(previousPosition.x, previousPosition.y);
+                    isLoop = true;
+                }
+                else
+                {
+                    collisionPositionAnswer.Answer = ContextToPositionAnswer.NoValidMovement;
+                }
             }
 
             return isLoop;
-        }
-
-        /// <summary>
-        /// Returns the opposite direction of the given direction.
-        /// </summary>
-        /// <param name="direction">Direction to find the opposite. </param>
-        /// <returns>Opposite direction of the given. </returns>
-        /// <exception cref="NotImplementedException">
-        /// Not implemented <see cref="Direction"/>.
-        /// </exception>
-        private Direction GetOppositeDirection(Direction direction)
-        {
-            switch(direction)
-            {
-                case Direction.Down: return Direction.Up;
-                case Direction.Up: return Direction.Down;
-                case Direction.Left: return Direction.Right;
-                case Direction.Right: return Direction.Left;
-                default:
-                    throw new NotImplementedException(
-                        $"{typeof(LoopedWorldDiscoveredByTile)}: " +
-                        $"No implementation for {nameof(direction)}");
-            }
-        }
-
-        /// <summary>
-        /// Finds a new position for the actor if they collide with the world.
-        /// </summary>
-        /// <param name="currentPosition">Where the actor is currently. </param>
-        /// <param name="currentDirection">The direction they took to get here. </param>
-        /// <returns>
-        /// Upon attempting to find a new position on collision with the world, this is the answer.
-        /// </returns>
-        public override CollisionPositionAnswer FindNewPositionForPlayer(
-            Vector3 currentPosition,
-            Direction currentDirection)
-        {
-            throw new NotImplementedException();
         }
     }
 }

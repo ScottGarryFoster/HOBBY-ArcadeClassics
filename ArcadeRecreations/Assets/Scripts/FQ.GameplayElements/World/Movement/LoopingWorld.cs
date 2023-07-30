@@ -17,7 +17,7 @@ namespace FQ.GameplayElements
         /// Upon attempting to find a new position on collision with the world, this is the answer.
         /// </returns>
         public virtual CollisionPositionAnswer FindNewPositionForPlayer(
-            Vector3 currentPosition,
+            Vector2Int currentPosition,
             Direction currentDirection)
         {
             throw new NotImplementedException();

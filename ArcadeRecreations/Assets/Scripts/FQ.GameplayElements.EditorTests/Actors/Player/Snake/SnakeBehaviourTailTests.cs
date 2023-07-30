@@ -33,20 +33,6 @@ namespace FQ.GameplayElements.EditorTests
             t.snakeTailPrefab = snakeTailPrefab;
 
             this.snakeBehaviour = t;
-            /*this.playerObject.tag = "Player";*/
-            //AddFullCollider(this.playerObject);
-            //this.snakeBehaviour = this.playerObject.AddComponent<SnakePlayer>();
-            
-            // The only reason Movement Speed is internal is to speed up tests
-            // We speed up Time delta and slow down frames.
-            /*this.snakePlayer.movementSpeed = 0.025f;
-            Time.maximumDeltaTime = 0.0001f;
-
-            this.mockGameplayInputs = new Mock<IGameplayInputs>();
-            this.snakePlayer.gameplayInputs = this.mockGameplayInputs.Object;
-            
-            SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
-            this.snakePlayer.snakeTailPrefab = snakeTailPrefab;*/
         }
 
         [TearDown]

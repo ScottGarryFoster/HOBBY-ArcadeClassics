@@ -5,7 +5,8 @@
         "FQ.GameplayInputs",
         "FQ.GameObjectPromises",
         "FQ.Log",
-        "FQ.Libraries.MonoSingleton"
+        "FQ.Libraries.MonoSingleton",
+        "FQ.Libraries.Exceptions"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

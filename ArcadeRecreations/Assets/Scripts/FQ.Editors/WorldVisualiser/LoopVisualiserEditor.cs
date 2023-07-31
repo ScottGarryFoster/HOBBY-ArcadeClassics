@@ -11,10 +11,6 @@ namespace FQ.Editors
     
     public class LoopVisualiserEditor : EditorWindow
     {
-        private static EditorWindow CurrentWindow;
-
-        public const string WindowTitle = "LoopVisualiser";
-
         private Toggle toggle;
 
         private static bool layers;
@@ -22,7 +18,8 @@ namespace FQ.Editors
         [MenuItem("Custom/Loop Visualiser")]
         public static void OpenWindow()
         {
-            CurrentWindow  = GetWindow(typeof(LoopVisualiserEditor), false, WindowTitle, true);
+            string windowTitle = "Loop Visualiser";
+            GetWindow(typeof(LoopVisualiserEditor), false, windowTitle, true);
         }
         
         public  void CreateGUI()
@@ -41,13 +38,6 @@ namespace FQ.Editors
             toggle.RegisterValueChangedCallback(OnToggleChange);
             toggle.value = layers;
             root.Add(toggle);
-
-            // Create button
-            Button button = new Button();
-            button.name = "button";
-            button.text = "Button";
-            button.clicked += OnUpdateLoopableLayer;
-            root.Add(button);
             
             FullLayerRefresh();
         }
@@ -55,12 +45,6 @@ namespace FQ.Editors
         private void OnToggleChange(ChangeEvent<bool> value)
         {
             layers = value.newValue;
-            FullLayerRefresh();
-        }
-
-        private void OnUpdateLoopableLayer()
-        {
-            layers = toggle.value;
             FullLayerRefresh();
         }
 
@@ -89,9 +73,9 @@ namespace FQ.Editors
 
         private void CreateLayer()
         {
-            var borderTile = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            var visualiserPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             var arrowTile = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
-            var tilemapGO = GameObject.Instantiate(borderTile);
+            var tilemapGO = GameObject.Instantiate(visualiserPrefab);
 
             var tilemap = tilemapGO.GetComponentInChildren<Tilemap>();
             if (tilemap != null)

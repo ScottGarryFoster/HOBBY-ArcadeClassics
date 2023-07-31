@@ -2,7 +2,8 @@
     "name": "FQ.Editors.WorldVisualiser",
     "rootNamespace": "",
     "references": [
-        "GUID:5b6ad4141b0beef4899e5d0ffa6250ca"
+        "FQ.GameplayElements",
+        "FQ.Libraries.Exceptions"
     ],
     "includePlatforms": [
         "Editor"

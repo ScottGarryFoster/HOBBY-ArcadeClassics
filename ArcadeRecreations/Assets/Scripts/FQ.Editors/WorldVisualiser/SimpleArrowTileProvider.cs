@@ -11,35 +11,83 @@ namespace FQ.Editors
     /// </summary>
     public class SimpleArrowTileProvider : IArrowTileProvider
     {
+        /// <summary>
+        /// The number of tiles per purpose set.
+        /// </summary>
+        private const int TilesPerSet = 20;
+        
+        /// <summary>
+        /// All the loop arrow prefabs organised and preloaded.
+        /// </summary>
+        private readonly Dictionary<ArrowPurpose, Dictionary<ArrowDirection, Tile>> loopArrows;
 
-        private Dictionary<ArrowPurpose, Dictionary<ArrowDirection, Tile>> loopArrows;
-
-        public SimpleArrowTileProvider(string arrowTilePrefabs)
+        /// <summary>
+        /// Creates arrow tile prefabs from given string.
+        /// </summary>
+        /// <param name="arrowTilePrefabPrefix">
+        /// The name of prefabs for arrows until the number.
+        /// Supposes arrows are in sets and then each purpose occurs one after another.
+        /// </param>
+        /// <exception cref="ArgumentNullException">If a prefab does not exist. </exception>
+        public SimpleArrowTileProvider(string arrowTilePrefabPrefix)
         {
-            if (string.IsNullOrWhiteSpace(arrowTilePrefabs))
+            if (string.IsNullOrWhiteSpace(arrowTilePrefabPrefix))
             {
                 throw new ArgumentNullException();
             }
-            
-            this.loopArrows = new Dictionary<ArrowPurpose, Dictionary<ArrowDirection, Tile>>();
-            int doubleRowValue = 0;
-            int purpose = 0;
 
-            var arrowPurpose = (ArrowPurpose)purpose++;
-            Dictionary<ArrowDirection, Tile> currentPurpose = new Dictionary<ArrowDirection, Tile>();
-            this.loopArrows.Add(arrowPurpose, currentPurpose);
-            
-            for (int tile = 0; tile < 39; ++tile)
+            this.loopArrows = new Dictionary<ArrowPurpose, Dictionary<ArrowDirection, Tile>>();
+            CacheArrows(arrowTilePrefabPrefix);
+        }
+        
+        /// <summary>
+        /// Returns an arrow tile matching the given.
+        /// </summary>
+        /// <param name="directions">Directions to show. </param>
+        /// <param name="purpose">Purpose of the visualisation. </param>
+        /// <returns>A <see cref="Tile"/> or null if no tile exists. </returns>
+        public Tile GetArrowTile(ArrowDirection directions, ArrowPurpose purpose)
+        {
+            if (this.loopArrows.TryGetValue(purpose, out Dictionary<ArrowDirection, Tile> value))
             {
-                if (tile == 20)
+                if (value.TryGetValue(directions, out Tile tile))
                 {
-                    doubleRowValue = 0;
-                    arrowPurpose = (ArrowPurpose)purpose++;
-                    currentPurpose = new Dictionary<ArrowDirection, Tile>();
-                    this.loopArrows.Add(arrowPurpose, currentPurpose);
+                    return tile;
                 }
-                
-                string prefabName = $"{arrowTilePrefabs}{tile}";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Preloads and caches the arrow prefabs.
+        /// </summary>
+        /// <param name="arrowTilePrefabs"></param>
+        private void CacheArrows(string arrowTilePrefabs)
+        {
+            foreach (int purpose in Enum.GetValues(typeof(ArrowPurpose)))
+            {
+                var arrowPurpose = (ArrowPurpose) purpose;
+                Dictionary<ArrowDirection, Tile> currentPurpose = new();
+                this.loopArrows.Add(arrowPurpose, currentPurpose);
+
+                int actualTileValue = purpose * TilesPerSet;
+                FindAndAddTilePrefabsToCache(arrowTilePrefabs, actualTileValue, currentPurpose);
+            }
+        }
+
+        /// <summary>
+        /// Adds the arrow tiles to the cache.
+        /// </summary>
+        /// <param name="arrowTilePrefabs">The prefix for the prefabs. </param>
+        /// <param name="actualTileValue">The number to start counting the tile prefabs from. </param>
+        /// <param name="currentPurposeSet">Where to add prefabs to. </param>
+        /// <exception cref="ArgumentNullException">If a prefab does not exist. </exception>
+        private void FindAndAddTilePrefabsToCache(string arrowTilePrefabs, int actualTileValue, Dictionary<ArrowDirection, Tile> currentPurposeSet)
+        {
+            for (int tile = 0; tile < TilesPerSet; ++tile)
+            {
+                string prefabName = $"{arrowTilePrefabs}{actualTileValue++}";
                 Tile arrow = Resources.Load<Tile>(prefabName);
                 if (arrow == null)
                 {
@@ -47,14 +95,19 @@ namespace FQ.Editors
                         $"{typeof(SimpleArrowTileProvider)}: Prefab is invalid. Name: {prefabName}.");
                 }
 
-                ArrowDirection direction = GetDirection(doubleRowValue++);
+                ArrowDirection direction = GetDirection(tile);
                 if (direction != ArrowDirection.None)
                 {
-                    currentPurpose.Add(direction, arrow);
+                    currentPurposeSet.Add(direction, arrow);
                 }
             }
         }
 
+        /// <summary>
+        /// Returns the direction for the tile number in a set.
+        /// </summary>
+        /// <param name="tile">Tile number in a set. </param>
+        /// <returns>Direction(s) which relate to the tile number. </returns>
         private ArrowDirection GetDirection(int tile)
         {
             switch (tile)
@@ -77,25 +130,6 @@ namespace FQ.Editors
             }
 
             return ArrowDirection.None;
-        }
-
-        /// <summary>
-        /// Returns an arrow tile matching the given.
-        /// </summary>
-        /// <param name="directions">Directions to show. </param>
-        /// <param name="purpose">Purpose of the visualisation. </param>
-        /// <returns>A <see cref="Tile"/> or null if no tile exists. </returns>
-        public Tile GetArrowTile(ArrowDirection directions, ArrowPurpose purpose)
-        {
-            if (this.loopArrows.TryGetValue(purpose, out Dictionary<ArrowDirection, Tile> value))
-            {
-                if (value.TryGetValue(directions, out Tile tile))
-                {
-                    return tile;
-                }
-            }
-
-            return null;
         }
     }
 }

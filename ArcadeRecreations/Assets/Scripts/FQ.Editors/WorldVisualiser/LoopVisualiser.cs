@@ -21,7 +21,7 @@ namespace FQ.Editors
             Tilemap scanTilemap,
             IArrowTileProvider arrowTileProvider)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

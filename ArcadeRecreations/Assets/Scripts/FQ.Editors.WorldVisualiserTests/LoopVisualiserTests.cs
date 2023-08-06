@@ -205,68 +205,17 @@ namespace FQ.Editors.WorldVisualiserTests
             Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(1, 2)));
         }
         
-                [Test]
+        [Test]
         public void AddVisualisationObject_SetsEntrancesForLoopArrangements_WhenTestGridIsGivenTest()
         {
             // Arrange
             GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
-            
             var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
-            ArrowTilesStruct arrows = GetArrowsFromProvider(provider, ArrowPurpose.LoopEntrance);
             
-            Tilemap expectedTilemap = CreateBlankTilemap(new Vector3Int(16, 2), new Vector3Int(20, 11));
-            expectedTilemap.SetTile(new Vector3Int(-3, -7), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -6), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -5), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -4), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -3), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -2), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, -1), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, 0), arrows.L);
-            expectedTilemap.SetTile(new Vector3Int(-3, 1), arrows.L);
-            
-            expectedTilemap.SetTile(new Vector3Int(-2, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(-1, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(0, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(1, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(2, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(3, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(4, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(5, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(6, -8), arrows.U);
-            
-            expectedTilemap.SetTile(new Vector3Int(-2, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(-1, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(0, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(1, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(2, 2), arrows.D);
-            
-            expectedTilemap.SetTile(new Vector3Int(0, -5), arrows.LRD);
-            expectedTilemap.SetTile(new Vector3Int(0, -4), arrows.LR);
-            expectedTilemap.SetTile(new Vector3Int(0, -3), arrows.LR);
-            expectedTilemap.SetTile(new Vector3Int(0, -2), arrows.LR);
-            expectedTilemap.SetTile(new Vector3Int(0, -1), arrows.LUR);
-            
-            expectedTilemap.SetTile(new Vector3Int(3, -3), arrows.URD);
-            expectedTilemap.SetTile(new Vector3Int(3, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(4, -3), arrows.UD);
-            expectedTilemap.SetTile(new Vector3Int(4, 2), arrows.D);
-            
-            expectedTilemap.SetTile(new Vector3Int(5, -5), arrows.LRD);
-            expectedTilemap.SetTile(new Vector3Int(5, -4), arrows.LR);
-            expectedTilemap.SetTile(new Vector3Int(5, -2), arrows.LR);
-            expectedTilemap.SetTile(new Vector3Int(5, -1), arrows.LUR);
-            expectedTilemap.SetTile(new Vector3Int(5, 2), arrows.D);
-            
-            expectedTilemap.SetTile(new Vector3Int(6, -3), arrows.UD);
-            expectedTilemap.SetTile(new Vector3Int(6, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(7, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(7, -3), arrows.LUR);
-            expectedTilemap.SetTile(new Vector3Int(7, 2), arrows.D);
-            expectedTilemap.SetTile(new Vector3Int(8, -8), arrows.U);
-            expectedTilemap.SetTile(new Vector3Int(8, -8), arrows.U);
+            Tilemap expectedTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements-Answer");
+            TileBase[][] expectedTiles = ExtractTiles(expectedTilemap);
 
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
@@ -276,26 +225,37 @@ namespace FQ.Editors.WorldVisualiserTests
             // Assert
             Assert.IsNotNull(actual, "No created object.");
             Tilemap extractedActualTilemap = ExtractTilemap(actual);
-            TileBase[][] tiles = ExtractTiles(extractedActualTilemap);
-            /*Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -2)));
-            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -1)));
-            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -0)));
-            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, 1)));
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
             
-            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -2)));
-            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -1)));
-            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 0)));
-            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 1)));
+            Vector3Int size = extractedActualTilemap.size;
             
-            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-2, -3)));
-            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-1, -3)));
-            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(0, -3)));
-            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(1, -3)));
-            
-            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-2, 2)));
-            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-1, 2)));
-            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(0, 2)));
-            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(1, 2)));*/
+            Assert.AreEqual(expectedTiles.Length, actualTiles.Length);
+            for (int x = 0; x < size.x; ++x)
+            {
+                Assert.AreEqual(expectedTiles[x].Length, actualTiles[x].Length);
+                for (int y = 0; y < size.y; ++y)
+                {
+                    if (!IsEntrance(actualTiles[x][y]))
+                    {
+                        continue;
+                    }
+                    
+                    Assert.AreEqual(expectedTiles[x][y], actualTiles[x][y]);
+                }
+            }
+        }
+
+        private bool IsEntrance(TileBase tileBase)
+        {
+            string tilePrefab = "TileArrows_";
+            string nameNoPrefab = tilePrefab.Replace(tilePrefab, "");
+
+            if (int.TryParse(nameNoPrefab, out int value))
+            {
+                return value <= 18;
+            }
+
+            return false;
         }
 
         private TileBase GetTopLeftTile(Tilemap search)
@@ -343,18 +303,27 @@ namespace FQ.Editors.WorldVisualiserTests
             return returnTilemap;
         }
 
+        /// <remark>
+        /// Note the X Y do not match because the origin will no begin at 0.
+        /// This is why Unity does not give you an array.
+        /// </remark>
         private TileBase[][] ExtractTiles(Tilemap tilemap)
         {
             Vector3Int origin = tilemap.origin;
+            Vector2Int tileIndex = new Vector2Int(origin.x, origin.y);
             Vector3Int size = tilemap.size;
             var returnMap = new TileBase[size.x][];
-            for (int x = origin.x; x < size.x; ++x)
+            for (int x = 0; x < size.x; ++x)
             {
                 returnMap[x] = new TileBase[size.y];
-                for (int y = origin.y; y < size.y; ++y)
+                for (int y = 0; y < size.y; ++y)
                 {
-                    returnMap[x][y] = tilemap.GetTile(new Vector3Int(x, y));
+                    returnMap[x][y] = tilemap.GetTile(new Vector3Int(tileIndex.x, tileIndex.y));
+                    tileIndex.y++;
                 }
+
+                tileIndex.y = origin.y;
+                tileIndex.x++;
             }
 
             return returnMap;

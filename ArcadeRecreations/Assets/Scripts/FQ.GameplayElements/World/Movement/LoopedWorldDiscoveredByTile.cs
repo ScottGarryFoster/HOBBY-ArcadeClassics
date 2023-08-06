@@ -21,15 +21,12 @@ namespace FQ.GameplayElements
         /// Calculates the looped positions based on the tilemap.
         /// </summary>
         /// <param name="tilemap">Tilemap to look for the loop position. </param>
-        /// <param name="centerTile">The center of the room. </param>
-        /// <param name="widthHeight">The width and height of the room to scan. </param>
+        /// <param name="borderTile">Tile to look for as the border. </param>
         /// <param name="loopAnswer">Answers or discovered loops. </param>
         /// <returns>True means there were no issues. </returns>
         public bool CalculateLoops(
             Tilemap tilemap,
-            Vector3Int centerTile,
             Tile borderTile,
-            int widthHeight,
             out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer
         )
         {
@@ -39,7 +36,7 @@ namespace FQ.GameplayElements
                 return false;
             }
             
-            loopAnswer = CalculateLoopsForGivenTilemap(tilemap, centerTile, borderTile, widthHeight);
+            loopAnswer = CalculateLoopsForGivenTilemap(tilemap, borderTile);
             this.lastCalculatedLoops = loopAnswer;
             return loopAnswer.Keys.Any();
         }
@@ -79,21 +76,19 @@ namespace FQ.GameplayElements
         /// Calculates loops for the entire given tilemap.
         /// </summary>
         /// <param name="tilemap">Tilemap to search. </param>
-        /// <param name="centerTile">Center tile of the tilemap. </param>
         /// <param name="borderTile">Border tile to use for loops. </param>
-        /// <param name="widthHeight">Width and height of the tilemap. </param>
         /// <returns>All the border tiles and loops. </returns>
         private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> CalculateLoopsForGivenTilemap(
-            Tilemap tilemap, Vector3Int centerTile, Tile borderTile, int widthHeight)
+            Tilemap tilemap, Tile borderTile)
         {
             var loopAnswer = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>();
-            Bounds searchArea = ExtractWorldArea(centerTile, widthHeight);
+            Bounds searchArea = ExtractWorldArea(tilemap);
             for (int x = (int) searchArea.min.x; x < (int) searchArea.max.x; ++x)
             {
                 for (int y = (int) searchArea.min.y; y < (int) searchArea.max.y; ++y)
                 {
                     if (CalculateLoopsAtGivenTile(tilemap, borderTile,
-                            new Vector3Int(x, y, (int) centerTile.z), searchArea,
+                            new Vector3Int(x, y, (int) tilemap.origin.z), searchArea,
                         out Dictionary<Direction, CollisionPositionAnswer> tileAnswer))
                     {
                         loopAnswer.Add(new Vector2Int(x,y), tileAnswer);
@@ -170,18 +165,24 @@ namespace FQ.GameplayElements
         /// <param name="centerTile">Center borderTile of the world. </param>
         /// <param name="widthHeight">Size of the borderTile as a width and height. </param>
         /// <returns>The bounds of the world. </returns>
-        private Bounds ExtractWorldArea(Vector3Int centerTile, int widthHeight)
+        private Bounds ExtractWorldArea(Tilemap tilemap)
         {
+            Vector3Int centerTile = tilemap.origin;
+            Vector3Int size = tilemap.size;
+            int widthHeight = size.x > size.y ? size.x : size.y;
+            
             int leftLimit = centerTile.x - widthHeight;
             int rightLimit = centerTile.x + widthHeight;
             int lowerLimit = centerTile.y - widthHeight;
             int upperLimit = centerTile.y + widthHeight;
             return new Bounds()
             {
+                center = centerTile,
+                size = size,
                 min = new Vector2(leftLimit, lowerLimit),
                 max = new Vector2(rightLimit, upperLimit)
             };
-        }
+        } 
         
         /// <summary>
         /// Calculating loops from the given tile in the direction.

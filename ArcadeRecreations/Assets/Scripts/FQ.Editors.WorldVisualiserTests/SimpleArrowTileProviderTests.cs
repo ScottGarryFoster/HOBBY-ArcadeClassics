@@ -121,14 +121,14 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile1_WhenGivenEntranceAndDownLeftUpTest()
+        public void GetArrowTile_ReturnsTile1_WhenGivenEntranceAndDownRightUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
                 ArrowDirection.Down | 
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -143,14 +143,14 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile21_WhenGivenExitAndDownLeftUpTest()
+        public void GetArrowTile_ReturnsTile21_WhenGivenExitAndDownRightUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
                 ArrowDirection.Down | 
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -209,14 +209,14 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile3_WhenGivenEntranceAndDownRightUpTest()
+        public void GetArrowTile_ReturnsTile3_WhenGivenEntranceAndDownLeftUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
                 ArrowDirection.Down | 
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -231,14 +231,14 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile23_WhenGivenExitAndDownRightUpTest()
+        public void GetArrowTile_ReturnsTile23_WhenGivenExitAndDownLeftUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
                 ArrowDirection.Down | 
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -297,13 +297,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile5_WhenGivenEntranceAndLeftUpTest()
+        public void GetArrowTile_ReturnsTile5_WhenGivenEntranceAndRightUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -318,13 +318,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile25_WhenGivenExitAndLeftUpTest()
+        public void GetArrowTile_ReturnsTile25_WhenGivenExitAndRightUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -339,13 +339,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile6_WhenGivenEntranceAndRightUpTest()
+        public void GetArrowTile_ReturnsTile6_WhenGivenEntranceAndLeftUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -360,13 +360,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile26_WhenGivenExitAndRightUpTest()
+        public void GetArrowTile_ReturnsTile26_WhenGivenExitAndLeftUpTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Up;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -381,13 +381,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile7_WhenGivenEntranceAndRightDownTest()
+        public void GetArrowTile_ReturnsTile7_WhenGivenEntranceAndLeftDownTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Down;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -402,13 +402,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile27_WhenGivenExitAndRightDownTest()
+        public void GetArrowTile_ReturnsTile27_WhenGivenExitAndLeftDownTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Right |
+                ArrowDirection.Left |
                 ArrowDirection.Down;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -423,13 +423,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile8_WhenGivenEntranceAndLeftDownTest()
+        public void GetArrowTile_ReturnsTile8_WhenGivenEntranceAndRightDownTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Down;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
@@ -444,13 +444,13 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile28_WhenGivenExitAndLeftDownTest()
+        public void GetArrowTile_ReturnsTile28_WhenGivenExitAndRightDownTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
             ArrowDirection givenDirection =
-                ArrowDirection.Left |
+                ArrowDirection.Right |
                 ArrowDirection.Down;
             var givenPurpose = ArrowPurpose.LoopExit;
 
@@ -549,12 +549,12 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile11_WhenGivenEntranceAndRightTest()
+        public void GetArrowTile_ReturnsTile11_WhenGivenEntranceAndLeftTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
-            ArrowDirection givenDirection = ArrowDirection.Right;
+            ArrowDirection givenDirection = ArrowDirection.Left;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
             int tile = 11;
@@ -568,12 +568,12 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile31_WhenGivenExitAndRightTest()
+        public void GetArrowTile_ReturnsTile31_WhenGivenExitAndLeftTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
-            ArrowDirection givenDirection = ArrowDirection.Right;
+            ArrowDirection givenDirection = ArrowDirection.Left;
             var givenPurpose = ArrowPurpose.LoopExit;
 
             int tile = 31;
@@ -625,12 +625,12 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile13_WhenGivenEntranceAndLeftTest()
+        public void GetArrowTile_ReturnsTile13_WhenGivenEntranceAndRightTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
-            ArrowDirection givenDirection = ArrowDirection.Left;
+            ArrowDirection givenDirection = ArrowDirection.Right;
             var givenPurpose = ArrowPurpose.LoopEntrance;
 
             int tile = 13;
@@ -644,12 +644,12 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void GetArrowTile_ReturnsTile33_WhenGivenExitAndLeftTest()
+        public void GetArrowTile_ReturnsTile33_WhenGivenExitAndRightTest()
         {
             // Arrange
             IArrowTileProvider testClass = new SimpleArrowTileProvider(ValidPrefabPrefix);
 
-            ArrowDirection givenDirection = ArrowDirection.Left;
+            ArrowDirection givenDirection = ArrowDirection.Right;
             var givenPurpose = ArrowPurpose.LoopExit;
 
             int tile = 33;

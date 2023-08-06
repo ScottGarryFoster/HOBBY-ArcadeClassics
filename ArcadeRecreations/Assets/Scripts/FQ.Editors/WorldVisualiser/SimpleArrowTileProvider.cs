@@ -113,19 +113,19 @@ namespace FQ.Editors
             switch (tile)
             {
                 case 0: return ArrowDirection.Down | ArrowDirection.Left | ArrowDirection.Right | ArrowDirection.Up;
-                case 1: return ArrowDirection.Down | ArrowDirection.Left | ArrowDirection.Up;
+                case 1: return ArrowDirection.Down | ArrowDirection.Right | ArrowDirection.Up;
                 case 2: return ArrowDirection.Left | ArrowDirection.Right | ArrowDirection.Up;
-                case 3: return ArrowDirection.Down | ArrowDirection.Right | ArrowDirection.Up;
+                case 3: return ArrowDirection.Down | ArrowDirection.Left | ArrowDirection.Up;
                 case 4: return ArrowDirection.Down | ArrowDirection.Right | ArrowDirection.Left;
-                case 5: return ArrowDirection.Left | ArrowDirection.Up;
-                case 6: return ArrowDirection.Right | ArrowDirection.Up;
-                case 7: return ArrowDirection.Right | ArrowDirection.Down;
-                case 8: return ArrowDirection.Left | ArrowDirection.Down;
+                case 5: return ArrowDirection.Right | ArrowDirection.Up;
+                case 6: return ArrowDirection.Left | ArrowDirection.Up;
+                case 7: return ArrowDirection.Left | ArrowDirection.Down;
+                case 8: return ArrowDirection.Right | ArrowDirection.Down;
                 case 9: return ArrowDirection.Left | ArrowDirection.Right;
                 case 10: return ArrowDirection.Up | ArrowDirection.Down;
-                case 11: return ArrowDirection.Right;
+                case 11: return ArrowDirection.Left;
                 case 12: return ArrowDirection.Down;
-                case 13: return ArrowDirection.Left;
+                case 13: return ArrowDirection.Right;
                 case 14: return ArrowDirection.Up;
             }
 

@@ -74,14 +74,27 @@ namespace FQ.Editors
         private void CreateLayer()
         {
             var visualiserPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            var borderTile = Resources.Load<Tile>("World/Tiles/BasicChecker-A/BasicChecker-A-Tile");
+            GameObject map = GameObject.FindGameObjectWithTag("SnakeBorder");
+            if (map != null)
+            {
+                var tilemap = map.GetComponentInChildren<Tilemap>();
+                if (tilemap != null)
+                {
+                    var arrow = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+                    new LoopVisualiser().AddVisualisationObject(visualiserPrefab, tilemap, borderTile, arrow);
+                }
+            }
+            /*var visualiserPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             var arrowTile = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
             var tilemapGO = GameObject.Instantiate(visualiserPrefab);
 
             var tilemap = tilemapGO.GetComponentInChildren<Tilemap>();
             if (tilemap != null)
             {
+                
                 tilemap.SetTile(new Vector3Int(0, 0), arrowTile);
-            }
+            }*/
         }
     }
 }

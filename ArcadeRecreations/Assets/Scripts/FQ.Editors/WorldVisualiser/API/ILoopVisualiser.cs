@@ -13,11 +13,13 @@ namespace FQ.Editors
         /// </summary>
         /// <param name="prefab">Prefab to use when making the visualisation. </param>
         /// <param name="scanTilemap">Tilemap to find the loops. </param>
+        /// <param name="borderTile">Border tile to search for. </param>
         /// <param name="arrowTileProvider">Provides the tiles to use in the visuals. </param>
         /// <returns>A reference to the created object. </returns>
         GameObject AddVisualisationObject(
             GameObject prefab, 
             Tilemap scanTilemap, 
+            Tile borderTile,
             IArrowTileProvider arrowTileProvider);
     }
 }

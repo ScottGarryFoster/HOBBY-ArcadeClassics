@@ -34,42 +34,12 @@ namespace FQ.GameplayElements.EditorTests
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
             
             // Act
-            bool actual = this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 1, out _);
+            bool actual = this.testClass.CalculateLoops(testTilemap, borderTile, out _);
             
             // Assert
             Assert.IsFalse(actual);
         }
-        
-        [Test]
-        public void CalculateLoops_ReturnsFalse_WhenGivenWidthAndHeightIsZeroTest()
-        {
-            // Arrange
-            int widthHeight = 0;
-            Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
-            var borderTile = Resources.Load<Tile>(BorderTileLocation);
-            
-            // Act
-            bool actual = this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, widthHeight, out _);
-            
-            // Assert
-            Assert.IsFalse(actual);
-        }
-        
-        [Test]
-        public void CalculateLoops_ReturnsFalse_WhenGivenWidthAndHeightIsNegativeTest()
-        {
-            // Arrange
-            int widthHeight = -1;
-            Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
-            var borderTile = Resources.Load<Tile>(BorderTileLocation);
-            
-            // Act
-            bool actual = this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, widthHeight, out _);
-            
-            // Assert
-            Assert.IsFalse(actual);
-        }
-        
+
         [Test]
         public void CalculateLoops_ReturnsTrue_WhenGivenAMapWithBorderTest()
         {
@@ -78,7 +48,7 @@ namespace FQ.GameplayElements.EditorTests
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
             
             // Act
-            bool actual = this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10, out _);
+            bool actual = this.testClass.CalculateLoops(testTilemap, borderTile, out _);
             
             // Assert
             Assert.IsTrue(actual);
@@ -93,7 +63,7 @@ namespace FQ.GameplayElements.EditorTests
             List<Vector2Int> expectedLocations = GetBorderLocationInTestMap();
             
             // Act
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+            this.testClass.CalculateLoops(testTilemap, borderTile,
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
@@ -139,7 +109,7 @@ namespace FQ.GameplayElements.EditorTests
             };
             
             // Act
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+            this.testClass.CalculateLoops(testTilemap, borderTile,
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
@@ -211,7 +181,7 @@ namespace FQ.GameplayElements.EditorTests
             };
             
             // Act
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+            this.testClass.CalculateLoops(testTilemap, borderTile,
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
@@ -279,7 +249,7 @@ namespace FQ.GameplayElements.EditorTests
             };
             
             // Act
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+            this.testClass.CalculateLoops(testTilemap, borderTile,
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
@@ -328,7 +298,7 @@ namespace FQ.GameplayElements.EditorTests
             };
             
             // Act
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), borderTile, 10,
+            this.testClass.CalculateLoops(testTilemap, borderTile,
                 out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
             
             // Assert
@@ -367,7 +337,7 @@ namespace FQ.GameplayElements.EditorTests
         public void FindNewPositionForPlayer_ThrowsInvalidCallOrder_WhenCalculateCalledWithInvalidParametersTest()
         {
             // Arrange
-            this.testClass.CalculateLoops(null, new Vector3Int(), new Tile(), 0, out _);
+            this.testClass.CalculateLoops(null, new Tile(), out _);
 
             // Act Assert
             Assert.Throws<InvalidCallOrder>(() =>
@@ -382,7 +352,7 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             var expected = ContextToPositionAnswer.NoValidMovement;
             Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
-            this.testClass.CalculateLoops(testTilemap, new Vector3Int(), new Tile(), 0, out _);
+            this.testClass.CalculateLoops(testTilemap, new Tile(), out _);
             
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(new Vector2Int(), Direction.Down);
@@ -404,7 +374,8 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -426,7 +397,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -448,7 +419,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -470,7 +441,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -492,7 +463,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -514,7 +485,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -536,7 +507,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -558,7 +529,7 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
-            this.testClass.CalculateLoops(givenTileMap, new Vector3Int(), givenBorderTile, 10, out _);
+            this.testClass.CalculateLoops(givenTileMap, givenBorderTile, out _);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);

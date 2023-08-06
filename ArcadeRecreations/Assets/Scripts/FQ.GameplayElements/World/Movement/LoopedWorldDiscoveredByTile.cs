@@ -162,8 +162,7 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Extracts the bounds of the world from the position and size.
         /// </summary>
-        /// <param name="centerTile">Center borderTile of the world. </param>
-        /// <param name="widthHeight">Size of the borderTile as a width and height. </param>
+        /// <param name="tilemap">Tilemap to extract the bounds from. </param>
         /// <returns>The bounds of the world. </returns>
         private Bounds ExtractWorldArea(Tilemap tilemap)
         {

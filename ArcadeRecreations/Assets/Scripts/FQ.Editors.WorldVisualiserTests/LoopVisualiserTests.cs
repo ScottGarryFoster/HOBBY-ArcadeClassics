@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using FQ.Libraries;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Object = UnityEngine.Object;
 
 namespace FQ.Editors.WorldVisualiserTests
 {
@@ -13,10 +15,25 @@ namespace FQ.Editors.WorldVisualiserTests
         
         private ILoopVisualiser testClass;
         
+        /// <summary>
+        /// Add to this list to tear down these objects after tests.
+        /// </summary>
+        private List<GameObject> tearDownObjects; 
+        
         [SetUp]
         public void Setup()
         {
             this.testClass = new LoopVisualiser();
+            this.tearDownObjects = new List<GameObject>();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            foreach (var obj in tearDownObjects)
+            {
+                Object.DestroyImmediate(obj);
+            }
         }
         
         [Test]
@@ -25,13 +42,14 @@ namespace FQ.Editors.WorldVisualiserTests
             // Arrange
             GameObject givenPrefab = null;
             Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             var provider = new Mock<IArrowTileProvider>();
             
             // Act
             bool didThrow = false;
             try
             {
-                //this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, provider.Object);
+                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
             }
             catch (ArgumentNullException)
             {
@@ -48,13 +66,38 @@ namespace FQ.Editors.WorldVisualiserTests
             // Arrange
             GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             Tilemap givenTilemap = null;
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             var provider = new Mock<IArrowTileProvider>();
             
             // Act
             bool didThrow = false;
             try
             {
-                //this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, provider.Object);
+                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+            }
+            catch (ArgumentNullException)
+            {
+                didThrow = true;
+            }
+            
+            // Assert
+            Assert.IsTrue(didThrow, $"Did not throw {nameof(ArgumentNullException)}");
+        }
+        
+        [Test]
+        public void AddVisualisationObject_ThrowsArgumentNullException_WhenBorderTileMapIsNullTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid");
+            Tile givenBorderTile = null;
+            var provider = new Mock<IArrowTileProvider>();
+            
+            // Act
+            bool didThrow = false;
+            try
+            {
+                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
             }
             catch (ArgumentNullException)
             {
@@ -71,13 +114,14 @@ namespace FQ.Editors.WorldVisualiserTests
             // Arrange
             GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             IArrowTileProvider provider = null;
             
             // Act
             bool didThrow = false;
             try
             {
-                //this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, provider);
+                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider);
             }
             catch (ArgumentNullException)
             {
@@ -89,18 +133,18 @@ namespace FQ.Editors.WorldVisualiserTests
         }
         
         [Test]
-        public void AddVisualisationObject_ThrowsArgumentNullException_WhenPrefabGivenIsNullTest2()
+        public void AddVisualisationObject_ProvidesAtLeastOneArrow_WhenGivenTestTileMapAndArrowProviderTest()
         {
             // Arrange
             GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid");
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
-            //var provider = new Mock<IArrowTileProvider>();
             var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_"); 
             
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
                 givenPrefab, givenTilemap, givenBorderTile, provider);
+            this.tearDownObjects.Add(actual);
 
             // Assert
             Assert.IsNotNull(actual, "No created object.");
@@ -108,7 +152,150 @@ namespace FQ.Editors.WorldVisualiserTests
             Assert.IsNotNull(extractedActualTilemap, "No tilemap in created object.");
             TileBase topLeft = GetTopLeftTile(extractedActualTilemap);
             Assert.IsNotNull(topLeft, "No Visual.");
-            Assert.Fail($"{topLeft.name}"); 
+        }
+        
+        [Test]
+        public void AddVisualisationObject_SetsEntrancesForBasicTestMap_WhenTestGridIsGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new Mock<IArrowTileProvider>();
+            
+            Tile mockLeft = new();
+            provider.Setup(x => x.GetArrowTile(ArrowDirection.Left, ArrowPurpose.LoopEntrance)).Returns(mockLeft);
+            
+            Tile mockRight = new();
+            provider.Setup(x => x.GetArrowTile(ArrowDirection.Right, ArrowPurpose.LoopEntrance)).Returns(mockRight);
+            
+            Tile mockUp = new();
+            provider.Setup(x => x.GetArrowTile(ArrowDirection.Up, ArrowPurpose.LoopEntrance)).Returns(mockUp);
+            
+            Tile mockDown = new();
+            provider.Setup(x => x.GetArrowTile(ArrowDirection.Down, ArrowPurpose.LoopEntrance)).Returns(mockDown);
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -2)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -1)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -0)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, 1)));
+            
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -2)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -1)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 0)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 1)));
+            
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-2, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-1, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(0, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(1, -3)));
+            
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-2, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-1, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(0, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(1, 2)));
+        }
+        
+                [Test]
+        public void AddVisualisationObject_SetsEntrancesForLoopArrangements_WhenTestGridIsGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+            ArrowTilesStruct arrows = GetArrowsFromProvider(provider, ArrowPurpose.LoopEntrance);
+            
+            Tilemap expectedTilemap = CreateBlankTilemap(new Vector3Int(16, 2), new Vector3Int(20, 11));
+            expectedTilemap.SetTile(new Vector3Int(-3, -7), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -6), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -5), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -4), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -3), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -2), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, -1), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, 0), arrows.L);
+            expectedTilemap.SetTile(new Vector3Int(-3, 1), arrows.L);
+            
+            expectedTilemap.SetTile(new Vector3Int(-2, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(-1, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(0, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(1, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(2, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(3, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(4, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(5, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(6, -8), arrows.U);
+            
+            expectedTilemap.SetTile(new Vector3Int(-2, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(-1, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(0, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(1, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(2, 2), arrows.D);
+            
+            expectedTilemap.SetTile(new Vector3Int(0, -5), arrows.LRD);
+            expectedTilemap.SetTile(new Vector3Int(0, -4), arrows.LR);
+            expectedTilemap.SetTile(new Vector3Int(0, -3), arrows.LR);
+            expectedTilemap.SetTile(new Vector3Int(0, -2), arrows.LR);
+            expectedTilemap.SetTile(new Vector3Int(0, -1), arrows.LUR);
+            
+            expectedTilemap.SetTile(new Vector3Int(3, -3), arrows.URD);
+            expectedTilemap.SetTile(new Vector3Int(3, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(4, -3), arrows.UD);
+            expectedTilemap.SetTile(new Vector3Int(4, 2), arrows.D);
+            
+            expectedTilemap.SetTile(new Vector3Int(5, -5), arrows.LRD);
+            expectedTilemap.SetTile(new Vector3Int(5, -4), arrows.LR);
+            expectedTilemap.SetTile(new Vector3Int(5, -2), arrows.LR);
+            expectedTilemap.SetTile(new Vector3Int(5, -1), arrows.LUR);
+            expectedTilemap.SetTile(new Vector3Int(5, 2), arrows.D);
+            
+            expectedTilemap.SetTile(new Vector3Int(6, -3), arrows.UD);
+            expectedTilemap.SetTile(new Vector3Int(6, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(7, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(7, -3), arrows.LUR);
+            expectedTilemap.SetTile(new Vector3Int(7, 2), arrows.D);
+            expectedTilemap.SetTile(new Vector3Int(8, -8), arrows.U);
+            expectedTilemap.SetTile(new Vector3Int(8, -8), arrows.U);
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] tiles = ExtractTiles(extractedActualTilemap);
+            /*Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -2)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -1)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, -0)));
+            Assert.AreEqual(mockLeft, extractedActualTilemap.GetTile(new Vector3Int(-3, 1)));
+            
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -2)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, -1)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 0)));
+            Assert.AreEqual(mockRight, extractedActualTilemap.GetTile(new Vector3Int(2, 1)));
+            
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-2, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(-1, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(0, -3)));
+            Assert.AreEqual(mockUp, extractedActualTilemap.GetTile(new Vector3Int(1, -3)));
+            
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-2, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(-1, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(0, 2)));
+            Assert.AreEqual(mockDown, extractedActualTilemap.GetTile(new Vector3Int(1, 2)));*/
         }
 
         private TileBase GetTopLeftTile(Tilemap search)
@@ -156,6 +343,35 @@ namespace FQ.Editors.WorldVisualiserTests
             return returnTilemap;
         }
 
+        private TileBase[][] ExtractTiles(Tilemap tilemap)
+        {
+            Vector3Int origin = tilemap.origin;
+            Vector3Int size = tilemap.size;
+            var returnMap = new TileBase[size.x][];
+            for (int x = origin.x; x < size.x; ++x)
+            {
+                returnMap[x] = new TileBase[size.y];
+                for (int y = origin.y; y < size.y; ++y)
+                {
+                    returnMap[x][y] = tilemap.GetTile(new Vector3Int(x, y));
+                }
+            }
+
+            return returnMap;
+        }
+
+        private Tilemap CreateBlankTilemap(Vector3Int origin, Vector3Int size)
+        {
+            GameObject obj = new GameObject("Blank");
+            this.tearDownObjects.Add(obj);
+
+            Tilemap returnMap = obj.AddComponent<Tilemap>();
+            returnMap.size = size;
+            returnMap.origin = origin;
+
+            return returnMap;
+        }
+
         private GameObject GetTestBorderObject(GameObject gridGameObject)
         {
             for (int i = 0; i < gridGameObject.transform.childCount; ++i)
@@ -173,7 +389,111 @@ namespace FQ.Editors.WorldVisualiserTests
 
             return null;
         }
+
+        private ArrowTilesStruct GetArrowsFromProvider(IArrowTileProvider provider, ArrowPurpose purpose)
+        {
+            ArrowTilesStruct tiles = new();
+            tiles.L = provider.GetArrowTile(ArrowDirection.Left, purpose);
+            tiles.R = provider.GetArrowTile(ArrowDirection.Right, purpose);
+            tiles.U = provider.GetArrowTile(ArrowDirection.Up, purpose);
+            tiles.D = provider.GetArrowTile(ArrowDirection.Down, purpose);
+            tiles.LR = provider.GetArrowTile(ArrowDirection.Left | ArrowDirection.Right, purpose);
+            tiles.UD = provider.GetArrowTile(ArrowDirection.Up | ArrowDirection.Down, purpose);
+            tiles.LU = provider.GetArrowTile(ArrowDirection.Left | ArrowDirection.Up, purpose);
+            tiles.LD = provider.GetArrowTile(ArrowDirection.Left | ArrowDirection.Down, purpose);
+            tiles.RU = provider.GetArrowTile(ArrowDirection.Right | ArrowDirection.Up, purpose);
+            tiles.RD = provider.GetArrowTile(ArrowDirection.Right | ArrowDirection.Down, purpose);
+            tiles.LRD = provider.GetArrowTile(ArrowDirection.Left |ArrowDirection.Right | ArrowDirection.Down, purpose);
+            tiles.LDU = provider.GetArrowTile(ArrowDirection.Left |ArrowDirection.Down | ArrowDirection.Up, purpose);
+            tiles.LUR = provider.GetArrowTile(ArrowDirection.Left |ArrowDirection.Up | ArrowDirection.Right, purpose);
+            tiles.URD = provider.GetArrowTile(ArrowDirection.Up |ArrowDirection.Right | ArrowDirection.Down, purpose);
+            tiles.LRDU = provider.GetArrowTile(
+                ArrowDirection.Up | ArrowDirection.Left | ArrowDirection.Right | ArrowDirection.Down, purpose);
+
+            return tiles;
+        }
         
         #endregion
+
+        /// <summary>
+        /// Stores all directions for ease of naming
+        /// </summary>
+        public struct ArrowTilesStruct
+        {
+            /// <summary>
+            /// Left.
+            /// </summary>
+            public Tile L;
+
+            /// <summary>
+            /// Right.
+            /// </summary>
+            public Tile R;
+
+            /// <summary>
+            /// Up.
+            /// </summary>
+            public Tile U;
+
+            /// <summary>
+            /// Down.
+            /// </summary>
+            public Tile D;
+
+            /// <summary>
+            /// Left Right.
+            /// </summary>
+            public Tile LR;
+
+            /// <summary>
+            /// Up Down.
+            /// </summary>
+            public Tile UD;
+
+            /// <summary>
+            /// Left Up.
+            /// </summary>
+            public Tile LU;
+
+            /// <summary>
+            /// Left Down.
+            /// </summary>
+            public Tile LD;
+
+            /// <summary>
+            /// Right Up.
+            /// </summary>
+            public Tile RU;
+
+            /// <summary>
+            /// Right Down.
+            /// </summary>
+            public Tile RD;
+
+            /// <summary>
+            /// Left Right Down.
+            /// </summary>
+            public Tile LRD;
+
+            /// <summary>
+            /// Left Down Up.
+            /// </summary>
+            public Tile LDU;
+
+            /// <summary>
+            /// Left Up Right.
+            /// </summary>
+            public Tile LUR;
+
+            /// <summary>
+            /// Up Right Down.
+            /// </summary>
+            public Tile URD;
+
+            /// <summary>
+            /// Left Right Down Up.
+            /// </summary>
+            public Tile LRDU;
+        }
     }
 }

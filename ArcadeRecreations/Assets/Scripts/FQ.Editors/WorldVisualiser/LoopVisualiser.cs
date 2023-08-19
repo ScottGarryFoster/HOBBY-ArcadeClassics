@@ -26,7 +26,7 @@ namespace FQ.Editors
             Tile borderTile,
             IArrowTileProvider arrowTileProvider)
         {
-            ValidateParametersForNewVisualisation(prefab, scanTilemap, arrowTileProvider);
+            ValidateParametersForNewVisualisation(prefab, scanTilemap, borderTile, arrowTileProvider);
 
             ILoopedWorldDiscoveredByTile loopingAnswers = new LoopedWorldDiscoveredByTile();
             if (!loopingAnswers.CalculateLoops(
@@ -44,6 +44,9 @@ namespace FQ.Editors
                 Debug.LogError($"No tile map in prefab.");
                 return null;
             }
+
+            var exits = new Dictionary<Vector2Int, ArrowDirection>();
+            
             Debug.Log($"Tilemap: {tilemap.name}");
             for (int x = scanTilemap.origin.x; x < scanTilemap.size.x; ++x)
             {
@@ -67,6 +70,17 @@ namespace FQ.Editors
                                 {
                                     givenDirection |= ConvertDirectionToArrowDirection(currentDirection.Key);
                                 }
+
+                                ArrowDirection exitDirection =
+                                    ConvertDirectionToArrowDirection(currentDirection.Value.NewDirection);
+                                if (exits.ContainsKey(currentDirection.Value.NewPosition))
+                                {
+                                    exits[currentDirection.Value.NewPosition] |= exitDirection;
+                                }
+                                else
+                                {
+                                    exits.Add(currentDirection.Value.NewPosition, exitDirection);
+                                }
                             }
                         }
 
@@ -83,19 +97,41 @@ namespace FQ.Editors
 
                             return null;*/
                             //var arrowTile = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
-                            TileChangeData change = new()
+                            var l = new Vector3Int(x, y);
+                            Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance);
+
+                            if (tile == null)
                             {
-                                position = new Vector3Int(x, y),
-                                tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance)
-                            };
-                            
-                            tilemap.SetTile(new Vector3Int(x, y), arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance));
-                            Debug.Log($"Set: {change.tile.name} at {change.position.x}, {change.position.y}." +
-                                      $"{givenDirection}");
+                                Debug.Log($"Set LoopEntrance: NULL at {l.x}, {l.y} : {givenDirection}");
+                            }
+                            else
+                            {
+                                tilemap.SetTile(l, tile);
+                                Debug.Log($"Set LoopEntrance: {tile.name} at {l.x}, {l.y} : {givenDirection}");
+                            }
+
                             //tilemap.RefreshTile(change.position);
                         }
                     }
                 }
+            }
+
+            foreach (var exit in exits)
+            {
+                var l = new Vector3Int(exit.Key.x, exit.Key.y);
+                ArrowDirection givenDirection = exit.Value;
+                Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopExit);
+
+                if (tile == null)
+                {
+                    Debug.Log($"Set LoopExit: NULL at {l.x}, {l.y} : {givenDirection}");
+                }
+                else
+                {
+                    tilemap.SetTile(l, tile);
+                    Debug.Log($"Set LoopExit: {tile.name} at {l.x}, {l.y} : {givenDirection}");
+                }
+
             }
             
             return newObject;
@@ -116,7 +152,9 @@ namespace FQ.Editors
             }
         }
 
-        private void ValidateParametersForNewVisualisation(GameObject prefab, Tilemap scanTilemap,
+        private void ValidateParametersForNewVisualisation(GameObject prefab, 
+                                                           Tilemap scanTilemap,
+                                                           Tile borderTile,
                                                            IArrowTileProvider arrowTileProvider)
         {
             if (prefab == null)
@@ -127,6 +165,11 @@ namespace FQ.Editors
             if (scanTilemap == null)
             {
                 throw new ArgumentNullException($"{typeof(LoopVisualiser)}: {nameof(scanTilemap)} must not be null.");
+            }
+            
+            if (borderTile == null)
+            {
+                throw new ArgumentNullException($"{typeof(LoopVisualiser)}: {nameof(borderTile)} must not be null.");
             }
 
             if (arrowTileProvider == null)

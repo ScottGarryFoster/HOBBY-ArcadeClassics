@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FQ.Libraries;
 using Moq;
 using NUnit.Framework;
@@ -214,7 +215,7 @@ namespace FQ.Editors.WorldVisualiserTests
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
             
-            Tilemap expectedTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements-Answer");
+            Tilemap expectedTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements-Answer-Both");
             TileBase[][] expectedTiles = ExtractTiles(expectedTilemap);
 
             // Act
@@ -241,6 +242,49 @@ namespace FQ.Editors.WorldVisualiserTests
                     }
                     
                     Assert.AreEqual(expectedTiles[x][y], actualTiles[x][y]);
+                }
+            }
+        }
+
+        [Test]
+        public void AddVisualisationObject_SetsExitsForLoopArrangements_WhenTestGridIsGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+            
+            Tilemap expectedTilemap = GetTestBorderTileMap(
+                "TestResources/World/TestGrid-LoopArrangements-Answer-Both");
+            TileBase[][] expectedTiles = ExtractTiles(expectedTilemap);
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            
+            Assert.AreEqual(expectedTiles.Length, actualTiles.Length,
+                $"Expected: {expectedTiles.Length} | Actual: {actualTiles.Length}");
+            for (int x = 0; x < size.x; ++x)
+            {
+                Assert.AreEqual(expectedTiles[x].Length, actualTiles[x].Length);
+                for (int y = 0; y < size.y; ++y)
+                {
+                    if (IsEntrance(actualTiles[x][y]))
+                    {
+                        continue;
+                    }
+                    
+                    Assert.AreEqual(expectedTiles[x][y], actualTiles[x][y],
+                        $"({x}, {y}) Expected: {expectedTiles[x][y]}, Actual: {actualTiles[x][y]}");
                 }
             }
         }

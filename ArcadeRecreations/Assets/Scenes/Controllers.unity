@@ -208,6 +208,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoopVisualiserTilemap-Answer
       objectReference: {fileID: 0}
+    - target: {fileID: 570973765287859356, guid: 9819c429ee227544897cd6bf6036b4ae, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 570973765287859358, guid: 9819c429ee227544897cd6bf6036b4ae, type: 3}
       propertyPath: m_RootOrder
       value: 2

@@ -116,7 +116,6 @@ namespace FQ.Editors
         {
             foreach (var child in root.Children())
             {
-                Debug.Log($"Name: {child.name} == {name}");
                 if (child.name == name) 
                 {
                     return child;

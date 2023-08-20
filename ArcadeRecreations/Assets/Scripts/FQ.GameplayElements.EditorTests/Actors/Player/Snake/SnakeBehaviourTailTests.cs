@@ -27,7 +27,8 @@ namespace FQ.GameplayElements.EditorTests
             var t = new SnakeBehaviour(
                 this.playerObject, 
                 this.stubObjectCreation, 
-                this.mockGameplayInputs.Object);
+                this.mockGameplayInputs.Object,
+                null);
             
             SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
             t.snakeTailPrefab = snakeTailPrefab;
@@ -51,7 +52,7 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new SnakeBehaviour(given, this.stubObjectCreation, this.mockGameplayInputs.Object);
+                new SnakeBehaviour(given, this.stubObjectCreation, this.mockGameplayInputs.Object, null);
             });
         }
         
@@ -64,7 +65,7 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new SnakeBehaviour(new GameObject(), given, this.mockGameplayInputs.Object);
+                new SnakeBehaviour(new GameObject(), given, this.mockGameplayInputs.Object, null);
             });
         }
         
@@ -77,7 +78,7 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new SnakeBehaviour(new GameObject(), this.stubObjectCreation, given);
+                new SnakeBehaviour(new GameObject(), this.stubObjectCreation, given, null);
             });
         }
         

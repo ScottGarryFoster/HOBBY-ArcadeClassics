@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FQ.GameplayInputs;
 using FQ.GameObjectPromises;
 using UnityEngine;
@@ -40,11 +41,13 @@ namespace FQ.GameplayElements
         protected override void BaseStart()
         {
             base.BaseStart();
+            ILoopingWorldFromTilemap worldInfo = GetWorldInfo();
             this.snakeBehaviour =
                 new SnakeBehaviour(
                     this.gameObject,
                     new GameObjectCreation(),
-                    this.gameplayInputs)
+                    this.gameplayInputs,
+                    worldInfo)
                 {
                     MovementSpeed = this.MovementSpeed,
                     snakeTailPrefab = this.snakeTailPrefab,
@@ -67,6 +70,22 @@ namespace FQ.GameplayElements
         {
             base.BaseOnTriggerEnter2D(other);
             this.snakeBehaviour.OnTriggerEnter2D(other);
+        }
+        
+        /// <summary>
+        /// Collects the world information if in the scene.
+        /// </summary>
+        /// <returns>World Info or Null if not found. </returns>
+        private ILoopingWorldFromTilemap GetWorldInfo()
+        {
+            GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
+            GameObject border = borders.FirstOrDefault(x => x.name == "Border");
+            if (border == null)
+            {
+                return null;
+            }
+
+            return border.GetComponent<LoopingWorldFromTilemap>();
         }
     }
 }

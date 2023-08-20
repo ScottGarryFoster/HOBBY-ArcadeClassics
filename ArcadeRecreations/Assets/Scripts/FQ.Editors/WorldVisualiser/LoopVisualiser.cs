@@ -29,90 +29,45 @@ namespace FQ.Editors
             ValidateParametersForNewVisualisation(prefab, scanTilemap, borderTile, arrowTileProvider);
 
             ILoopedWorldDiscoveredByTile loopingAnswers = new LoopedWorldDiscoveredByTile();
-            if (!loopingAnswers.CalculateLoops(
-                    scanTilemap,
-                    borderTile,
-                    out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer))
-            {
-                
-            }
+            loopingAnswers.CalculateLoops(
+                scanTilemap,
+                borderTile,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
 
-            GameObject newObject = Object.Instantiate(prefab);
-            Tilemap tilemap = newObject.GetComponentInChildren<Tilemap>();
-            if (tilemap == null)
+            bool createdEmptyTilemap = CreatePrefab(prefab, out GameObject newObject, out Tilemap tilemap);
+            if (!createdEmptyTilemap)
             {
-                Debug.LogError($"No tile map in prefab.");
+                Debug.LogError($"{typeof(LoopVisualiser)}: No tile map in prefab: {prefab.name}.");
                 return null;
             }
 
             var exits = new Dictionary<Vector2Int, ArrowDirection>();
-            
+            var entrances = new Dictionary<Vector2Int, ArrowDirection>();
+            var location = new Vector2Int();
             Debug.Log($"Tilemap: {tilemap.name}");
             for (int x = scanTilemap.origin.x; x < scanTilemap.size.x; ++x)
             {
                 for (int y = scanTilemap.origin.y; y < scanTilemap.size.y; ++y)
                 {
-                    var location = new Vector2Int(x, y);
-                    if (loopAnswer.TryGetValue(location, out Dictionary<Direction, CollisionPositionAnswer> loopValue))
-                    {
-                        bool didSet = false;
-                        ArrowDirection givenDirection = ArrowDirection.None;
-                        foreach (var currentDirection in loopValue)
-                        {
-                            if (currentDirection.Value.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
-                            {
-                                didSet = true;
-                                if (givenDirection == ArrowDirection.None)
-                                {
-                                    givenDirection = ConvertDirectionToArrowDirection(currentDirection.Key);
-                                }
-                                else
-                                {
-                                    givenDirection |= ConvertDirectionToArrowDirection(currentDirection.Key);
-                                }
+                    location.Set(x, y);
+                    DiscoverEntrancesAndExitsOnTile(arrowTileProvider, location, loopAnswer, entrances, exits);
+                }
+            }
+            
+            foreach (var entrance in entrances)
+            {
+                var l = new Vector3Int(entrance.Key.x, entrance.Key.y);
+                ArrowDirection givenDirection = entrance.Value;
+                Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance);
 
-                                ArrowDirection exitDirection =
-                                    ConvertDirectionToArrowDirection(currentDirection.Value.NewDirection);
-                                if (exits.ContainsKey(currentDirection.Value.NewPosition))
-                                {
-                                    exits[currentDirection.Value.NewPosition] |= exitDirection;
-                                }
-                                else
-                                {
-                                    exits.Add(currentDirection.Value.NewPosition, exitDirection);
-                                }
-                            }
-                        }
-
-                        if (didSet)
-                        {
-                            /*var arrowTile1 = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
-                            GameObject newObject1 = Object.Instantiate(prefab);
-                            Tilemap tilemap1 = newObject1.GetComponentInChildren<Tilemap>();
-                            if (tilemap1 != null)
-                            {
-                
-                                tilemap1.SetTile(new Vector3Int(x, y), arrowTile1);
-                            }
-
-                            return null;*/
-                            //var arrowTile = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
-                            var l = new Vector3Int(x, y);
-                            Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance);
-
-                            if (tile == null)
-                            {
-                                Debug.Log($"Set LoopEntrance: NULL at {l.x}, {l.y} : {givenDirection}");
-                            }
-                            else
-                            {
-                                tilemap.SetTile(l, tile);
-                                Debug.Log($"Set LoopEntrance: {tile.name} at {l.x}, {l.y} : {givenDirection}");
-                            }
-
-                            //tilemap.RefreshTile(change.position);
-                        }
-                    }
+                if (tile == null)
+                {
+                    Debug.Log($"Set LoopEntrance: NULL at {l.x}, {l.y} : {givenDirection}");
+                }
+                else
+                {
+                    tilemap.SetTile(l, tile);
+                    Debug.Log($"Set LoopEntrance: {tile.name} at {l.x}, {l.y} : {givenDirection}");
                 }
             }
 
@@ -131,10 +86,68 @@ namespace FQ.Editors
                     tilemap.SetTile(l, tile);
                     Debug.Log($"Set LoopExit: {tile.name} at {l.x}, {l.y} : {givenDirection}");
                 }
-
             }
             
             return newObject;
+        }
+
+        private void DiscoverEntrancesAndExitsOnTile(IArrowTileProvider arrowTileProvider, 
+                               Vector2Int location, Dictionary<Vector2Int,
+                               Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
+                               Dictionary<Vector2Int, ArrowDirection> entrances,
+                               Dictionary<Vector2Int, ArrowDirection> exits)
+        {
+            if (loopAnswer.TryGetValue(location, out Dictionary<Direction, CollisionPositionAnswer> loopValue))
+            {
+                foreach (var currentDirection in loopValue)
+                {
+                    if (currentDirection.Value.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
+                    {
+                        ArrowDirection entrancesArrow =
+                            ConvertDirectionToArrowDirection(currentDirection.Key);
+                        if (entrances.ContainsKey(location))
+                        {
+                            entrances[location] |= entrancesArrow;
+                        }
+                        else
+                        {
+                            entrances.Add(location, entrancesArrow);
+                        }
+
+                        ArrowDirection exitDirection =
+                            ConvertDirectionToArrowDirection(currentDirection.Value.NewDirection);
+                        if (exits.ContainsKey(currentDirection.Value.NewPosition))
+                        {
+                            exits[currentDirection.Value.NewPosition] |= exitDirection;
+                        }
+                        else
+                        {
+                            exits.Add(currentDirection.Value.NewPosition, exitDirection);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates the prefab and extracts the tilemap.
+        /// </summary>
+        /// <param name="prefab">Prefab to create. </param>
+        /// <param name="newObject">New object created. </param>
+        /// <param name="tilemap">Tilemap extracted. </param>
+        /// <returns>True means tilemap found. </returns>
+        private bool CreatePrefab(GameObject prefab, out GameObject newObject, out Tilemap tilemap)
+        {
+            newObject = Object.Instantiate(prefab);
+            tilemap = newObject.GetComponentInChildren<Tilemap>();
+
+            bool hasTilemap = tilemap != null;
+            if (!hasTilemap)
+            {
+                Object.DestroyImmediate(newObject);
+            }
+            
+            return hasTilemap;
         }
 
         private ArrowDirection ConvertDirectionToArrowDirection(Direction direction)

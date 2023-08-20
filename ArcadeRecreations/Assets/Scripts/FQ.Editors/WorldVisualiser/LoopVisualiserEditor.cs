@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,7 +12,6 @@ namespace FQ.Editors
     
     public class LoopVisualiserEditor : EditorWindow
     {
-        private Toggle toggle;
 
         private static bool layers;
         
@@ -32,7 +32,7 @@ namespace FQ.Editors
             root.Add(label);
 
             // Create toggle
-            var toggle = new Toggle();
+            Toggle toggle = new();
             toggle.name = "toggle";
             toggle.label = "Toggle";
             toggle.RegisterValueChangedCallback(OnToggleChange);
@@ -65,9 +65,9 @@ namespace FQ.Editors
                 return;
             }
             
-            foreach (var gameObject in gameObjects)
+            foreach (var gameObject in gameObjects.Where(x => x.name.Contains("LoopVisualiserTilemap")))
             {
-                GameObject.DestroyImmediate(gameObject);
+                DestroyImmediate(gameObject);
             }
         }
 
@@ -85,16 +85,6 @@ namespace FQ.Editors
                     new LoopVisualiser().AddVisualisationObject(visualiserPrefab, tilemap, borderTile, arrow);
                 }
             }
-            /*var visualiserPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
-            var arrowTile = Resources.Load<Tile>("Editor/LoopVisualiser/ArrowTiles/TileArrows_0");
-            var tilemapGO = GameObject.Instantiate(visualiserPrefab);
-
-            var tilemap = tilemapGO.GetComponentInChildren<Tilemap>();
-            if (tilemap != null)
-            {
-                
-                tilemap.SetTile(new Vector3Int(0, 0), arrowTile);
-            }*/
         }
     }
 }

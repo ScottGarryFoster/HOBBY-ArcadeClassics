@@ -27,105 +27,158 @@ namespace FQ.Editors
             IArrowTileProvider arrowTileProvider)
         {
             ValidateParametersForNewVisualisation(prefab, scanTilemap, borderTile, arrowTileProvider);
-
-            ILoopedWorldDiscoveredByTile loopingAnswers = new LoopedWorldDiscoveredByTile();
-            loopingAnswers.CalculateLoops(
-                scanTilemap,
-                borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
-
+            
             bool createdEmptyTilemap = CreatePrefab(prefab, out GameObject newObject, out Tilemap tilemap);
             if (!createdEmptyTilemap)
             {
                 Debug.LogError($"{typeof(LoopVisualiser)}: No tile map in prefab: {prefab.name}.");
                 return null;
             }
-
-            var exits = new Dictionary<Vector2Int, ArrowDirection>();
-            var entrances = new Dictionary<Vector2Int, ArrowDirection>();
-            var location = new Vector2Int();
-            Debug.Log($"Tilemap: {tilemap.name}");
-            for (int x = scanTilemap.origin.x; x < scanTilemap.size.x; ++x)
-            {
-                for (int y = scanTilemap.origin.y; y < scanTilemap.size.y; ++y)
-                {
-                    location.Set(x, y);
-                    DiscoverEntrancesAndExitsOnTile(arrowTileProvider, location, loopAnswer, entrances, exits);
-                }
-            }
             
-            foreach (var entrance in entrances)
-            {
-                var l = new Vector3Int(entrance.Key.x, entrance.Key.y);
-                ArrowDirection givenDirection = entrance.Value;
-                Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopEntrance);
+            Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loops =
+                CalculateLoops(scanTilemap, borderTile);
+            IdentifyAllEntrancesAndExitsInTilemap(
+                loops, 
+                out Dictionary<Vector2Int, ArrowDirection> entrances,
+                out Dictionary<Vector2Int, ArrowDirection> exits);
 
-                if (tile == null)
-                {
-                    Debug.Log($"Set LoopEntrance: NULL at {l.x}, {l.y} : {givenDirection}");
-                }
-                else
-                {
-                    tilemap.SetTile(l, tile);
-                    Debug.Log($"Set LoopEntrance: {tile.name} at {l.x}, {l.y} : {givenDirection}");
-                }
-            }
+            UpdateTilemapWithDiscoveredAnswers(arrowTileProvider, tilemap, entrances, exits);
 
-            foreach (var exit in exits)
-            {
-                var l = new Vector3Int(exit.Key.x, exit.Key.y);
-                ArrowDirection givenDirection = exit.Value;
-                Tile tile = arrowTileProvider.GetArrowTile(givenDirection, ArrowPurpose.LoopExit);
-
-                if (tile == null)
-                {
-                    Debug.Log($"Set LoopExit: NULL at {l.x}, {l.y} : {givenDirection}");
-                }
-                else
-                {
-                    tilemap.SetTile(l, tile);
-                    Debug.Log($"Set LoopExit: {tile.name} at {l.x}, {l.y} : {givenDirection}");
-                }
-            }
-            
             return newObject;
         }
 
-        private void DiscoverEntrancesAndExitsOnTile(IArrowTileProvider arrowTileProvider, 
-                               Vector2Int location, Dictionary<Vector2Int,
-                               Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
-                               Dictionary<Vector2Int, ArrowDirection> entrances,
-                               Dictionary<Vector2Int, ArrowDirection> exits)
+        /// <summary>
+        /// Calculates loops on the given tilemap.
+        /// </summary>
+        /// <param name="scanTilemap">Tilemap to scan. </param>
+        /// <param name="borderTile">Border tile to use for entrances and exits. </param>
+        /// <returns>All the information for loops. </returns>
+        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> CalculateLoops(Tilemap scanTilemap, Tile borderTile)
+        {
+            ILoopedWorldDiscoveredByTile loopingAnswers = new LoopedWorldDiscoveredByTile();
+            loopingAnswers.CalculateLoops(
+                scanTilemap,
+                borderTile,
+                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
+
+            return loopAnswer;
+        }
+
+        /// <summary>
+        /// Updates the tilemap with Entrances and exits discovered in the lists.
+        /// </summary>
+        /// <param name="arrowTileProvider">Arrow tiles to use when updating. </param>
+        /// <param name="tilemap">Tilemap to update tiles on. </param>
+        /// <param name="entrances">Location and <see cref="ArrowDirection"/> for entrances. </param>
+        /// <param name="exits">Location and <see cref="ArrowDirection"/> for exits. </param>
+        private void UpdateTilemapWithDiscoveredAnswers(
+            IArrowTileProvider arrowTileProvider, 
+            Tilemap tilemap,
+            Dictionary<Vector2Int, ArrowDirection> entrances,
+            Dictionary<Vector2Int, ArrowDirection> exits)
+        {
+            SetTilesInMapToArrowsGiven(arrowTileProvider, entrances, ArrowPurpose.LoopEntrance, tilemap);
+            SetTilesInMapToArrowsGiven(arrowTileProvider, exits, ArrowPurpose.LoopExit, tilemap);
+        }
+
+        /// <summary>
+        /// Sets tile to the <see cref="ArrowDirection"/> version given in the dictionary location.
+        /// Will not set if there is no arrow in <see cref="IArrowTileProvider"/>.
+        /// </summary>
+        /// <param name="arrowTileProvider">Provider to find arrows. </param>
+        /// <param name="arrows">Arrows to set, with location and direction. </param>
+        /// <param name="purpose"><see cref="ArrowPurpose"/> to filter for arrows. </param>
+        /// <param name="tilemap">Tilemap to update tiles. </param>
+        private void SetTilesInMapToArrowsGiven(
+            IArrowTileProvider arrowTileProvider, 
+            Dictionary<Vector2Int, ArrowDirection> arrows,
+            ArrowPurpose purpose,
+            Tilemap tilemap)
+        {
+            foreach (var arrow in arrows)
+            {
+                var location = new Vector3Int(arrow.Key.x, arrow.Key.y);
+                ArrowDirection givenDirection = arrow.Value;
+                Tile tile = arrowTileProvider.GetArrowTile(givenDirection, purpose);
+
+                if (tile == null)
+                {
+                    continue;
+                }
+                
+                tilemap.SetTile(location, tile);
+            }
+        }
+
+        /// <summary>
+        /// Finds all the entrances and exits from <see cref="loopAnswer"/> and
+        /// extracts the <see cref="ArrowDirection"/>s for both Entrances and Exits.
+        /// </summary>
+        /// <param name="loopAnswer">Answers to use for entrances and exits. </param>
+        /// <param name="entrances">Extracted entrances. </param>
+        /// <param name="exits">Extracted exits. </param>
+        private void IdentifyAllEntrancesAndExitsInTilemap(
+            Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
+            out Dictionary<Vector2Int, ArrowDirection> entrances,
+            out Dictionary<Vector2Int, ArrowDirection> exits)
+        {
+            exits = new Dictionary<Vector2Int, ArrowDirection>();
+            entrances = new Dictionary<Vector2Int, ArrowDirection>();
+            foreach (var location in loopAnswer)
+            {
+                DiscoverEntrancesAndExitsOnTile(location.Key, loopAnswer, entrances, exits);
+            }
+        }
+
+        /// <summary>
+        /// Discovers all the entrances and exits which are on the given tile.
+        /// If there is an entrance on the tile there should be an exit and this will identify both.
+        /// </summary>
+        /// <param name="location">Location to discover and update loop information. </param>
+        /// <param name="loopAnswer">Source of information for loops. </param>
+        /// <param name="entrances">Entrance answers to add to. </param>
+        /// <param name="exits">Exit answers to add to. </param>
+        private void DiscoverEntrancesAndExitsOnTile(Vector2Int location, Dictionary<Vector2Int,
+                                                         Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
+                                                     Dictionary<Vector2Int, ArrowDirection> entrances,
+                                                     Dictionary<Vector2Int, ArrowDirection> exits)
         {
             if (loopAnswer.TryGetValue(location, out Dictionary<Direction, CollisionPositionAnswer> loopValue))
             {
                 foreach (var currentDirection in loopValue)
                 {
-                    if (currentDirection.Value.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
+                    if (currentDirection.Value.Answer != ContextToPositionAnswer.NewPositionIsCorrect)
                     {
-                        ArrowDirection entrancesArrow =
-                            ConvertDirectionToArrowDirection(currentDirection.Key);
-                        if (entrances.ContainsKey(location))
-                        {
-                            entrances[location] |= entrancesArrow;
-                        }
-                        else
-                        {
-                            entrances.Add(location, entrancesArrow);
-                        }
-
-                        ArrowDirection exitDirection =
-                            ConvertDirectionToArrowDirection(currentDirection.Value.NewDirection);
-                        if (exits.ContainsKey(currentDirection.Value.NewPosition))
-                        {
-                            exits[currentDirection.Value.NewPosition] |= exitDirection;
-                        }
-                        else
-                        {
-                            exits.Add(currentDirection.Value.NewPosition, exitDirection);
-                        }
+                        continue;
                     }
+
+                    AddOrUpdateNewArrow(entrances, 
+                            location, currentDirection.Key);
+                    AddOrUpdateNewArrow(exits, 
+                        currentDirection.Value.NewPosition, currentDirection.Value.NewDirection);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Adds or updates the given <see cref="Direction"/> arrow in the the output given.
+        /// </summary>
+        /// <param name="arrowOutput">The list of locations and <see cref="ArrowDirection"/> to update. </param>
+        /// <param name="location">Location to update. </param>
+        /// <param name="direction">Direction to add or update. </param>
+        private void AddOrUpdateNewArrow(
+                Dictionary<Vector2Int, ArrowDirection> arrowOutput, 
+                Vector2Int location,
+                Direction direction)
+        {
+            ArrowDirection exitDirection = ConvertDirectionToArrowDirection(direction);
+            if (arrowOutput.ContainsKey(location))
+            {
+                arrowOutput[location] |= exitDirection;
+            }
+            else
+            {
+                arrowOutput.Add(location, exitDirection);
             }
         }
 
@@ -150,6 +203,14 @@ namespace FQ.Editors
             return hasTilemap;
         }
 
+        /// <summary>
+        /// Converts a <see cref="Direction"/> to an <see cref="ArrowDirection"/>.
+        /// </summary>
+        /// <param name="direction"><see cref="Direction"/> to convert. </param>
+        /// <returns><see cref="ArrowDirection"/> converted. </returns>
+        /// <exception cref="NotImplementedException">
+        /// Thrown if there is no equivalent.
+        /// </exception>
         private ArrowDirection ConvertDirectionToArrowDirection(Direction direction)
         {
             switch (direction)
@@ -165,6 +226,16 @@ namespace FQ.Editors
             }
         }
 
+        /// <summary>
+        /// Validates that a visualization may take place with the given parameters.
+        /// </summary>
+        /// <param name="prefab">Prefab to create. </param>
+        /// <param name="scanTilemap">Tile map to scan. </param>
+        /// <param name="borderTile">Border map to compare. </param>
+        /// <param name="arrowTileProvider"><see cref="IArrowTileProvider"/> to give tiles for visualization. </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if not valid.
+        /// </exception>
         private void ValidateParametersForNewVisualisation(GameObject prefab, 
                                                            Tilemap scanTilemap,
                                                            Tile borderTile,

@@ -12,8 +12,7 @@ namespace FQ.Editors
     
     public class LoopVisualiserEditor : EditorWindow
     {
-
-        private static bool layers;
+        private bool layers;
         
         [MenuItem("Custom/Loop Visualiser")]
         public static void OpenWindow()
@@ -22,30 +21,92 @@ namespace FQ.Editors
             GetWindow(typeof(LoopVisualiserEditor), false, windowTitle, true);
         }
         
-        public  void CreateGUI()
+        public void CreateGUI()
         {
-            // Each editor window contains a root VisualElement object
             VisualElement root = rootVisualElement;
 
-            // VisualElements objects can contain other VisualElement following a tree hierarchy
-            Label label = new Label("Hello World!");
-            root.Add(label);
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/Scripts/FQ.Editors/WorldVisualiser/VisualiseUI.uxml");
+            root.Add(visualTree.Instantiate());
 
-            // Create toggle
-            Toggle toggle = new();
-            toggle.name = "toggle";
-            toggle.label = "Toggle";
-            toggle.RegisterValueChangedCallback(OnToggleChange);
-            toggle.value = layers;
-            root.Add(toggle);
-            
+            SetupWorldLoopToggle(root);
+            SetupRefreshWorldLoopButton(root);
+
             FullLayerRefresh();
+        }
+
+        private void SetupRefreshWorldLoopButton(VisualElement root)
+        {
+            VisualElement element = FindElementByName(root, "RefreshWorldLoop"); 
+            Button worldLoop = ExtractButton(element);
+            if (worldLoop != null)
+            {
+                worldLoop.clicked += FullLayerRefresh; 
+            }
+        }
+
+        private void SetupWorldLoopToggle(VisualElement root)
+        {
+            VisualElement element = FindElementByName(root, "WorldLoop");
+            Toggle worldLoop = ExtractToggle(element);
+            if (worldLoop != null)
+            {
+                worldLoop.RegisterValueChangedCallback(OnToggleChange);
+            }
+        }
+
+        private Toggle ExtractToggle(VisualElement element)
+        {
+            Toggle returnToggle = null;
+            if (element is Toggle t)
+            {
+                returnToggle = t;
+            }
+
+            return returnToggle;
+        }
+        
+        private Button ExtractButton(VisualElement element)
+        {
+            Button returnToggle = null;
+            if (element is Button t)
+            {
+                returnToggle = t;
+            }
+
+            return returnToggle;
+        }
+
+        private VisualElement FindElementByName(VisualElement root, string name)
+        {
+            foreach (var child in root.Children())
+            {
+                Debug.Log($"Name: {child.name} == {name}");
+                if (child.name == name) 
+                {
+                    return child;
+                }
+                
+                VisualElement ve = FindElementByName(child, name);
+                if (ve != null)
+                {
+                    return ve;
+                }
+            }
+
+            return null;
         }
 
         private void OnToggleChange(ChangeEvent<bool> value)
         {
             layers = value.newValue;
             FullLayerRefresh();
+        }
+
+        private void ToggleWorldLoop()
+        {
+            ChangeEvent<bool> value = ChangeEvent<bool>.GetPooled(layers, !layers);
+            OnToggleChange(value);
         }
 
         private void FullLayerRefresh()

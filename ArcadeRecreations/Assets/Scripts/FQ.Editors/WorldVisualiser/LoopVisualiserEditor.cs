@@ -9,11 +9,19 @@ using UnityEngine.UIElements;
 
 namespace FQ.Editors
 {
-    
+    /// <summary>
+    /// Creates and manages the visualiser for the world loop layer.
+    /// </summary>
     public class LoopVisualiserEditor : EditorWindow
     {
-        private bool layers;
+        /// <summary>
+        /// True means show World Loop Layers.
+        /// </summary>
+        private bool worldLoopLayers;
         
+        /// <summary>
+        /// Add the window open to the window open location.
+        /// </summary>
         [MenuItem("Custom/Loop Visualiser")]
         public static void OpenWindow()
         {
@@ -21,6 +29,9 @@ namespace FQ.Editors
             GetWindow(typeof(LoopVisualiserEditor), false, windowTitle, true);
         }
         
+        /// <summary>
+        /// Create the GUI for the editor.
+        /// </summary>
         public void CreateGUI()
         {
             VisualElement root = rootVisualElement;
@@ -32,19 +43,27 @@ namespace FQ.Editors
             SetupWorldLoopToggle(root);
             SetupRefreshWorldLoopButton(root);
 
-            FullLayerRefresh();
+            WorldLoopRefresh();
         }
 
+        /// <summary>
+        /// Sets up the button binds for Refresh World Loop.
+        /// </summary>
+        /// <param name="root">UI Root. </param>
         private void SetupRefreshWorldLoopButton(VisualElement root)
         {
             VisualElement element = FindElementByName(root, "RefreshWorldLoop"); 
             Button worldLoop = ExtractButton(element);
             if (worldLoop != null)
             {
-                worldLoop.clicked += FullLayerRefresh; 
+                worldLoop.clicked += WorldLoopRefresh; 
             }
         }
 
+        /// <summary>
+        /// Setup world loop toggle binds.
+        /// </summary>
+        /// <param name="root">UI Root. </param>
         private void SetupWorldLoopToggle(VisualElement root)
         {
             VisualElement element = FindElementByName(root, "WorldLoop");
@@ -55,6 +74,11 @@ namespace FQ.Editors
             }
         }
 
+        /// <summary>
+        /// Extract Toggle from Element.
+        /// </summary>
+        /// <param name="element">UI Element. </param>
+        /// <returns>Toggle if found. </returns>
         private Toggle ExtractToggle(VisualElement element)
         {
             Toggle returnToggle = null;
@@ -66,6 +90,11 @@ namespace FQ.Editors
             return returnToggle;
         }
         
+        /// <summary>
+        /// Extract Button from Element.
+        /// </summary>
+        /// <param name="element">UI Element. </param>
+        /// <returns>Button if found. </returns>
         private Button ExtractButton(VisualElement element)
         {
             Button returnToggle = null;
@@ -77,6 +106,12 @@ namespace FQ.Editors
             return returnToggle;
         }
 
+        /// <summary>
+        /// Finds an element by name.
+        /// </summary>
+        /// <param name="root">UI Root. </param>
+        /// <param name="name">Name to search for. </param>
+        /// <returns>Element or null if not found. </returns>
         private VisualElement FindElementByName(VisualElement root, string name)
         {
             foreach (var child in root.Children())
@@ -97,28 +132,32 @@ namespace FQ.Editors
             return null;
         }
 
+        /// <summary>
+        /// Called when the toggle is changed.
+        /// </summary>
+        /// <param name="value">Change event containing old and new value. </param>
         private void OnToggleChange(ChangeEvent<bool> value)
         {
-            layers = value.newValue;
-            FullLayerRefresh();
+            worldLoopLayers = value.newValue;
+            WorldLoopRefresh();
         }
 
-        private void ToggleWorldLoop()
+        /// <summary>
+        /// Refreshes the World Loop Layer.
+        /// </summary>
+        private void WorldLoopRefresh()
         {
-            ChangeEvent<bool> value = ChangeEvent<bool>.GetPooled(layers, !layers);
-            OnToggleChange(value);
-        }
-
-        private void FullLayerRefresh()
-        {
-            DeleteLayer(); 
-            if (layers)
+            DeleteWorldLoopLayer(); 
+            if (worldLoopLayers)
             {
-                CreateLayer(); 
+                CreateWorldLoopLayer(); 
             }
         }
 
-        private void DeleteLayer()
+        /// <summary>
+        /// Delete World Loop Layer.
+        /// </summary>
+        private void DeleteWorldLoopLayer()
         {
             GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("EditorOnly");
             if (gameObjects == null)
@@ -132,7 +171,10 @@ namespace FQ.Editors
             }
         }
 
-        private void CreateLayer()
+        /// <summary>
+        /// Creates world loop layer.
+        /// </summary>
+        private void CreateWorldLoopLayer()
         {
             var visualiserPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
             var borderTile = Resources.Load<Tile>("World/Tiles/BasicChecker-A/BasicChecker-A-Tile");

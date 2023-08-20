@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <ui:Label tabindex="-1" text="Visualisers" display-tooltip-when-elided="true" name="VisualiserTitle" style="align-items: center; justify-content: flex-end; align-self: center; font-size: 18px; -unity-font-style: bold;" />
-    <ui:Toggle label="View World Loops" value="false" name="WorldLoop" view-data-key="VL-WorldLoop" />
-    <ui:Button text="Refresh" display-tooltip-when-elided="true" name="RefreshWorldLoop" />
+    <ui:Toggle label="View World Loops" value="false" name="WorldLoop" view-data-key="VL-WorldLoop" binding-path="WorldLoopToggle" />
+    <ui:Button text="Refresh" display-tooltip-when-elided="true" name="RefreshWorldLoop" binding-path="RefreshWorldLoopButton" />
 </ui:UXML>

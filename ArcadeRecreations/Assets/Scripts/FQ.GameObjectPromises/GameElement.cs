@@ -150,5 +150,15 @@ namespace FQ.GameObjectPromises
         {
             
         }
+        
+        /// <summary>
+        /// Used to receive a reference from another object.
+        /// </summary>
+        /// <param name="element">The reference. </param>
+        /// <param name="baseName">An indication of what the reference is. </param>
+        protected virtual void GiveReference(GameElement element, ElementBaseName baseName)
+        {
+            
+        }
     }
 }

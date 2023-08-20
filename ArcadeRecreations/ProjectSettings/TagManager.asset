@@ -7,6 +7,7 @@ TagManager:
   - SnakeFood
   - SnakeTail
   - SnakeBorder
+  - SnakeFoodArea
   layers:
   - Default
   - TransparentFX

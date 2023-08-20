@@ -1,0 +1,19 @@
+{
+    "name": "FQ.Editors.WorldVisualiser",
+    "rootNamespace": "",
+    "references": [
+        "FQ.GameplayElements",
+        "FQ.Libraries.Exceptions"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -28,7 +28,8 @@ namespace FQ.GameplayElements.EditorTests
             var concreteSnakeBehaviour = new SnakeBehaviour(
                 this.playerObject,
                 this.stubObjectCreation,
-                this.mockGameplayInputs.Object)
+                this.mockGameplayInputs.Object,
+                null)
             {
                 MovementSpeed = 1
             };

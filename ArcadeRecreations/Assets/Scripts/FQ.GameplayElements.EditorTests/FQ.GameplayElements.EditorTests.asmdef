@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "FQ.GameplayElements",
         "FQ.GameObjectPromises",
-        "FQ.GameplayInputs"
+        "FQ.GameplayInputs",
+        "FQ.Libraries.Exceptions"
     ],
     "includePlatforms": [
         "Editor"

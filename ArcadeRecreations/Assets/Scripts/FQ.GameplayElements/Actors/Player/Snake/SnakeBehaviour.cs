@@ -64,6 +64,8 @@ namespace FQ.GameplayElements
         /// </summary>
         private readonly IGameplayInputs gameplayInputs;
         
+        private readonly ILoopingWorldFromTilemap worldInfo;
+        
         /// <summary>
         /// Logic for an actor which moves.
         /// </summary>
@@ -110,7 +112,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private bool didTriggerStart;
 
-        public SnakeBehaviour(GameObject gameObject, IObjectCreation objectCreation, IGameplayInputs gameplayInputs)
+        public SnakeBehaviour(
+            GameObject gameObject, 
+            IObjectCreation objectCreation, 
+            IGameplayInputs gameplayInputs,
+            ILoopingWorldFromTilemap worldInfo)
         {
             this.parent = gameObject != null
                 ? gameObject
@@ -122,6 +128,8 @@ namespace FQ.GameplayElements
             
             this.gameplayInputs = gameplayInputs ?? throw new ArgumentNullException(
                 $"{typeof(SnakeBehaviour)}: {nameof(gameplayInputs)} must not be null.");
+
+            this.worldInfo = worldInfo;
         }
         
         /// <summary>
@@ -166,6 +174,8 @@ namespace FQ.GameplayElements
                     UpdateTail();
                     this.movingActor.MoveActor(this.nextDirection);
                     this.currentDirection = this.nextDirection;
+                    
+                    LoopAroundTheWorld();
                 }
             }
         }
@@ -340,6 +350,32 @@ namespace FQ.GameplayElements
             {
                 ++snakeTailLength;
                 this.growingLag = false;
+            }
+        }
+        
+        /// <summary>
+        /// Checks for loops in the world and teleports the player if there is a loop.
+        /// </summary>
+        private void LoopAroundTheWorld()
+        {
+            if (this.worldInfo == null)
+            {
+                return;
+            }
+            
+            Vector3 position = this.parent.transform.position;
+            Vector2Int location = new((int) position.x, (int) position.y);
+            
+            Direction giveDirection = this.currentDirection;
+            if (giveDirection == Direction.Down || giveDirection == Direction.Up)
+            {
+                giveDirection = GetCounterDirection(giveDirection);
+            }
+
+            CollisionPositionAnswer answer = this.worldInfo.GetLoop(location, giveDirection);
+            if (answer.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
+            {
+                this.parent.transform.position = new Vector3(answer.NewPosition.x, answer.NewPosition.y);
             }
         }
     }

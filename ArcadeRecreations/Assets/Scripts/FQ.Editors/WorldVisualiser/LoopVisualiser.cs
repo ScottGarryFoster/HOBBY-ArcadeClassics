@@ -19,12 +19,14 @@ namespace FQ.Editors
         /// <param name="scanTilemap">Tilemap to find the loops. </param>
         /// <param name="borderTile">Border tile to search for. </param>
         /// <param name="arrowTileProvider">Provides the tiles to use in the visuals. </param>
+        /// <param name="elementsToShow">Describes the world loop elements to display in the object. </param>
         /// <returns>A reference to the created object. </returns>
         public GameObject AddVisualisationObject(
             GameObject prefab,
             Tilemap scanTilemap,
             Tile borderTile,
-            IArrowTileProvider arrowTileProvider)
+            IArrowTileProvider arrowTileProvider,
+            WorldLoopElementsToShow elementsToShow)
         {
             ValidateParametersForNewVisualisation(prefab, scanTilemap, borderTile, arrowTileProvider);
             
@@ -42,7 +44,7 @@ namespace FQ.Editors
                 out Dictionary<Vector2Int, ArrowDirection> entrances,
                 out Dictionary<Vector2Int, ArrowDirection> exits);
 
-            UpdateTilemapWithDiscoveredAnswers(arrowTileProvider, tilemap, entrances, exits);
+            UpdateTilemapWithDiscoveredAnswers(arrowTileProvider, tilemap, entrances, exits, elementsToShow);
 
             return newObject;
         }
@@ -71,14 +73,23 @@ namespace FQ.Editors
         /// <param name="tilemap">Tilemap to update tiles on. </param>
         /// <param name="entrances">Location and <see cref="ArrowDirection"/> for entrances. </param>
         /// <param name="exits">Location and <see cref="ArrowDirection"/> for exits. </param>
+        /// <param name="elementsToShow">Describes the world loop elements to display in the object. </param>
         private void UpdateTilemapWithDiscoveredAnswers(
             IArrowTileProvider arrowTileProvider, 
             Tilemap tilemap,
             Dictionary<Vector2Int, ArrowDirection> entrances,
-            Dictionary<Vector2Int, ArrowDirection> exits)
+            Dictionary<Vector2Int, ArrowDirection> exits,
+            WorldLoopElementsToShow elementsToShow)
         {
-            SetTilesInMapToArrowsGiven(arrowTileProvider, entrances, ArrowPurpose.LoopEntrance, tilemap);
-            SetTilesInMapToArrowsGiven(arrowTileProvider, exits, ArrowPurpose.LoopExit, tilemap);
+            if (elementsToShow.HasFlag(WorldLoopElementsToShow.Entrances))
+            {
+                SetTilesInMapToArrowsGiven(arrowTileProvider, entrances, ArrowPurpose.LoopEntrance, tilemap);
+            }
+
+            if (elementsToShow.HasFlag(WorldLoopElementsToShow.Exits))
+            {
+                SetTilesInMapToArrowsGiven(arrowTileProvider, exits, ArrowPurpose.LoopExit, tilemap);
+            }
         }
 
         /// <summary>
@@ -136,7 +147,7 @@ namespace FQ.Editors
         /// </summary>
         /// <param name="location">Location to discover and update loop information. </param>
         /// <param name="loopAnswer">Source of information for loops. </param>
-        /// <param name="entrances">Entrance answers to add to. </param>
+        /// <param name="entrances">Entrances answers to add to. </param>
         /// <param name="exits">Exit answers to add to. </param>
         private void DiscoverEntrancesAndExitsOnTile(Vector2Int location, Dictionary<Vector2Int,
                                                          Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,

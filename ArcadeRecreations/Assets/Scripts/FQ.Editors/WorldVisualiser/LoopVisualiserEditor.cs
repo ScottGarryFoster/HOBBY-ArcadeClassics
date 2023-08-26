@@ -15,9 +15,14 @@ namespace FQ.Editors
     public class LoopVisualiserEditor : EditorWindow
     {
         /// <summary>
-        /// True means show World Loop Layers.
+        /// True means show World Loop Entrances on Layer.
         /// </summary>
-        private bool worldLoopLayers;
+        private bool worldLoopShowEntrances;
+        
+        /// <summary>
+        /// True means show World Loop Exits on Layer.
+        /// </summary>
+        private bool worldLoopShowExits;
         
         /// <summary>
         /// Add the window open to the window open location.
@@ -40,7 +45,8 @@ namespace FQ.Editors
                 "Assets/Scripts/FQ.Editors/WorldVisualiser/VisualiseUI.uxml");
             root.Add(visualTree.Instantiate());
 
-            SetupWorldLoopToggle(root);
+            SetupWorldLoopEntranceToggle(root);
+            SetupWorldLoopExitToggle(root);
             SetupRefreshWorldLoopButton(root);
 
             WorldLoopRefresh();
@@ -64,13 +70,27 @@ namespace FQ.Editors
         /// Setup world loop toggle binds.
         /// </summary>
         /// <param name="root">UI Root. </param>
-        private void SetupWorldLoopToggle(VisualElement root)
+        private void SetupWorldLoopEntranceToggle(VisualElement root)
         {
             VisualElement element = FindElementByName(root, "WorldLoop-Entrances");
             Toggle worldLoop = ExtractToggle(element);
             if (worldLoop != null)
             {
-                worldLoop.RegisterValueChangedCallback(OnToggleChange);
+                worldLoop.RegisterValueChangedCallback(OnEntranceToggleChange);
+            }
+        }
+        
+        /// <summary>
+        /// Setup world loop toggle binds.
+        /// </summary>
+        /// <param name="root">UI Root. </param>
+        private void SetupWorldLoopExitToggle(VisualElement root)
+        {
+            VisualElement element = FindElementByName(root, "WorldLoop-Exits");
+            Toggle worldLoop = ExtractToggle(element);
+            if (worldLoop != null)
+            {
+                worldLoop.RegisterValueChangedCallback(OnExitToggleChange);
             }
         }
 
@@ -132,12 +152,22 @@ namespace FQ.Editors
         }
 
         /// <summary>
-        /// Called when the toggle is changed.
+        /// Called when the entrance toggle is changed.
         /// </summary>
         /// <param name="value">Change event containing old and new value. </param>
-        private void OnToggleChange(ChangeEvent<bool> value)
+        private void OnEntranceToggleChange(ChangeEvent<bool> value)
         {
-            worldLoopLayers = value.newValue;
+            worldLoopShowEntrances = value.newValue;
+            WorldLoopRefresh();
+        }
+        
+        /// <summary>
+        /// Called when the exits toggle is changed.
+        /// </summary>
+        /// <param name="value">Change event containing old and new value. </param>
+        private void OnExitToggleChange(ChangeEvent<bool> value)
+        {
+            worldLoopShowExits = value.newValue;
             WorldLoopRefresh();
         }
 
@@ -147,7 +177,7 @@ namespace FQ.Editors
         private void WorldLoopRefresh()
         {
             DeleteWorldLoopLayer(); 
-            if (worldLoopLayers)
+            if (worldLoopShowEntrances || worldLoopShowExits)
             {
                 CreateWorldLoopLayer(); 
             }
@@ -171,6 +201,26 @@ namespace FQ.Editors
         }
 
         /// <summary>
+        /// Gathers the elements to show from the User Elements.
+        /// </summary>
+        /// <returns>World Loop elements to Show. </returns>
+        private WorldLoopElementsToShow GetElementsToShowFromUI()
+        {
+            WorldLoopElementsToShow elementsToShow = WorldLoopElementsToShow.None;
+            if (worldLoopShowEntrances)
+            {
+                elementsToShow |= WorldLoopElementsToShow.Entrances;
+            }
+            
+            if (worldLoopShowExits)
+            {
+                elementsToShow |= WorldLoopElementsToShow.Exits;
+            }
+
+            return elementsToShow;
+        }
+
+        /// <summary>
         /// Creates world loop layer.
         /// </summary>
         private void CreateWorldLoopLayer()
@@ -184,7 +234,8 @@ namespace FQ.Editors
                 if (tilemap != null)
                 {
                     var arrow = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
-                    new LoopVisualiser().AddVisualisationObject(visualiserPrefab, tilemap, borderTile, arrow);
+                    new LoopVisualiser().AddVisualisationObject(
+                        visualiserPrefab, tilemap, borderTile, arrow, GetElementsToShowFromUI());
                 }
             }
         }

@@ -13,6 +13,9 @@ namespace FQ.Editors.WorldVisualiserTests
     public class LoopVisualiserTests
     {
         private const string BorderTileLocation = "TestResources/World/TestBasicChecker-A/TestBasicChecker-A-Tile";
+
+        private const WorldLoopElementsToShow AllElements =
+            WorldLoopElementsToShow.Entrances | WorldLoopElementsToShow.Exits;
         
         private ILoopVisualiser testClass;
         
@@ -50,7 +53,8 @@ namespace FQ.Editors.WorldVisualiserTests
             bool didThrow = false;
             try
             {
-                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+                this.testClass.AddVisualisationObject(
+                    givenPrefab, givenTilemap, givenBorderTile, provider.Object, AllElements);
             }
             catch (ArgumentNullException)
             {
@@ -74,7 +78,8 @@ namespace FQ.Editors.WorldVisualiserTests
             bool didThrow = false;
             try
             {
-                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+                this.testClass.AddVisualisationObject(
+                    givenPrefab, givenTilemap, givenBorderTile, provider.Object, AllElements);
             }
             catch (ArgumentNullException)
             {
@@ -98,7 +103,8 @@ namespace FQ.Editors.WorldVisualiserTests
             bool didThrow = false;
             try
             {
-                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+                this.testClass.AddVisualisationObject(
+                    givenPrefab, givenTilemap, givenBorderTile, provider.Object, AllElements);
             }
             catch (ArgumentNullException)
             {
@@ -122,7 +128,8 @@ namespace FQ.Editors.WorldVisualiserTests
             bool didThrow = false;
             try
             {
-                this.testClass.AddVisualisationObject(givenPrefab, givenTilemap, givenBorderTile, provider);
+                this.testClass.AddVisualisationObject(
+                    givenPrefab, givenTilemap, givenBorderTile, provider, AllElements);
             }
             catch (ArgumentNullException)
             {
@@ -144,7 +151,7 @@ namespace FQ.Editors.WorldVisualiserTests
             
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
-                givenPrefab, givenTilemap, givenBorderTile, provider);
+                givenPrefab, givenTilemap, givenBorderTile, provider, AllElements);
             this.tearDownObjects.Add(actual);
 
             // Assert
@@ -178,7 +185,7 @@ namespace FQ.Editors.WorldVisualiserTests
 
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
-                givenPrefab, givenTilemap, givenBorderTile, provider.Object);
+                givenPrefab, givenTilemap, givenBorderTile, provider.Object, AllElements);
             this.tearDownObjects.Add(actual);
 
             // Assert
@@ -220,7 +227,7 @@ namespace FQ.Editors.WorldVisualiserTests
 
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
-                givenPrefab, givenTilemap, givenBorderTile, provider);
+                givenPrefab, givenTilemap, givenBorderTile, provider, AllElements);
             this.tearDownObjects.Add(actual);
 
             // Assert
@@ -236,7 +243,13 @@ namespace FQ.Editors.WorldVisualiserTests
                 Assert.AreEqual(expectedTiles[x].Length, actualTiles[x].Length);
                 for (int y = 0; y < size.y; ++y)
                 {
-                    if (!IsEntrance(actualTiles[x][y]))
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (!IsEntrance(tile))
                     {
                         continue;
                     }
@@ -261,7 +274,7 @@ namespace FQ.Editors.WorldVisualiserTests
 
             // Act
             GameObject actual = this.testClass.AddVisualisationObject(
-                givenPrefab, givenTilemap, givenBorderTile, provider);
+                givenPrefab, givenTilemap, givenBorderTile, provider, AllElements);
             this.tearDownObjects.Add(actual);
 
             // Assert
@@ -278,7 +291,13 @@ namespace FQ.Editors.WorldVisualiserTests
                 Assert.AreEqual(expectedTiles[x].Length, actualTiles[x].Length);
                 for (int y = 0; y < size.y; ++y)
                 {
-                    if (IsEntrance(actualTiles[x][y]))
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (IsEntrance(tile))
                     {
                         continue;
                     }
@@ -288,11 +307,232 @@ namespace FQ.Editors.WorldVisualiserTests
                 }
             }
         }
+        
+        [Test]
+        public void AddVisualisationObject_DoesNotSetAnything_WhenNoneElementGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+
+            int expectedLength = 0;
+
+            var givenElement = WorldLoopElementsToShow.None;
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider, givenElement);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int y = 0; y < size.y; ++y)
+                {
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (IsEntrance(tile))
+                    {
+                        Assert.Fail($"Found a tile at: {x}, {y}: {tile.name}");
+                    }
+                }
+            }
+        }
+        
+        [Test]
+        public void AddVisualisationObject_DoesNotSetEntrances_WhenExitsElementGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+
+            var givenElement = WorldLoopElementsToShow.Exits;
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider, givenElement);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int y = 0; y < size.y; ++y)
+                {
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (IsEntrance(tile))
+                    {
+                        Assert.Fail($"Found an entrance at: {x}, {y}");
+                    }
+                }
+            }
+        }
+        
+        [Test]
+        public void AddVisualisationObject_DoesNotSetExits_WhenEntranceElementGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+
+            var givenElement = WorldLoopElementsToShow.Entrances;
+
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider, givenElement);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int y = 0; y < size.y; ++y)
+                {
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (!IsEntrance(tile))
+                    {
+                        Assert.Fail($"Found an exit at: {x}, {y}");
+                    }
+                }
+            }
+        }
+        
+        [Test]
+        public void AddVisualisationObject_SetExits_WhenExitsElementGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+            
+            Tilemap expectedTilemap = GetTestBorderTileMap(
+                "TestResources/World/TestGrid-LoopArrangements-Answer-Both");
+            TileBase[][] expectedTiles = ExtractTiles(expectedTilemap);
+
+            var givenElement = WorldLoopElementsToShow.Exits;
+            
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider, givenElement);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int y = 0; y < size.y; ++y)
+                {
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (!IsEntrance(tile))
+                    {
+                        continue;
+                    }
+
+                    Assert.AreEqual(expectedTiles[x][y], actualTiles[x][y],
+                        $"({x}, {y}) Expected: {expectedTiles[x][y]}, Actual: {actualTiles[x][y]}");
+                }
+            }
+        }
+        
+        [Test]
+        public void AddVisualisationObject_SetEntrances_WhenEntrancesElementGivenTest()
+        {
+            // Arrange
+            GameObject givenPrefab = Resources.Load<GameObject>("Editor/LoopVisualiser/LoopVisualiserTilemap");
+            Tilemap givenTilemap = GetTestBorderTileMap("TestResources/World/TestGrid-LoopArrangements");
+            var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
+            var provider = new SimpleArrowTileProvider("Editor/LoopVisualiser/ArrowTiles/TileArrows_");
+            
+            Tilemap expectedTilemap = GetTestBorderTileMap(
+                "TestResources/World/TestGrid-LoopArrangements-Answer-Both");
+            TileBase[][] expectedTiles = ExtractTiles(expectedTilemap);
+
+            var givenElement = WorldLoopElementsToShow.Entrances;
+            
+            // Act
+            GameObject actual = this.testClass.AddVisualisationObject(
+                givenPrefab, givenTilemap, givenBorderTile, provider, givenElement);
+            this.tearDownObjects.Add(actual);
+
+            // Assert
+            Assert.IsNotNull(actual, "No created object.");
+            Tilemap extractedActualTilemap = ExtractTilemap(actual);
+            TileBase[][] actualTiles = ExtractTiles(extractedActualTilemap);
+            
+            Vector3Int size = extractedActualTilemap.size;
+            for (int x = 0; x < size.x; ++x)
+            {
+                for (int y = 0; y < size.y; ++y)
+                {
+                    TileBase tile = actualTiles[x][y];
+                    if (tile == null)
+                    {
+                        continue;
+                    }
+                    
+                    if (!IsEntrance(tile))
+                    {
+                        continue;
+                    }
+
+                    Assert.AreEqual(expectedTiles[x][y], actualTiles[x][y],
+                        $"({x}, {y}) Expected: {expectedTiles[x][y]}, Actual: {actualTiles[x][y]}");
+                }
+            }
+        }
 
         private bool IsEntrance(TileBase tileBase)
         {
-            string tilePrefab = "TileArrows_";
-            string nameNoPrefab = tilePrefab.Replace(tilePrefab, "");
+            if (tileBase == null)
+            {
+                return false;
+            }
+            
+            string tilePrefab = "TileArrows_".ToLower();
+            string nameNoPrefab = tileBase.name.ToLower().Replace(tilePrefab, "");
 
             if (int.TryParse(nameNoPrefab, out int value))
             {

@@ -66,7 +66,7 @@ namespace FQ.Editors
         /// <param name="root">UI Root. </param>
         private void SetupWorldLoopToggle(VisualElement root)
         {
-            VisualElement element = FindElementByName(root, "WorldLoop");
+            VisualElement element = FindElementByName(root, "WorldLoop-Entrances");
             Toggle worldLoop = ExtractToggle(element);
             if (worldLoop != null)
             {

@@ -1,0 +1,15 @@
+.MainHeading {
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    -unity-font-style: bold;
+    font-size: 18px;
+}
+
+.SectionHeading0 {
+    align-items: flex-start;
+    justify-content: flex-end;
+    align-self: flex-start;
+    -unity-font-style: bold;
+    font-size: 16px;
+}

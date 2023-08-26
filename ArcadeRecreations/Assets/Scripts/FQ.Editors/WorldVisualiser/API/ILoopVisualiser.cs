@@ -15,11 +15,13 @@ namespace FQ.Editors
         /// <param name="scanTilemap">Tilemap to find the loops. </param>
         /// <param name="borderTile">Border tile to search for. </param>
         /// <param name="arrowTileProvider">Provides the tiles to use in the visuals. </param>
+        /// <param name="elementsToShow">Describes the world loop elements to display in the object. </param>
         /// <returns>A reference to the created object. </returns>
         GameObject AddVisualisationObject(
             GameObject prefab, 
             Tilemap scanTilemap, 
             Tile borderTile,
-            IArrowTileProvider arrowTileProvider);
+            IArrowTileProvider arrowTileProvider,
+            WorldLoopElementsToShow elementsToShow);
     }
 }

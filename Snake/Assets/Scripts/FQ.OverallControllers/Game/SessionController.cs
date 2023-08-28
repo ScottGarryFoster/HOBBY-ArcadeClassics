@@ -48,6 +48,8 @@ namespace FQ.OverallControllers
             
             this.snakeGameBehaviours = new SnakeGameBehaviours(new GameObjectCreation());
             var player = this.snakeGameBehaviours.CreateNewBehaviour(SnakeGameElements.Player);
+            MovePlayerToPlaceholder(player);
+            
             player.StartTrigger += OnStartTrigger;
             player.EndTrigger += OnEndTrigger;
             this.objectsInTheScene.Add(player);
@@ -67,6 +69,35 @@ namespace FQ.OverallControllers
             this.objectsCreatedDuringTheScene.ForEach(x => GameObject.Destroy(x.gameObject));
             this.objectsCreatedDuringTheScene.Clear();
             this.objectsInTheScene.ForEach(x => x.ResetElement?.Invoke());
+        }
+        
+        /// <summary>
+        /// Moves the player to the player placeholder.
+        /// </summary>
+        /// <param name="player">Player to move. </param>
+        private void MovePlayerToPlaceholder(GameElement player)
+        {
+            GameObject playerTag = GameObject.FindGameObjectWithTag("Player");
+            if (playerTag != null)
+            {
+                Vector3 tagPosition = playerTag.transform.position;
+                tagPosition = ReduceToTopLeft(tagPosition);
+                player.transform.position = tagPosition;
+                Destroy(playerTag);
+            }
+        }
+
+        /// <summary>
+        /// Reduces the precision (floats) of the vector to the top left position.
+        /// </summary>
+        /// <param name="given">Vector to reduce. </param>
+        /// <returns>Result with 0 points of precision. </returns>
+        private Vector3 ReduceToTopLeft(Vector3 given)
+        {
+            given.x = (int) given.x;
+            given.y = (int) given.y;
+            given.z = (int) given.z;
+            return given;
         }
     }
 }

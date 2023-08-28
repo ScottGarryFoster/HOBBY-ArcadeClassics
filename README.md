@@ -1,5 +1,7 @@
+
+
 # Arcade Classics
-This project is an attempt to prototype create basic arcade games in Unity. At a core level Unity is overkill for these projects but this project is about figuring out how basic game elements fit together on a programming and game engine level. To prototype these concepts, I’ve selected a few arcade games which span mechanics from basic player movement to AI. This is not intended to be shippable but instead a learning, teaching and reference tool.
+This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
 
 ## Projects
 The planned projects under this repository are as follows:
@@ -8,9 +10,9 @@ The planned projects under this repository are as follows:
 3. Space Invaders
 
 ## Progress
-1. Snake Game 40%
+1. Snake Game 50%
 2. Pac-man 0%
-3. Space Invaders 0%
+3. Space Invades 0%
 
 ## Milestones / History
 This is a record of notable times in the project a snapshot was taken.
@@ -73,6 +75,55 @@ This essentially resets the entire session. There would be protected methods for
 
 This is the result and the the next step in terms of the controllers is to handle score boards and user interface:
 ![Snake tail growth](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/003-DeathOnTailCollision.gif?raw=true)
+
+### Adding a Border
+A task on the back log came up to add a border and in the fashion of the Nokia classic the idea of a looping border sprung to mind. From this idea came the idea of having any size border, designed by the developer and in the situation this is implemented having an editor tool to see all the loops.
+
+Parts to this update:
+1. Creating the Loop discovery code
+2. Adding an editor visualiser
+3. Adding this code in Game
+
+#### Creating the looping code
+Creating this code required gathering an understanding of the Tilemap system in Unity. Using Test Driven Development helped a lot in breaking apart the solution and having the confidence to proceed to other sections which plugged into the implementation. 
+
+**Some elements I had to figure out**:
+Tilemaps in Unity are not provided in an array format for instance because their coordinates are incompatible with the general structure, the center of the world appears to be (0, 0) meaning a quarter of the world is entirely in negative co-ordinates. When searching for tiles therefore you use the origin and size to gather this information.
+
+Converting between Vector2Int and Vector3 is annoying. I want to create a utilities class in my next large project to deal with some of these common situations as I found myself continually typing the same things. For this I went WET as to avoid project conflicts and as this is a prototype but in future I should add a Standalone Library for this.
+
+Set tile directly also appeared to work far more often than other methods.
+
+#### Creating the editor visualiser
+For this I used the UI Builder to create the User Interface and run the code which would turn on the visuals. The UI Builder is rather similar to WPF XAML and even contains style sheets. The UI Builder uses .uxml which appears to be a similar mark-up to XAML containing the elements of the interface. These UXML files may even contain other UXML files just like XAML making this quite a powerful tool for tool making. The USS stylesheets in this tool offer a way to uniform the styling across all the tools and although not used extensively here are going to prove powerful in uniting the styling. To match up the UI Builder and the actual code the name element was used and picked up on the editor side (code), it seems as though Binding is meant to be used however I struggled to figure out or research a way to use this method at the time (there is a pending task to further research this).
+
+|WPF|UI Builder|
+|---|---|
+|![WPF Image](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/AddedImages/animation_visualstudio.gif?raw=true)|![UI Builder](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/AddedImages/UIBuilder.PNG?raw=true)|
+
+When creating the visual layer I used the Tilemap as the border was so that both could easily line up. A tile sheet of two types of arrows were created, one for entrances (where the Snake player enters, and one where the Snake player leaves a loop). The visual code takes a Tilemap and given a set border will run the same game code to determine the loops and set the arrows to what it finds.
+
+Due to the fact the visual and borders were Tilemaps I could use Test Driven Development and provide an example map with it's solution for the tests. This meant I could create the solution and clean it up with the knowledge it worked. 
+
+These tests were not without faults however and did require a lot of tweaking throughout the prototyping phase. In future with Unit tests for tile maps it may be preferable to create a module designed for assertions on Unity Tilemaps to avoid some of the pitfalls I fell into during the course of this project (which is still a positive as a key goal of prototyping is discovering these issues in a small project).
+
+#### Adding the Code in Game
+When placing a border the looping code accompanies it (in theory a multi-Tilemap version could be created) and this is given to the Snake Behaviour. When moving around the world the Snake uses this to figure out if the location they are moving to is a border tile. The reason this happens as they move to this tile and not via the collision is the ordering in Unity, the ideal place for this is before any Snake Head movement and tail movement so that everything remains in line. Placing this code where it is means that the Snake is teleported to the other side of the loop and the tail code works without any further implementation. To ensure this code remains fast Dictionaries (n(0) lookup) which would not change after the initial scan.
+
+*Food spawning*
+Not mentioned here is the food spawning code. When the border is closed the food will still spawn randomly even where the border is or under the player. As a stop gap there was an additional piece of code added in which a layer is added to define 'within the border' for where the food should spawn. This is to be done programmatically in future and not to spawn on the player. The stop gap version may be seen in the 'Larger Game' image below.
+
+*Entrance and Exit toggle*
+Separate toggles were an after thought of the project. When using the tool it seemed clearer to visualize one set of the arrows and these were broken out into two sets of arrows. The Flags (bit) with Enums proved useful for this type of data.
+
+#### Results
+|Standard Looping|Larger Game|
+|--|--|
+|![Standard Looping](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/005-LoopsInGame.gif?raw=true)|![Larger Game](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/005-LoopsInGame-Gameplay.gif?raw=true)
+
+|Visual Layer|
+|--|
+|![Visualisers](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/006-FurtherVisualiser.gif?raw=true)
 
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

@@ -6,7 +6,8 @@
         "FQ.GameObjectPromises",
         "FQ.Log",
         "FQ.Libraries.MonoSingleton",
-        "FQ.Libraries.Exceptions"
+        "FQ.Libraries.Exceptions",
+        "FQ.TilemapTools"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

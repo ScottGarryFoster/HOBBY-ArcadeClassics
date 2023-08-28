@@ -41,13 +41,13 @@ namespace FQ.GameplayElements
         protected override void BaseStart()
         {
             base.BaseStart();
-            ILoopingWorldFromTilemap worldInfo = GetWorldInfo();
+            IWorldInfoFromTilemap worldInfoInfo = GetWorldInfo();
             this.snakeBehaviour =
                 new SnakeBehaviour(
                     this.gameObject,
                     new GameObjectCreation(),
                     this.gameplayInputs,
-                    worldInfo)
+                    worldInfoInfo)
                 {
                     MovementSpeed = this.MovementSpeed,
                     snakeTailPrefab = this.snakeTailPrefab,
@@ -76,7 +76,7 @@ namespace FQ.GameplayElements
         /// Collects the world information if in the scene.
         /// </summary>
         /// <returns>World Info or Null if not found. </returns>
-        private ILoopingWorldFromTilemap GetWorldInfo()
+        private IWorldInfoFromTilemap GetWorldInfo()
         {
             GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
             GameObject border = borders.FirstOrDefault(x => x.name == "Border");
@@ -85,7 +85,7 @@ namespace FQ.GameplayElements
                 return null;
             }
 
-            return border.GetComponent<LoopingWorldFromTilemap>();
+            return border.GetComponent<WorldInfoInfoFromTilemap>();
         }
     }
 }

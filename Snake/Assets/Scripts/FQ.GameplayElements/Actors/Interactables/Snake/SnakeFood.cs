@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using FQ.GameObjectPromises;
+using Mono.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -12,16 +14,21 @@ namespace FQ.GameplayElements
     /// </summary>
     public class SnakeFood : GameElement
     {
+        /// <summary>
+        /// True means active.
+        /// </summary>
         private bool areActive;
 
-        private Tilemap snakeArea;
+        /// <summary>
+        /// The area we may spawn.
+        /// </summary>
+        private Vector3Int[] safeArea;
         
         protected override void BaseStart()
         {
             this.areActive = true;
 
-            GameObject snakeFoodAreaGO = GameObject.FindGameObjectWithTag("SnakeFoodArea");
-            snakeArea = snakeFoodAreaGO.GetComponent<Tilemap>();
+            SetupAndAcquireSafeArea();
         }
 
         protected override void BaseFixedUpdate()
@@ -34,30 +41,36 @@ namespace FQ.GameplayElements
                 tag = "SnakeFood";
             }
         }
+        
+        /// <summary>
+        /// Collects the world information if in the scene.
+        /// </summary>
+        /// <returns>World Info or Null if not found. </returns>
+        private IWorldInfoFromTilemap GetWorldInfo()
+        {
+            GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
+            GameObject border = borders.FirstOrDefault(x => x.name == "Border");
+            if (border == null)
+            {
+                return null;
+            }
+
+            return border.GetComponent<WorldInfoInfoFromTilemap>();
+        }
 
         /// <summary>
         /// Moves to a random but also valid location for food.
         /// </summary>
         private void MoveToRandomValidLocation()
         {
-            Vector3Int origin = snakeArea.origin;
-            Vector3Int size = snakeArea.size;
-            while (true)
+            if (this.safeArea == null)
             {
-                int x = Random.Range(origin.x, origin.x + size.x);
-                int y = Random.Range(origin.y, origin.y + size.y);
-                transform.position = new Vector2(x, y);
-
-                if (snakeArea == null)
-                {
-                    break;
-                }
-
-                if (snakeArea.HasTile(new Vector3Int(x, y)))
-                {
-                    break;
-                }
+                return;
             }
+            
+            int max = this.safeArea.Length;
+            int i = Random.Range(0, max);
+            transform.position = this.safeArea[i];
         }
 
         protected override void BaseOnTriggerEnter2D(Collider2D other)
@@ -65,6 +78,25 @@ namespace FQ.GameplayElements
             if (other.CompareTag("Player"))
             {
                 areActive = false;
+            }
+        }
+        
+        /// <summary>
+        /// Grabs and sets up the safe area which is the area we can spawn.
+        /// </summary>
+        private void SetupAndAcquireSafeArea()
+        {
+            IWorldInfoFromTilemap worldInfo = GetWorldInfo();
+            if (worldInfo == null)
+            {
+                Debug.LogError($"{typeof(SnakeFood)}: World info null");
+                return;
+            }
+
+            this.safeArea = worldInfo.GetTravelableArea();
+            if (this.safeArea == null)
+            {
+                Debug.LogError($"{typeof(SnakeFood)}: safeArea null");
             }
         }
     }

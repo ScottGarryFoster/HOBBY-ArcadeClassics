@@ -1,18 +1,11 @@
+# Snake Prototype
 
-
-# Arcade Classics
 This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
 
-## Projects
-The planned projects under this repository are as follows:
-1. Snake Game (classic Arcade and Nokia game)
-2. Pac-man arcade game
-3. Space Invaders
+For this project it is a prototype of the classic game Snake popularised by Nokia.
 
 ## Progress
-1. Snake Game 50%
-2. Pac-man 0%
-3. Space Invades 0%
+Snake Game 50%
 
 ## Milestones / History
 This is a record of notable times in the project a snapshot was taken.
@@ -111,9 +104,11 @@ These tests were not without faults however and did require a lot of tweaking th
 When placing a border the looping code accompanies it (in theory a multi-Tilemap version could be created) and this is given to the Snake Behaviour. When moving around the world the Snake uses this to figure out if the location they are moving to is a border tile. The reason this happens as they move to this tile and not via the collision is the ordering in Unity, the ideal place for this is before any Snake Head movement and tail movement so that everything remains in line. Placing this code where it is means that the Snake is teleported to the other side of the loop and the tail code works without any further implementation. To ensure this code remains fast Dictionaries (n(0) lookup) which would not change after the initial scan.
 
 *Food spawning*
+
 Not mentioned here is the food spawning code. When the border is closed the food will still spawn randomly even where the border is or under the player. As a stop gap there was an additional piece of code added in which a layer is added to define 'within the border' for where the food should spawn. This is to be done programmatically in future and not to spawn on the player. The stop gap version may be seen in the 'Larger Game' image below.
 
 *Entrance and Exit toggle*
+
 Separate toggles were an after thought of the project. When using the tool it seemed clearer to visualize one set of the arrows and these were broken out into two sets of arrows. The Flags (bit) with Enums proved useful for this type of data.
 
 #### Results

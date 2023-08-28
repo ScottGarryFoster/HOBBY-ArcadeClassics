@@ -64,7 +64,10 @@ namespace FQ.GameplayElements
         /// </summary>
         private readonly IGameplayInputs gameplayInputs;
         
-        private readonly ILoopingWorldFromTilemap worldInfo;
+        /// <summary>
+        /// Provides information about the current map.
+        /// </summary>
+        private readonly IWorldInfoFromTilemap worldInfoInfo;
         
         /// <summary>
         /// Logic for an actor which moves.
@@ -116,7 +119,7 @@ namespace FQ.GameplayElements
             GameObject gameObject, 
             IObjectCreation objectCreation, 
             IGameplayInputs gameplayInputs,
-            ILoopingWorldFromTilemap worldInfo)
+            IWorldInfoFromTilemap worldInfoInfo)
         {
             this.parent = gameObject != null
                 ? gameObject
@@ -129,7 +132,7 @@ namespace FQ.GameplayElements
             this.gameplayInputs = gameplayInputs ?? throw new ArgumentNullException(
                 $"{typeof(SnakeBehaviour)}: {nameof(gameplayInputs)} must not be null.");
 
-            this.worldInfo = worldInfo;
+            this.worldInfoInfo = worldInfoInfo;
         }
         
         /// <summary>
@@ -358,7 +361,7 @@ namespace FQ.GameplayElements
         /// </summary>
         private void LoopAroundTheWorld()
         {
-            if (this.worldInfo == null)
+            if (this.worldInfoInfo == null)
             {
                 return;
             }
@@ -372,7 +375,7 @@ namespace FQ.GameplayElements
                 giveDirection = GetCounterDirection(giveDirection);
             }
 
-            CollisionPositionAnswer answer = this.worldInfo.GetLoop(location, giveDirection);
+            CollisionPositionAnswer answer = this.worldInfoInfo.GetLoop(location, giveDirection);
             if (answer.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
             {
                 this.parent.transform.position = new Vector3(answer.NewPosition.x, answer.NewPosition.y);

@@ -18,7 +18,7 @@ namespace FQ.GameplayElements.EditorTests
         private GameObject playerObject;
         private StubObjectCreation stubObjectCreation;
         private Mock<IGameplayInputs> mockGameplayInputs;
-        private Mock<ILoopingWorldFromTilemap> mockWorldInfo;
+        private Mock<IWorldInfoFromTilemap> mockWorldInfo;
 
         /// <summary>
         /// A tick amount to advance the update which will not advance the movement.
@@ -31,7 +31,7 @@ namespace FQ.GameplayElements.EditorTests
             this.playerObject = new GameObject();
             this.stubObjectCreation = new StubObjectCreation();
             this.mockGameplayInputs = new Mock<IGameplayInputs>();
-            this.mockWorldInfo = new Mock<ILoopingWorldFromTilemap>();
+            this.mockWorldInfo = new Mock<IWorldInfoFromTilemap>();
             var concreteSnakeBehaviour = new SnakeBehaviour(
                 this.playerObject,
                 this.stubObjectCreation,

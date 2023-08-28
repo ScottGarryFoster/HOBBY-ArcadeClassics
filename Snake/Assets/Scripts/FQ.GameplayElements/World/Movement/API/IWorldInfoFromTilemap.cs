@@ -3,9 +3,9 @@
 namespace FQ.GameplayElements
 {
     /// <summary>
-    /// Provides information about loops based on tilemaps in the world.
+    /// Provides information about the world based on tilemaps.
     /// </summary>
-    public interface ILoopingWorldFromTilemap
+    public interface IWorldInfoFromTilemap
     {
         /// <summary>
         /// Gets loop information based on the given input.
@@ -14,5 +14,11 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction the Snake is moving in. </param>
         /// <returns>Answer as to whether there are loops. </returns>
         CollisionPositionAnswer GetLoop(Vector2Int location, Direction direction);
+
+        /// <summary>
+        /// Get the area which provided the player was not there, would be travelable.
+        /// </summary>
+        /// <returns>All the tiles which would be travelable. </returns>
+        Vector3Int[] GetTravelableArea();
     }
 }

@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
-namespace FQ.GameplayElements.EditorTests
+namespace FQ.GameplayElements
 {
     /// <summary>
     /// Exists to remove the collider similar to actual food.
     /// </summary>
-    public class TestFood : GameElement
+    public class SnakeFood : GameElement
     {
         private bool areActive;
 

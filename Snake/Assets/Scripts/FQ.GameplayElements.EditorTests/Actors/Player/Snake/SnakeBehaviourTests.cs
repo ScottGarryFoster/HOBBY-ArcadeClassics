@@ -113,7 +113,7 @@ namespace FQ.GameplayElements.EditorTests
         {
             Vector3 currentPosition = CopyVector3(player.transform.position);
             var foodGo = CreateGameObject(position: new Vector3(0, currentPosition.y + 1, 0), tag: "SnakeFood");
-            foodGo.AddComponent<TestFood>();
+            foodGo.AddComponent<SnakeFood>();
             collider2D = CreateTriggerBoxCollider(foodGo);
 
             mockGI.Setup(x => x.KeyPressed(GameplayButton.DirectionUp))

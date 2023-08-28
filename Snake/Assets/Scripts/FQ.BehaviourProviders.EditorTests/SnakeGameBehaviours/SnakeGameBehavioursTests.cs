@@ -4,7 +4,7 @@ using UnityEngine;
 using FQ.BehaviourProviders;
 using FQ.GameObjectPromises;
 using FQ.GameplayElements;
-using FQ.GameplayElements.EditorTests;
+using FQ.GameplayElements;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -97,16 +97,16 @@ namespace FQ.BehaviourProviders.EditorTests
         {
             // Arrange
             var go = new GameObject();
-            var expected = go.AddComponent<TestFood>();
+            var expected = go.AddComponent<SnakeFood>();
             
-            int objectsBefore = Object.FindObjectsOfType<TestFood>().Length;
+            int objectsBefore = Object.FindObjectsOfType<SnakeFood>().Length;
             int expectedObjects = objectsBefore + 1;
 
             // Act
             IGameElement actual = this.testClass.CreateNewBehaviour(SnakeGameElements.Food);
 
             // Assert
-            int actualObjects = Object.FindObjectsOfType<TestFood>().Length;
+            int actualObjects = Object.FindObjectsOfType<SnakeFood>().Length;
             Assert.AreEqual(expected.GetType(), actual.GetType());
             Assert.AreEqual(expectedObjects, actualObjects);
 
@@ -119,15 +119,15 @@ namespace FQ.BehaviourProviders.EditorTests
         {
             // Arrange
             var go = new GameObject();
-            var expected = go.AddComponent<TestFood>();
+            var expected = go.AddComponent<SnakeFood>();
             
-            int expectedObjects = Object.FindObjectsOfType<TestFood>().Length;
+            int expectedObjects = Object.FindObjectsOfType<SnakeFood>().Length;
 
             // Act
             IGameElement actual = this.testClass.GetPrefab(SnakeGameElements.Food);
 
             // Assert
-            int actualObjects = Object.FindObjectsOfType<TestFood>().Length;
+            int actualObjects = Object.FindObjectsOfType<SnakeFood>().Length;
             Assert.AreEqual(expected.GetType(), actual.GetType());
             Assert.AreEqual(expectedObjects, actualObjects);
 

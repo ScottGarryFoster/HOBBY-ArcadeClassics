@@ -1,18 +1,11 @@
+# Snake Prototype
 
-
-# Arcade Classics
 This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
 
-## Projects
-The planned projects under this repository are as follows:
-1. Snake Game (classic Arcade and Nokia game)
-2. Pac-man arcade game
-3. Space Invaders
+For this project it is a prototype of the classic game Snake popularised by Nokia.
 
 ## Progress
-1. Snake Game 50%
-2. Pac-man 0%
-3. Space Invades 0%
+Snake Game 50%
 
 ## Milestones / History
 This is a record of notable times in the project a snapshot was taken.

@@ -120,5 +120,26 @@ Separate toggles were an after thought of the project. When using the tool it se
 |--|
 |![Visualisers](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/006-FurtherVisualiser.gif?raw=true)
 
+### Food Spawning
+A task which needs to be address now a border is in place is the food spawning in the correct location. Agile and prototyping in general tends to trend toward the concept of postponing decisions until the decisions are required. There are reasons to bring decisions forward or not but the general idea is that if one makes a decision or write a system to early issues would arise between when the need arise for the system which it is likely not to solve. In the case of food spawning I have implemented a stop gap to test the border code in that you could force the area for Food and therefore force Food only to spawn within the border. This is fine but the decision and system to make this automatic is now because now we have a border and all the other systems to make this automatic. Below were the goals for this system:
+
+1. Food should spawn where ever the player can reach
+2. Food should not spawn on the player or tail
+
+#### Step 1. Where does the Player Spawn?
+The first thought I had was to use a flood fill algorithm from where the Player spawns however in the current system the player spawns where ever the Prefab spawns. The designer currently does not choose where the Player spawns by default. Therefore the first point of call was to add a Tagged object 'Player' then to make it so that in the Session Controller this is where the player spawns.
+
+|Player Placeholder|In Game|
+|--|--|
+| ![Add the Player Placeholder to spawn the player](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/007-PlayerPlaceholder.png?raw=true)| ![Gameplay of the Player Marker](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/007-PlayerPlaceholderGameplay.gif?raw=true)|
+
+#### Step 2. Figure out where the Player can go
+For this the first idea I had was the flood fill algorithm. From the player position I should look for free tiles in all four direction (North, East, South, West), add them to a list if free then explore from the queue and add more tiles from the queue. There would also need to be a maximum size for the world and a method to understand where the border is. This task is embeded into the Food at launch to gather the area the food may spawn (before a player/tail check). The image below shows the Flood Fill quite well.
+
+|Flood Fill|
+|--|
+| ![Span fill Flood Fill](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/AddedImages/007-FloodFillAddedImage.gif?raw=true)|
+|[Comparing Flood Fill Algorithms in JavaScript by lukegarrigan](https://codeheir.com/2022/08/21/comparing-flood-fill-algorithms-in-javascript/)| 
+
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

@@ -121,6 +121,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private bool didTriggerStart;
 
+        /// <summary>
+        /// The position the player spawned at and should return to on death.
+        /// </summary>
+        private Vector3 spawnPosition;
+
         public SnakeBehaviour(
             GameObject gameObject, 
             IObjectCreation objectCreation, 
@@ -146,7 +151,9 @@ namespace FQ.GameplayElements
         /// </summary>
         public void Start()
         {
+            this.spawnPosition = this.parent.transform.position;
             ResetElement += OnResetElement;
+            
             this.currentDirection = Direction.Down;
             this.receivedInput = false;
 
@@ -230,7 +237,7 @@ namespace FQ.GameplayElements
         /// </summary>
         private void OnResetElement()
         {
-            this.parent.transform.position = new Vector3();
+            this.parent.transform.position = this.spawnPosition;
             foreach (SnakeTail snakeTailPiece in this.SnakeTailPieces)
             {
                 snakeTailPiece.gameObject.SetActive(false);

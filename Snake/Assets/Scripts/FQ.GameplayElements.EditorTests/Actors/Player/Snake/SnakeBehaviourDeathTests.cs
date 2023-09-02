@@ -92,6 +92,32 @@ namespace FQ.GameplayElements.EditorTests
         }
         
         [Test]
+        public void ResetElement_ReturnsToTheLocationAfterStart_WhenInvokedAfterMovementAndStartIsNotDefaultTest()
+        {
+            // Arrange
+            Vector3 givenPosition = new Vector3(4, 3, 2);
+            this.playerObject.transform.position = givenPosition;
+            Vector3 expectedLocation = CopyVector3(givenPosition);
+            
+            this.snakeBehaviour.Start();
+
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
+            RunMovementUpdateCycle();
+            RunMovementUpdateCycle();
+            
+            Vector3 newLocation = CopyVector3(this.playerObject.transform.position);
+            Assert.AreNotEqual(expectedLocation, newLocation, "Player did not move");
+
+            // Act 
+            this.snakeBehaviour.ResetElement?.Invoke();
+            Vector3 actual = CopyVector3(this.playerObject.transform.position);
+
+            // Assert
+            Assert.AreEqual(expectedLocation, actual, "Player did not return");
+        }
+        
+        [Test]
         public void ResetElement_ReducesTheTailSizeToDefault_WhenInvokedAfterGrowingTest()
         {
             // Arrange

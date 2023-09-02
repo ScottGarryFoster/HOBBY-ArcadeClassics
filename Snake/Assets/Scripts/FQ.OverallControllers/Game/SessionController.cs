@@ -60,6 +60,8 @@ namespace FQ.OverallControllers
         private void OnStartTrigger()
         {
             var go = this.objectCreation.Instantiate(this.snakeFoodPrefab);
+            this.snakeFoodPrefab.StartTrigger?.Invoke();
+            
             this.objectsCreatedDuringTheScene.Add(go.GetComponent<GameElement>());
         }
         

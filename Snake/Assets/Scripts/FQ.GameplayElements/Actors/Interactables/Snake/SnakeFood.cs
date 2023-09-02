@@ -36,6 +36,7 @@ namespace FQ.GameplayElements
 
             SetupAndAcquireSafeArea();
             AcquirePlayerStatus();
+            MoveToRandomValidLocation();
         }
 
         protected override void BaseFixedUpdate()

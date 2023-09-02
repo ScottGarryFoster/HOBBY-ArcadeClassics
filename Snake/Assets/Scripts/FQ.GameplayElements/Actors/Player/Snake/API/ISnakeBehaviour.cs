@@ -1,5 +1,6 @@
 ﻿using System;
 using FQ.GameObjectPromises;
+using UnityEngine;
 
 namespace FQ.GameplayElements
 {
@@ -27,5 +28,10 @@ namespace FQ.GameplayElements
         /// Called when the element should reset it's state to the start of the session.
         /// </summary>
         public Action ResetElement { get; set; }
+        
+        /// <summary>
+        /// Update where the player is considered to be.
+        /// </summary>
+        public Action<Vector2Int[]> UpdatePlayerLocation { get; set; }
     }
 }

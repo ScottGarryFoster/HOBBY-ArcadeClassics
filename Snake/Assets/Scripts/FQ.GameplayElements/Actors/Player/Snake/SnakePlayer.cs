@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FQ.GameElementCommunication;
 using FQ.GameplayInputs;
 using FQ.GameObjectPromises;
 using UnityEngine;
@@ -52,10 +53,12 @@ namespace FQ.GameplayElements
                     MovementSpeed = this.MovementSpeed,
                     snakeTailPrefab = this.snakeTailPrefab,
                 };
-            
+
+            HookupStatusToCommunication(this.snakeBehaviour);
             this.snakeBehaviour.StartTrigger += StartTrigger;
             this.snakeBehaviour.EndTrigger += EndTrigger;
             ResetElement += () => { this.snakeBehaviour.ResetElement?.Invoke(); };
+            DestroyGameElement += OnDestroyGameElement;
             
             this.snakeBehaviour.Start();
         }
@@ -73,6 +76,14 @@ namespace FQ.GameplayElements
         }
         
         /// <summary>
+        /// Called when game element is to be destroyed
+        /// </summary>
+        private void OnDestroyGameElement()
+        {
+            this.snakeBehaviour.UpdatePlayerLocation = null;
+        }
+        
+        /// <summary>
         /// Collects the world information if in the scene.
         /// </summary>
         /// <returns>World Info or Null if not found. </returns>
@@ -86,6 +97,30 @@ namespace FQ.GameplayElements
             }
 
             return border.GetComponent<WorldInfoInfoFromTilemap>();
+        }
+        
+        /// <summary>
+        /// Hooks up the ability for the player to broadcast it's status.
+        /// </summary>
+        /// <param name="behaviour">The behaviour to be broadcasting. </param>
+        private void HookupStatusToCommunication(ISnakeBehaviour behaviour)
+        {
+            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+            if (controller == null)
+            {
+                Debug.LogError($"{typeof(SnakePlayer)}: No Object with GameController. Cannot update player status.");
+                return;
+            }
+
+            ElementCommunication communication = controller.GetComponent<ElementCommunication>();
+            if (communication == null)
+            {
+                Debug.LogError($"{typeof(SnakePlayer)}: No {nameof(ElementCommunication)}. Cannot update player status.");
+                return;
+            }
+
+            PlayerStatus playerStatus = communication.PlayerStatus;
+            behaviour.UpdatePlayerLocation += playerStatus.UpdateLocation;
         }
     }
 }

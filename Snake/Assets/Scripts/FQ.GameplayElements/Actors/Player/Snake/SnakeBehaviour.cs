@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace FQ.GameplayElements
     /// <summary>
     /// The player behaviour behind the Snake Player
     /// </summary>
-    public class SnakeBehaviour : ISnakeBehaviour
+    public class SnakeBehaviour : ISnakeBehaviour, IPlayerStatusBroadcaster
     {
         /// <summary>
         /// How big the given tail may get. This does not include the head.
@@ -42,6 +43,11 @@ namespace FQ.GameplayElements
         /// How fast the actor moves each time the actor moves.
         /// </summary>
         public float MovementSpeed { get; set; }
+        
+        /// <summary>
+        /// Update where the player is considered to be.
+        /// </summary>
+        public Action<Vector2Int[]> UpdatePlayerLocation { get; set; }
         
         /// <summary>
         /// Prefab for the Snake's body.
@@ -115,6 +121,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private bool didTriggerStart;
 
+        /// <summary>
+        /// The position the player spawned at and should return to on death.
+        /// </summary>
+        private Vector3 spawnPosition;
+
         public SnakeBehaviour(
             GameObject gameObject, 
             IObjectCreation objectCreation, 
@@ -140,7 +151,9 @@ namespace FQ.GameplayElements
         /// </summary>
         public void Start()
         {
+            this.spawnPosition = this.parent.transform.position;
             ResetElement += OnResetElement;
+            
             this.currentDirection = Direction.Down;
             this.receivedInput = false;
 
@@ -179,6 +192,7 @@ namespace FQ.GameplayElements
                     this.currentDirection = this.nextDirection;
                     
                     LoopAroundTheWorld();
+                    CommunicateCurrentPosition();
                 }
             }
         }
@@ -223,7 +237,7 @@ namespace FQ.GameplayElements
         /// </summary>
         private void OnResetElement()
         {
-            this.parent.transform.position = new Vector3();
+            this.parent.transform.position = this.spawnPosition;
             foreach (SnakeTail snakeTailPiece in this.SnakeTailPieces)
             {
                 snakeTailPiece.gameObject.SetActive(false);
@@ -380,6 +394,31 @@ namespace FQ.GameplayElements
             {
                 this.parent.transform.position = new Vector3(answer.NewPosition.x, answer.NewPosition.y);
             }
+        }
+        
+        /// <summary>
+        /// Communicates the current position of the player and tail pieces.
+        /// </summary>
+        private void CommunicateCurrentPosition()
+        {
+            List<Vector2Int> playerPosition = new();
+            playerPosition.Add(GetTilePosition(this.parent.transform.position));
+            foreach (var tailPiece in SnakeTailPieces.Where(x => x.isActiveAndEnabled))
+            {
+                playerPosition.Add(GetTilePosition(tailPiece.transform.position));
+            }
+            
+            UpdatePlayerLocation?.Invoke(playerPosition.ToArray());
+        }
+
+        /// <summary>
+        /// Returns the tile position from the transform exact position.
+        /// </summary>
+        /// <param name="transformPosition">A transform float based Vector position. </param>
+        /// <returns>The location as a tile location. </returns>
+        private Vector2Int GetTilePosition(Vector3 transformPosition)
+        {
+            return new Vector2Int((int) transformPosition.x, (int) transformPosition.y);
         }
     }
 }

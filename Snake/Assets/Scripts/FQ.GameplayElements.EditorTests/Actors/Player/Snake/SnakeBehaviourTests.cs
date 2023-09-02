@@ -28,7 +28,7 @@ namespace FQ.GameplayElements.EditorTests
                 this.playerObject, 
                 this.stubObjectCreation, 
                 this.mockGameplayInputs.Object,
-                null);
+                worldInfoInfo: null);
             
             SnakeTail snakeTailPrefab = Resources.Load<SnakeTail>("Actors/Snake/SnakeTail");
             concreteSnakeBehaviour.snakeTailPrefab = snakeTailPrefab;

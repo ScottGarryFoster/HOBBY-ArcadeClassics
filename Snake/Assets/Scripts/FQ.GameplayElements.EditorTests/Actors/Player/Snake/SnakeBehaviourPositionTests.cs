@@ -34,7 +34,7 @@ namespace FQ.GameplayElements.EditorTests
                 this.playerObject,
                 this.stubObjectCreation,
                 this.mockGameplayInputs.Object,
-                null)
+                worldInfoInfo: null)
             {
                 MovementSpeed = 1
             };

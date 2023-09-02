@@ -13,6 +13,11 @@ namespace FQ.GameElementCommunication
         /// </summary>
         public Vector2Int[] PlayerLocation { get; private set; }
 
+        public PlayerStatus()
+        {
+            PlayerLocation = Array.Empty<Vector2Int>();
+        }
+        
         /// <summary>
         /// Provide a new location. This is every location considered "player".
         /// </summary>
@@ -22,7 +27,13 @@ namespace FQ.GameElementCommunication
         /// </exception>
         public void UpdateLocation(Vector2Int[] location)
         {
-            Debug.Log($"{typeof(PlayerStatus)}");
+            if (location == null)
+            {
+                throw new ArgumentNullException(
+                    $"{typeof(PlayerStatus)}: {nameof(location)} must not be null.");
+            }
+            
+            PlayerLocation = location;
         }
     }
 }

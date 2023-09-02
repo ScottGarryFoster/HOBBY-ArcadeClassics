@@ -141,5 +141,49 @@ For this the first idea I had was the flood fill algorithm. From the player posi
 | ![Span fill Flood Fill](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/AddedImages/007-FloodFillAddedImage.gif?raw=true)|
 |[Comparing Flood Fill Algorithms in JavaScript by lukegarrigan](https://codeheir.com/2022/08/21/comparing-flood-fill-algorithms-in-javascript/)| 
 
+#### The problem with Flood Fill
+The Flood Fill worked well and used the area of the border tile map to limit the area to search for the area the player can move. This does mean that technically speaking the player can move is larger than where the food can spawn **if the border is open and the player leaves the area**. You cannot see where this is however and there is technically a way to fix this by either offering a leeway to the search given by a number (so the area would be tilemap + some number) but you cannot see it. Therefore the way to combat this first is a new visual, to visually see where the food is spawning then we can address this leeway.
+
+[#24 Add a way to see where the Food Spawns](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/issues/24) | [#25 # Address Areas Player could move in but Food cannot spawn](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/issues/25)
+
+#### Food not spawning on Player
+Communication between game objects is increasingly becoming a thing within this project, for instance the border projects World Info and the Food grabs this using Unity Tags. Now the Player also communicates with a new project for communication and via an Action will just update it's location along with tail pieces. The Food piece will use this to not spawn on the player. The only way this is kept separated is via Unity Tags and Get operations which is not ideal in the grand scheme of things. Ideally the creator would set all this up and link everything together because when I do things like the below code what it feels like is a singleton or like a static. Functionally the reasons why we dislike singleton's and statics is because it is difficult to figure out who or what is interacting with it, essentially this is the same situation. I've placed the 'get information' and 'update information' behind two different interfaces and I did consider making an observer pattern here but it seemed like the wrong shape and if it did fit like overkill. I might go back to observers when this arises outside of prototyping.
+
+```csharp
+private void HookupStatusToCommunication(ISnakeBehaviour behaviour)  
+{  
+    GameObject controller = GameObject.FindGameObjectWithTag("GameController");  
+    if (controller == null)  
+    {  
+        Debug.LogError($"{typeof(SnakePlayer)}: No Object with GameController. Cannot update player status.");  
+        return;  
+    }  
+      
+    ElementCommunication communication = controller.GetComponent<ElementCommunication>();  
+    if (communication == null)  
+    {  
+        Debug.LogError($"{typeof(SnakePlayer)}: No {nameof(ElementCommunication)}. Cannot update player status.");  
+        return;  
+    }  
+      
+    PlayerStatus playerStatus = communication.PlayerStatus;  
+    behaviour.UpdatePlayerLocation += playerStatus.UpdateLocation;  
+}
+```
+*This feels like a singleton / static?*
+
+#### Current Results and Reflection
+
+The current results are good and promising, Food does not spawn on top of the player nor border and it is automatic. The Snake Prototype at this stage is at it's most playable and in theory without the other tasks this task brought up I could move on continue.
+
+There are some points which are going to need to be addressed which are likely to not go into a task for instance the food is yet to receive full tests, this should occur with a refactor as some core reasons are the reasoning for this. For instance random numbers, gathering game objects means these need to be Unity Tests not editor tests. These will be addressed and will need to be addressed before this project is 'complete'.
+
+In general though this section of project has shown the holes in my session controller implementation in that it does not fully setup the game objects, the game objects do. In making that decision I caused the singleton like behaviour of using `GameObject` tags to find things. This could have been avoided with a back channel, with `GameElement` having a reference to `Controller` then gaining access to other elements potentially even the border. Probably when doing this 'for real' in the next project I will do this and figure out a way I like for doing this.
+
+It's an alright implementation and I like how separated the `GameElements` are however I can see how in a larger project this may become unmanageable.
+
+![Gameplay without the Food spawning on Player](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/007-FoodNotSpawningOnPlayerOrBorder.gif?raw=true)
+
+
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

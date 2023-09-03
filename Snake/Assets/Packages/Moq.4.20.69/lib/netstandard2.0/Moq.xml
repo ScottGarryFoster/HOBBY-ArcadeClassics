@@ -4510,6 +4510,36 @@
             </code>
             </example>
         </member>
+        <member name="M:Moq.Language.IVerifies.Verifiable(Moq.Times)">
+            <summary>
+            Marks the setup as verifiable and specifies the number of expected calls.
+            <see cref="M:Moq.Mock.Verify"/> and <see cref="M:Moq.Mock.VerifyAll"/> will later verify
+            that the setup was called the correct number of times.
+            </summary>
+        </member>
+        <member name="M:Moq.Language.IVerifies.Verifiable(System.Func{Moq.Times})">
+            <summary>
+            Marks the setup as verifiable and specifies the number of expected calls.
+            <see cref="M:Moq.Mock.Verify"/> and <see cref="M:Moq.Mock.VerifyAll"/> will later verify
+            that the setup was called the correct number of times.
+            </summary>
+        </member>
+        <member name="M:Moq.Language.IVerifies.Verifiable(Moq.Times,System.String)">
+            <summary>
+            Marks the setup as verifiable and specifies the number of expected calls
+            and a message for failures.
+            <see cref="M:Moq.Mock.Verify"/> and <see cref="M:Moq.Mock.VerifyAll"/> will later verify
+            that the setup was called the correct number of times.
+            </summary>
+        </member>
+        <member name="M:Moq.Language.IVerifies.Verifiable(System.Func{Moq.Times},System.String)">
+            <summary>
+            Marks the setup as verifiable and specifies the number of expected calls
+            and a message for failures.
+            <see cref="M:Moq.Mock.Verify"/> and <see cref="M:Moq.Mock.VerifyAll"/> will later verify
+            that the setup was called the correct number of times.
+            </summary>
+        </member>
         <member name="T:Moq.Language.IOccurrence">
             <summary>
             Defines occurrence members to constraint setups.
@@ -5100,14 +5130,9 @@
             </para>
             </remarks>
         </member>
-        <member name="M:Moq.MockException.MoreThanOneCall(Moq.MethodCall,System.Int32)">
+        <member name="M:Moq.MockException.IncorrectNumberOfCalls(Moq.MethodCall,Moq.Times,System.Int32)">
             <summary>
-              Returns the exception to be thrown when a setup limited by <see cref="M:Moq.Language.IOccurrence.AtMostOnce"/> is matched more often than once.
-            </summary>
-        </member>
-        <member name="M:Moq.MockException.MoreThanNCalls(Moq.MethodCall,System.Int32,System.Int32)">
-            <summary>
-              Returns the exception to be thrown when a setup limited by <see cref="M:Moq.Language.IOccurrence.AtMost(System.Int32)"/> is matched more often than the specified maximum number of times.
+              Returns the exception to be thrown when a setup has been invoked an incorrect (unexpected) number of times.
             </summary>
         </member>
         <member name="M:Moq.MockException.NoMatchingCalls(Moq.Mock,System.Linq.Expressions.LambdaExpression,System.String,Moq.Times,System.Int32)">
@@ -6119,6 +6144,30 @@
               <code>
                 var mock = new Mock&lt;IViewModel&gt;();
                 mock.Raise(x => x.MyEvent -= null, "Name", bool, 25);
+              </code>
+            </example>
+        </member>
+        <member name="M:Moq.Mock`1.RaiseAsync(System.Action{`0},System.Object[])">
+            <summary>
+              Raises the event referenced in <paramref name="eventExpression"/> using the given arguments
+              for an event with a <c>Func&lt;..., Task&gt;</c> or <c>Func&lt;..., ValueTask&gt;</c> signature.
+              The returned <see cref="T:System.Threading.Tasks.Task"/> completes when all of the <see cref="T:System.Threading.Tasks.Task"/>s / <see cref="T:System.Threading.Tasks.ValueTask"/>s
+              returned by the event handlers have completed.
+            </summary>
+            <exception cref="T:System.ArgumentException">
+              The <paramref name="args"/> arguments are invalid for the target event invocation,
+              or the <paramref name="eventExpression"/> is not an event attach or detach expression.
+            </exception>
+            <example>
+              The following example shows how to raise an event with async event handlers:
+              <code>
+                interface IViewModel
+                {
+                    event Func&lt;InitializationData, Task&gt; Initialized;
+                }
+                var mock = new Mock&lt;IViewModel&gt;();
+                mock.Object.Initialized += async initializationData => ...;
+                await mock.RaiseAsync(x => x.Initialized += null, new InitializationData { ... });
               </code>
             </example>
         </member>
@@ -7827,6 +7876,14 @@
             </summary>
             <typeparam name="TMock">Mocked type.</typeparam>
             <param name="mock">Returns verb which represents the mocked type and the task return type</param>
+            <param name="exception">Exception instance to throw.</param>
+        </member>
+        <member name="M:Moq.ReturnsExtensions.ThrowsAsync``1(Moq.Language.IReturns{``0,System.Threading.Tasks.ValueTask},System.Exception)">
+            <summary>
+            Specifies the exception to throw when the asynchronous method is invoked.
+            </summary>
+            <typeparam name="TMock">Mocked type.</typeparam>
+            <param name="mock">Returns verb which represents the mocked type and the valuetask return type</param>
             <param name="exception">Exception instance to throw.</param>
         </member>
         <member name="M:Moq.ReturnsExtensions.ThrowsAsync``2(Moq.Language.IReturns{``0,System.Threading.Tasks.Task{``1}},System.Exception)">

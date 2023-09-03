@@ -34,9 +34,9 @@ namespace FQ.GameplayElements
         {
             this.areActive = true;
 
-            SetupAndAcquireSafeArea();
-            AcquirePlayerStatus();
-            MoveToRandomValidLocation();
+            //SetupAndAcquireSafeArea();
+            //AcquirePlayerStatus();
+            //MoveToRandomValidLocation();
         }
 
         protected override void BaseFixedUpdate()
@@ -46,7 +46,7 @@ namespace FQ.GameplayElements
                 MoveToRandomValidLocation();
 
                 this.areActive = true;
-                tag = "SnakeFood";
+                //tag = "SnakeFood";
             }
         }
         
@@ -64,14 +64,15 @@ namespace FQ.GameplayElements
         /// <returns>World Info or Null if not found. </returns>
         private IWorldInfoFromTilemap GetWorldInfo()
         {
-            GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
-            GameObject border = borders.FirstOrDefault(x => x.name == "Border");
-            if (border == null)
-            {
-                return null;
-            }
-
-            return border.GetComponent<WorldInfoInfoFromTilemap>();
+            throw new NotImplementedException();
+            // GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
+            // GameObject border = borders.FirstOrDefault(x => x.name == "Border");
+            // if (border == null)
+            // {
+            //     return null;
+            // }
+            //
+            // return border.GetComponent<WorldInfoInfoFromTilemap>();
         }
         
         /// <summary>
@@ -80,25 +81,26 @@ namespace FQ.GameplayElements
         /// </summary>
         private void AcquirePlayerStatus()
         {
-            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
-            if (controller == null)
-            {
-                Debug.LogError($"{typeof(PlayerStatus)}: " +
-                               $"No Object with GameController. " +
-                               $"Cannot stop food spawning on player.");
-                return;
-            }
-
-            ElementCommunication communication = controller.GetComponent<ElementCommunication>();
-            if (communication == null)
-            {
-                Debug.LogError($"{typeof(PlayerStatus)}: " +
-                               $"No {nameof(ElementCommunication)}. " +
-                               $"Cannot stop food spawning on player.");
-                return;
-            }
-
-            this.playerStatus = communication.PlayerStatus;
+            throw new NotImplementedException();
+            // GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+            // if (controller == null)
+            // {
+            //     Debug.LogError($"{typeof(PlayerStatus)}: " +
+            //                    $"No Object with GameController. " +
+            //                    $"Cannot stop food spawning on player.");
+            //     return;
+            // }
+            //
+            // ElementCommunication communication = controller.GetComponent<ElementCommunication>();
+            // if (communication == null)
+            // {
+            //     Debug.LogError($"{typeof(PlayerStatus)}: " +
+            //                    $"No {nameof(ElementCommunication)}. " +
+            //                    $"Cannot stop food spawning on player.");
+            //     return;
+            // }
+            //
+            // this.playerStatus = communication.PlayerStatus;
         }
 
         /// <summary>
@@ -106,22 +108,24 @@ namespace FQ.GameplayElements
         /// </summary>
         private void MoveToRandomValidLocation()
         {
-            if (this.safeArea == null)
-            {
-                return;
-            }
-
-            while (true)
-            {
-                int max = this.safeArea.Length;
-                int i = Random.Range(0, max);
-                transform.position = this.safeArea[i];
-
-                if (!CurrentPositionIsWherePlayerIs())
-                {
-                    break;
-                }
-            }
+            Vector3 position = gameObject.transform.position;
+            gameObject.transform.position = new Vector3(position.x + 1, position.y);
+            // if (this.safeArea == null)
+            // {
+            //     return;
+            // }
+            //
+            // while (true)
+            // {
+            //     int max = this.safeArea.Length;
+            //     int i = Random.Range(0, max);
+            //     transform.position = this.safeArea[i];
+            //
+            //     if (!CurrentPositionIsWherePlayerIs())
+            //     {
+            //         break;
+            //     }
+            // }
 
         }
 
@@ -132,15 +136,16 @@ namespace FQ.GameplayElements
         /// <returns>True means the current location is where the player is. </returns>
         private bool CurrentPositionIsWherePlayerIs()
         {
-            if (this.playerStatus == null)
-            {
-                return false;
-            }
-
-            Vector3 position = transform.position;
-            Vector2Int tile = new Vector2Int((int)position.x, (int)position.y);
-
-            return this.playerStatus.PlayerLocation.Any(x => x == tile);
+            throw new NotImplementedException();
+            // if (this.playerStatus == null)
+            // {
+            //     return false;
+            // }
+            //
+            // Vector3 position = transform.position;
+            // Vector2Int tile = new Vector2Int((int)position.x, (int)position.y);
+            //
+            // return this.playerStatus.PlayerLocation.Any(x => x == tile);
         }
 
         /// <summary>
@@ -148,18 +153,19 @@ namespace FQ.GameplayElements
         /// </summary>
         private void SetupAndAcquireSafeArea()
         {
-            IWorldInfoFromTilemap worldInfo = GetWorldInfo();
-            if (worldInfo == null)
-            {
-                Debug.LogError($"{typeof(SnakeFood)}: World info null");
-                return;
-            }
-
-            this.safeArea = worldInfo.GetTravelableArea();
-            if (this.safeArea == null)
-            {
-                Debug.LogError($"{typeof(SnakeFood)}: safeArea null");
-            }
+            throw new NotImplementedException();
+            // IWorldInfoFromTilemap worldInfo = GetWorldInfo();
+            // if (worldInfo == null)
+            // {
+            //     Debug.LogError($"{typeof(SnakeFood)}: World info null");
+            //     return;
+            // }
+            //
+            // this.safeArea = worldInfo.GetTravelableArea();
+            // if (this.safeArea == null)
+            // {
+            //     Debug.LogError($"{typeof(SnakeFood)}: safeArea null");
+            // }
         }
     }
 }

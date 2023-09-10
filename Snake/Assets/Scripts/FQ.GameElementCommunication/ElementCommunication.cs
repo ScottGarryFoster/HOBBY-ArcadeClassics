@@ -5,7 +5,7 @@ namespace FQ.GameElementCommunication
     /// <summary>
     /// Connects elements to broad information they might want.
     /// </summary>
-    public class ElementCommunication : MonoBehaviour
+    public class ElementCommunication : MonoBehaviour, IElementCommunication
     {
         /// <summary>
         /// Basics about the Player.

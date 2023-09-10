@@ -8,7 +8,8 @@
         "FQ.Libraries.MonoSingleton",
         "FQ.Libraries.Exceptions",
         "FQ.TilemapTools",
-        "FQ.GameElementCommunication"
+        "FQ.GameElementCommunication",
+        "FQ.Libraries.Randomness"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

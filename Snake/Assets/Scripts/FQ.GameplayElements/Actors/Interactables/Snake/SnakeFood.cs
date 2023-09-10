@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using FQ.GameElementCommunication;
 using FQ.GameObjectPromises;
+using FQ.Libraries.Randomness;
 using Mono.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -15,6 +16,24 @@ namespace FQ.GameplayElements
     /// </summary>
     public class SnakeFood : GameElement
     {
+        /// <summary>
+        /// Random number generator.
+        /// </summary>
+        /// <remarks>Internal only for testing purposes. </remarks>
+        internal IRandom randomGenerator;
+
+        /// <summary>
+        /// Finds World Info in the Scene.
+        /// </summary>
+        /// <remarks>Internal only for testing purposes. </remarks>
+        internal IWorldInfoFromTilemapFinder worldInfoFromTilemapFinder;
+
+        /// <summary>
+        /// Attempts to find ElementCommunication in the Scene
+        /// </summary>
+        /// <remarks>Internal only for testing purposes. </remarks>
+        internal IElementCommunicationFinder elementCommunicationFinder;
+        
         /// <summary>
         /// True means active.
         /// </summary>
@@ -46,7 +65,7 @@ namespace FQ.GameplayElements
                 MoveToRandomValidLocation();
 
                 this.areActive = true;
-                //tag = "SnakeFood";
+                tag = "SnakeFood";
             }
         }
         

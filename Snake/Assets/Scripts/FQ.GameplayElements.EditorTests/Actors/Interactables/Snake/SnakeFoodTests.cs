@@ -5,6 +5,11 @@ namespace FQ.GameplayElements.EditorTests
 {
     public class SnakeFoodTests
     {
+        private const string NotValidPlayerTag = "SnakeFood";
+        private const string ValidPlayerTag = "Player";
+        private const string SnakeFoodTag = "SnakeFood";
+        private const string NotSnakeFoodTag = "Untagged";
+        
         private GameObject gameObject;
         private TestSnakeFood testClass;
         
@@ -46,7 +51,7 @@ namespace FQ.GameplayElements.EditorTests
 
             // Simulate player colliding
             GameObject player = new("Player");
-            player.tag = "Player";
+            player.tag = ValidPlayerTag;
             Collider2D collider = player.AddComponent<BoxCollider2D>();
             this.testClass.PublicOnTriggerEnter2D(collider);
 
@@ -66,7 +71,7 @@ namespace FQ.GameplayElements.EditorTests
 
             // Simulate player colliding
             GameObject player = new("Player");
-            player.tag = "Player";
+            player.tag = ValidPlayerTag;
             Collider2D collider = player.AddComponent<BoxCollider2D>();
             this.testClass.PublicOnTriggerEnter2D(collider);
             
@@ -80,6 +85,49 @@ namespace FQ.GameplayElements.EditorTests
             // Assert
             Vector3 actual = this.testClass.gameObject.transform.position;
             Assert.AreEqual(expectedPosition, actual);
+        }
+        
+        [Test]
+        public void BaseFixedUpdateToMovePlayer_DoesNotMoveFood_WhenOnTriggerEnter2DIsCalledWithoutPlayerTest()
+        {
+            // Arrange
+            this.testClass.PublicStart();
+            Vector3 expectedPosition = CopyVector(this.testClass.gameObject.transform.position);
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = NotValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expectedPosition, actual);
+        }
+        
+        [Test]
+        public void BaseFixedUpdateToMovePlayer_SetsTagToSnakeFood_WhenBaseFixedUpdateToMovePlayerIsCalledAfterCollisionWithPlayerTest()
+        {
+            // Arrange
+            string expectedTag = SnakeFoodTag;
+            this.testClass.gameObject.tag = NotSnakeFoodTag;
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expectedTag, this.testClass.gameObject.tag);
         }
 
         private Vector3 CopyVector(Vector3 transformPosition)
@@ -107,5 +155,7 @@ namespace FQ.GameplayElements.EditorTests
                 BaseOnTriggerEnter2D(other);
             }
         }
+        
+        
     }
 }

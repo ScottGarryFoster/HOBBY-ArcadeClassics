@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using FQ.GameElementCommunication;
+using FQ.Libraries.Randomness;
+using Moq;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace FQ.GameplayElements.EditorTests
@@ -12,6 +15,10 @@ namespace FQ.GameplayElements.EditorTests
         
         private GameObject gameObject;
         private TestSnakeFood testClass;
+        private Mock<IRandom> mockRandomNumbers;
+        private Mock<IWorldInfoFromTilemapFinder> mockWorldInfoFromTilemapFinder;
+        private Mock<IWorldInfoFromTilemap> mockWorldInfoFromTilemap;
+        private Mock<IElementCommunicationFinder> mockElementCommunicationFinder;
         
         [SetUp]
         public void Setup()
@@ -19,6 +26,19 @@ namespace FQ.GameplayElements.EditorTests
             this.gameObject = new GameObject();
             this.testClass = this.gameObject.AddComponent<TestSnakeFood>();
 
+            this.mockRandomNumbers = new Mock<IRandom>();
+            this.mockWorldInfoFromTilemapFinder = new Mock<IWorldInfoFromTilemapFinder>();
+            this.mockWorldInfoFromTilemap = new Mock<IWorldInfoFromTilemap>();
+            this.mockWorldInfoFromTilemapFinder.Setup(x => x.FindWorldInfo()).Returns(mockWorldInfoFromTilemap.Object);
+            this.mockElementCommunicationFinder = new Mock<IElementCommunicationFinder>();
+            
+            this.testClass.SetRandomGenerator(this.mockRandomNumbers.Object);
+            this.testClass.SetWorldInfoFromTilemapFinder(this.mockWorldInfoFromTilemapFinder.Object);
+            this.testClass.SetElementCommunicationFinder(this.mockElementCommunicationFinder.Object);
+            
+            Vector3Int[] area = new[] {new Vector3Int(0, 1)};
+            this.mockRandomNumbers.Setup(x => x.Range(0, 1)).Returns(0);
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
         }
 
         [TearDown]
@@ -129,6 +149,32 @@ namespace FQ.GameplayElements.EditorTests
             Vector3 actual = this.testClass.gameObject.transform.position;
             Assert.AreEqual(expectedTag, this.testClass.gameObject.tag);
         }
+        
+        [Test]
+        public void BaseFixedUpdateToMovePlayer_MovesToRandomLocationInSafeArea_WhenCollidedWithPlayerTest()
+        {
+            // Arrange
+            Vector3Int expected = new Vector3Int(5, 6);
+            Vector3Int[] area = new[] {new Vector3Int(1, 2), expected, new Vector3Int(3, 4)};
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            this.mockRandomNumbers.Setup(x => x.Range(0, area.Length)).Returns(1);
+            
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expected.x, (int)actual.x);
+            Assert.AreEqual(expected.y, (int)actual.y);
+        }
 
         private Vector3 CopyVector(Vector3 transformPosition)
         {
@@ -153,6 +199,21 @@ namespace FQ.GameplayElements.EditorTests
             public void PublicOnTriggerEnter2D(Collider2D other)
             {
                 BaseOnTriggerEnter2D(other);
+            }
+
+            public void SetRandomGenerator(IRandom newValue)
+            {
+                this.randomGenerator = newValue;
+            }
+
+            public void SetWorldInfoFromTilemapFinder(IWorldInfoFromTilemapFinder newValue)
+            {
+                this.worldInfoFromTilemapFinder = newValue;
+            }
+
+            public void SetElementCommunicationFinder(IElementCommunicationFinder newValue)
+            {
+                this.elementCommunicationFinder = newValue;
             }
         }
         

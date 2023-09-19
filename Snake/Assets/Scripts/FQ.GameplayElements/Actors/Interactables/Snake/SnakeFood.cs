@@ -20,19 +20,19 @@ namespace FQ.GameplayElements
         /// Random number generator.
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        internal IRandom randomGenerator;
+        protected IRandom randomGenerator;
 
         /// <summary>
         /// Finds World Info in the Scene.
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        internal IWorldInfoFromTilemapFinder worldInfoFromTilemapFinder;
+        protected IWorldInfoFromTilemapFinder worldInfoFromTilemapFinder;
 
         /// <summary>
         /// Attempts to find ElementCommunication in the Scene
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        internal IElementCommunicationFinder elementCommunicationFinder;
+        protected IElementCommunicationFinder elementCommunicationFinder;
         
         /// <summary>
         /// True means active.
@@ -53,7 +53,7 @@ namespace FQ.GameplayElements
         {
             this.areActive = true;
 
-            //SetupAndAcquireSafeArea();
+            SetupAndAcquireSafeArea();
             //AcquirePlayerStatus();
             //MoveToRandomValidLocation();
         }
@@ -78,30 +78,12 @@ namespace FQ.GameplayElements
         }
         
         /// <summary>
-        /// Collects the world information if in the scene.
-        /// </summary>
-        /// <returns>World Info or Null if not found. </returns>
-        private IWorldInfoFromTilemap GetWorldInfo()
-        {
-            throw new NotImplementedException();
-            // GameObject[] borders = GameObject.FindGameObjectsWithTag("SnakeBorder");
-            // GameObject border = borders.FirstOrDefault(x => x.name == "Border");
-            // if (border == null)
-            // {
-            //     return null;
-            // }
-            //
-            // return border.GetComponent<WorldInfoInfoFromTilemap>();
-        }
-        
-        /// <summary>
         /// Links up the Food to the current player status such as location.
         /// This allows the food not to spawn where the player is.
         /// </summary>
         private void AcquirePlayerStatus()
         {
-            throw new NotImplementedException();
-            // GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
             // if (controller == null)
             // {
             //     Debug.LogError($"{typeof(PlayerStatus)}: " +
@@ -110,7 +92,7 @@ namespace FQ.GameplayElements
             //     return;
             // }
             //
-            // ElementCommunication communication = controller.GetComponent<ElementCommunication>();
+            ElementCommunication communication = controller.GetComponent<ElementCommunication>();
             // if (communication == null)
             // {
             //     Debug.LogError($"{typeof(PlayerStatus)}: " +
@@ -119,7 +101,7 @@ namespace FQ.GameplayElements
             //     return;
             // }
             //
-            // this.playerStatus = communication.PlayerStatus;
+            this.playerStatus = communication.PlayerStatus;
         }
 
         /// <summary>
@@ -127,24 +109,24 @@ namespace FQ.GameplayElements
         /// </summary>
         private void MoveToRandomValidLocation()
         {
-            Vector3 position = gameObject.transform.position;
-            gameObject.transform.position = new Vector3(position.x + 1, position.y);
+            //Vector3 position = gameObject.transform.position;
+            //gameObject.transform.position = new Vector3(position.x + 1, position.y);
             // if (this.safeArea == null)
             // {
             //     return;
             // }
             //
-            // while (true)
-            // {
-            //     int max = this.safeArea.Length;
-            //     int i = Random.Range(0, max);
-            //     transform.position = this.safeArea[i];
-            //
-            //     if (!CurrentPositionIsWherePlayerIs())
-            //     {
-            //         break;
-            //     }
-            // }
+            while (true)
+            {
+                int max = this.safeArea.Length;
+                int i = this.randomGenerator.Range(0, max);
+                transform.position = this.safeArea[i];
+            
+                if (!CurrentPositionIsWherePlayerIs())
+                {
+                    break;
+                }
+            }
 
         }
 
@@ -155,7 +137,7 @@ namespace FQ.GameplayElements
         /// <returns>True means the current location is where the player is. </returns>
         private bool CurrentPositionIsWherePlayerIs()
         {
-            throw new NotImplementedException();
+            return false;
             // if (this.playerStatus == null)
             // {
             //     return false;
@@ -172,15 +154,14 @@ namespace FQ.GameplayElements
         /// </summary>
         private void SetupAndAcquireSafeArea()
         {
-            throw new NotImplementedException();
-            // IWorldInfoFromTilemap worldInfo = GetWorldInfo();
+            IWorldInfoFromTilemap worldInfo = this.worldInfoFromTilemapFinder.FindWorldInfo();
             // if (worldInfo == null)
             // {
             //     Debug.LogError($"{typeof(SnakeFood)}: World info null");
             //     return;
             // }
-            //
-            // this.safeArea = worldInfo.GetTravelableArea();
+            
+            this.safeArea = worldInfo.GetTravelableArea();
             // if (this.safeArea == null)
             // {
             //     Debug.LogError($"{typeof(SnakeFood)}: safeArea null");

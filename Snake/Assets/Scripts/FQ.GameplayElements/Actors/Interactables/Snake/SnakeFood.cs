@@ -109,13 +109,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private void MoveToRandomValidLocation()
         {
-            //Vector3 position = gameObject.transform.position;
-            //gameObject.transform.position = new Vector3(position.x + 1, position.y);
-            // if (this.safeArea == null)
-            // {
-            //     return;
-            // }
-            //
+            if (!SafeAreaIsValid())
+            {
+                return;
+            }
+
             while (true)
             {
                 int max = this.safeArea.Length;
@@ -128,6 +126,23 @@ namespace FQ.GameplayElements
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Determines if Safe Area is valid to use.
+        /// </summary>
+        /// <returns>True means valid and it can be used.</returns>
+        private bool SafeAreaIsValid()
+        {
+            bool isNull = this.safeArea == null;
+            
+            bool isEmpty = false;
+            if (!isNull)
+            {
+                isEmpty = !this.safeArea.Any();
+            }
+            
+            return !isNull && !isEmpty;
         }
 
         /// <summary>
@@ -154,18 +169,28 @@ namespace FQ.GameplayElements
         /// </summary>
         private void SetupAndAcquireSafeArea()
         {
+            EnsureWorldInfoFromTilemapFinderIsNotNull();
+            
             IWorldInfoFromTilemap worldInfo = this.worldInfoFromTilemapFinder.FindWorldInfo();
-            // if (worldInfo == null)
-            // {
-            //     Debug.LogError($"{typeof(SnakeFood)}: World info null");
-            //     return;
-            // }
+            if (worldInfo == null)
+            {
+                Debug.LogWarning($"{typeof(SnakeFood)}: World info null");
+                return;
+            }
             
             this.safeArea = worldInfo.GetTravelableArea();
-            // if (this.safeArea == null)
-            // {
-            //     Debug.LogError($"{typeof(SnakeFood)}: safeArea null");
-            // }
+            if (this.safeArea == null)
+            {
+                Debug.LogWarning($"{typeof(SnakeFood)}: safeArea null. Will not move Food.");
+            }
+        }
+
+        private void EnsureWorldInfoFromTilemapFinderIsNotNull()
+        {
+            if (this.worldInfoFromTilemapFinder == null)
+            {
+                this.worldInfoFromTilemapFinder = new SnakeWorldInfoFromTilemapFinder();
+            }
         }
     }
 }

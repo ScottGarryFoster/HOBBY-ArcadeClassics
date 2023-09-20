@@ -1,8 +1,10 @@
-﻿using FQ.GameElementCommunication;
+﻿using System.Collections.Generic;
+using FQ.GameElementCommunication;
 using FQ.Libraries.Randomness;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace FQ.GameplayElements.EditorTests
 {
@@ -45,6 +47,61 @@ namespace FQ.GameplayElements.EditorTests
         public void Teardown()
         {
             
+        }
+        
+        [Test, Timeout(1000)]
+        public void PublicUpdate_HandlesUpdate_WhenWorldInfoFromTilemapFinderIsNullTest()
+        {
+            // Arrange
+            this.testClass.SetWorldInfoFromTilemapFinder(null);
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+        }
+        
+        [Test, Timeout(1000)]
+        public void PublicUpdate_HandlesUpdate_WhenNoTravelableAreaFoundTest()
+        {
+            // Arrange
+            Vector3Int[] given = null;
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(given);
+            
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+        }
+        
+        [Test, Timeout(1000)]
+        public void PublicUpdate_HandlesUpdate_WhenNoWorldInfoIsFoundTest()
+        {
+            // Arrange
+            IWorldInfoFromTilemap given = null;
+            this.mockWorldInfoFromTilemapFinder.Setup(x => x.FindWorldInfo()).Returns(given);
+            
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
         }
 
         [Test]
@@ -174,6 +231,56 @@ namespace FQ.GameplayElements.EditorTests
             Vector3 actual = this.testClass.gameObject.transform.position;
             Assert.AreEqual(expected.x, (int)actual.x);
             Assert.AreEqual(expected.y, (int)actual.y);
+        }
+        
+        [Test]
+        public void BaseFixedUpdateToMovePlayer_DoesMoveFood_WhenNoSafeAreaFoundTest()
+        {
+            // Arrange
+            Vector3Int[] area = null;
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            
+            Vector3 expectedPosition = CopyVector(this.testClass.gameObject.transform.position);
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expectedPosition.x, actual.x);
+            Assert.AreEqual(expectedPosition.y, actual.y);
+        }
+        
+        [Test, Timeout(1000)]
+        public void BaseFixedUpdateToMovePlayer_DoesMoveFood_WhenSafeAreaHasNoEntriesTest()
+        {
+            // Arrange
+            Vector3Int[] area = new List<Vector3Int>().ToArray();
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            
+            Vector3 expectedPosition = CopyVector(this.testClass.gameObject.transform.position);
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expectedPosition.x, actual.x);
+            Assert.AreEqual(expectedPosition.y, actual.y);
         }
 
         private Vector3 CopyVector(Vector3 transformPosition)

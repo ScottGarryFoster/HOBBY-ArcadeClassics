@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FQ.Libraries;
+using FQ.Logger;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -21,7 +22,14 @@ namespace FQ.GameplayElements.EditorTests
         [SetUp]
         public void Setup()
         {
+            Log.TestMode();
             this.testClass = new LoopedWorldDiscoveredByTile();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            Log.ResetTestMode();
         }
         
         #region CalculateLoops

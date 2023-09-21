@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FQ.GameElementCommunication;
 using FQ.Libraries.Randomness;
+using FQ.Logger;
+using FQ.OverallControllers;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
@@ -21,6 +24,8 @@ namespace FQ.GameplayElements.EditorTests
         private Mock<IWorldInfoFromTilemapFinder> mockWorldInfoFromTilemapFinder;
         private Mock<IWorldInfoFromTilemap> mockWorldInfoFromTilemap;
         private Mock<IElementCommunicationFinder> mockElementCommunicationFinder;
+        private Mock<IElementCommunication> mockElementCommunication;
+        private Mock<IPlayerStatus> mockPlayerStatus;
         
         [SetUp]
         public void Setup()
@@ -41,12 +46,23 @@ namespace FQ.GameplayElements.EditorTests
             Vector3Int[] area = new[] {new Vector3Int(0, 1)};
             this.mockRandomNumbers.Setup(x => x.Range(0, 1)).Returns(0);
             this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+
+            this.mockElementCommunication = new Mock<IElementCommunication>();
+            this.mockElementCommunicationFinder.Setup(x => x.FindElementCommunication())
+                .Returns(mockElementCommunication.Object);
+
+            this.mockPlayerStatus = new Mock<IPlayerStatus>();
+            this.mockElementCommunication.Setup(x => x.PlayerStatus).Returns(this.mockPlayerStatus.Object);
+
+            var locationNotIntersecting = Array.Empty<Vector2Int>();
+            this.mockPlayerStatus.Setup(x => x.PlayerLocation).Returns(locationNotIntersecting);
+            
+            Log.TestMode();
         }
 
         [TearDown]
         public void Teardown()
         {
-            
         }
         
         [Test, Timeout(1000)]
@@ -94,6 +110,25 @@ namespace FQ.GameplayElements.EditorTests
             
             this.testClass.PublicStart();
 
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+        }
+        
+        [Test, Timeout(1000)]
+        public void BaseFixedUpdateToMovePlayer_HandlesUpdate_WhenElementCommunicationFinderIsNotFoundTest()
+        {
+            // Arrange
+            IElementCommunicationFinder given = null;
+            this.testClass.SetElementCommunicationFinder(given);
+
+            this.testClass.PublicStart();
+            
             // Simulate player colliding
             GameObject player = new("Player");
             player.tag = ValidPlayerTag;
@@ -282,6 +317,60 @@ namespace FQ.GameplayElements.EditorTests
             Assert.AreEqual(expectedPosition.x, actual.x);
             Assert.AreEqual(expectedPosition.y, actual.y);
         }
+        
+        [Test, Timeout(1000)]
+        public void BaseFixedUpdateToMovePlayer_UsesSecondRandomLocation_WhenFirstLocationIsWherePlayerIsTest()
+        {
+            // Arrange
+            Vector3Int expected = new Vector3Int(3, 4);
+            Vector3Int positionOne = new Vector3Int(7, 9);
+            Vector3Int[] area = new[] {new Vector3Int(1, 2), positionOne, expected};
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+
+            int[] given = {1, 2};
+            int current = 0;
+            this.mockRandomNumbers.Setup(x => x.Range(0, area.Length))
+                .Returns<int, int>((minInclusive, maxExclusive) => given[current++]);
+            
+            this.testClass.PublicStart();
+            
+            // Put player in the location:
+            Vector2Int[] playerLocation = new[] {new Vector2Int(positionOne.x, positionOne.y)};
+            this.mockPlayerStatus.Setup(x => x.PlayerLocation).Returns(playerLocation);
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Vector3 actual = this.testClass.gameObject.transform.position;
+            Assert.AreEqual(expected.x, actual.x);
+            Assert.AreEqual(expected.y, actual.y);
+        }
+        
+        [Test, Timeout(1000)]
+        public void BaseFixedUpdateToMovePlayer_HandlesNull_WhenElementCommunicationIsNullTest()
+        {
+            // Arrange
+            IElementCommunication given = null;
+            this.mockElementCommunicationFinder.Setup(x => x.FindElementCommunication()).Returns(given);
+
+            this.testClass.PublicStart();
+            
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+        }
 
         private Vector3 CopyVector(Vector3 transformPosition)
         {
@@ -310,20 +399,18 @@ namespace FQ.GameplayElements.EditorTests
 
             public void SetRandomGenerator(IRandom newValue)
             {
-                this.randomGenerator = newValue;
+                this.RandomGenerator = newValue;
             }
 
             public void SetWorldInfoFromTilemapFinder(IWorldInfoFromTilemapFinder newValue)
             {
-                this.worldInfoFromTilemapFinder = newValue;
+                this.WorldInfoFromTilemapFinder = newValue;
             }
 
             public void SetElementCommunicationFinder(IElementCommunicationFinder newValue)
             {
-                this.elementCommunicationFinder = newValue;
+                this.ElementCommunicationFinder = newValue;
             }
         }
-        
-        
     }
 }

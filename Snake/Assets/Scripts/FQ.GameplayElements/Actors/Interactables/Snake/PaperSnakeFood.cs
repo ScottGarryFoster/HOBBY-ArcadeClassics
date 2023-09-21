@@ -29,7 +29,7 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Basics about the Player this session.
         /// </summary>
-        private IPlayerStatus playerStatus;
+        private IPlayerStatusBasics playerStatusBasics;
         
         protected override void BaseStart()
         {
@@ -100,7 +100,7 @@ namespace FQ.GameplayElements
                 return;
             }
 
-            this.playerStatus = communication.PlayerStatus;
+            this.playerStatusBasics = communication.PlayerStatus;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace FQ.GameplayElements
         /// <returns>True means the current location is where the player is. </returns>
         private bool CurrentPositionIsWherePlayerIs()
         {
-            if (this.playerStatus == null)
+            if (this.playerStatusBasics == null)
             {
                 return false;
             }
@@ -142,7 +142,7 @@ namespace FQ.GameplayElements
             Vector3 position = transform.position;
             Vector2Int tile = new Vector2Int((int)position.x, (int)position.y);
 
-            return this.playerStatus.PlayerLocation.Any(x => x == tile);
+            return this.playerStatusBasics.PlayerLocation.Any(x => x == tile);
         }
 
         /// <summary>

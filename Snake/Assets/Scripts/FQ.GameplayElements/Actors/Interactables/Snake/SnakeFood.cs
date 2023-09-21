@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using FQ.GameElementCommunication;
 using FQ.GameObjectPromises;
 using FQ.Libraries.Randomness;
-using Mono.Collections.Generic;
+using FQ.Logger;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using Random = UnityEngine.Random;
 
 namespace FQ.GameplayElements
 {
@@ -20,19 +16,19 @@ namespace FQ.GameplayElements
         /// Random number generator.
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        protected IRandom randomGenerator;
+        protected IRandom RandomGenerator;
 
         /// <summary>
         /// Finds World Info in the Scene.
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        protected IWorldInfoFromTilemapFinder worldInfoFromTilemapFinder;
+        protected IWorldInfoFromTilemapFinder WorldInfoFromTilemapFinder;
 
         /// <summary>
         /// Attempts to find ElementCommunication in the Scene
         /// </summary>
         /// <remarks>Internal only for testing purposes. </remarks>
-        protected IElementCommunicationFinder elementCommunicationFinder;
+        protected IElementCommunicationFinder ElementCommunicationFinder;
         
         /// <summary>
         /// True means active.
@@ -47,14 +43,14 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Basics about the Player this session.
         /// </summary>
-        private IPlayerStatus playerStatus;
+        private IPlayerStatusBasics playerStatus;
         
         protected override void BaseStart()
         {
             this.areActive = true;
 
             SetupAndAcquireSafeArea();
-            //AcquirePlayerStatus();
+            AcquirePlayerStatus();
             //MoveToRandomValidLocation();
         }
 
@@ -83,25 +79,44 @@ namespace FQ.GameplayElements
         /// </summary>
         private void AcquirePlayerStatus()
         {
-            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
-            // if (controller == null)
-            // {
-            //     Debug.LogError($"{typeof(PlayerStatus)}: " +
-            //                    $"No Object with GameController. " +
-            //                    $"Cannot stop food spawning on player.");
-            //     return;
-            // }
-            //
-            ElementCommunication communication = controller.GetComponent<ElementCommunication>();
-            // if (communication == null)
-            // {
-            //     Debug.LogError($"{typeof(PlayerStatus)}: " +
-            //                    $"No {nameof(ElementCommunication)}. " +
-            //                    $"Cannot stop food spawning on player.");
-            //     return;
-            // }
-            //
+            IElementCommunication communication = null;
+            if (this.ElementCommunicationFinder == null)
+            {
+                communication = TryToFindElementCommunication();
+            }
+            else
+            { 
+                communication = this.ElementCommunicationFinder.FindElementCommunication();
+                
+            }
+            
+            if (communication == null)
+            {
+                Log.Error($"{typeof(PlayerStatus)}: " +
+                          $"No {nameof(ElementCommunication)}. " +
+                          $"Cannot stop food spawning on player.");
+                return;
+            }
+
             this.playerStatus = communication.PlayerStatus;
+        }
+        
+        /// <summary>
+        /// Will attempt to find <see cref="IElementCommunication"/> in the scene.
+        /// </summary>
+        /// <returns><see cref="IElementCommunication"/> if any is in the scene. </returns>
+        private IElementCommunication TryToFindElementCommunication()
+        {
+            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
+             if (controller == null)
+             {
+                 Log.Error($"{typeof(PlayerStatus)}: " +
+                             $"No Object with GameController. " +
+                             $"Cannot stop food spawning on player.");
+                 return null;
+             }
+            
+            return controller.GetComponent<ElementCommunication>();
         }
 
         /// <summary>
@@ -117,7 +132,7 @@ namespace FQ.GameplayElements
             while (true)
             {
                 int max = this.safeArea.Length;
-                int i = this.randomGenerator.Range(0, max);
+                int i = this.RandomGenerator.Range(0, max);
                 transform.position = this.safeArea[i];
             
                 if (!CurrentPositionIsWherePlayerIs())
@@ -152,16 +167,15 @@ namespace FQ.GameplayElements
         /// <returns>True means the current location is where the player is. </returns>
         private bool CurrentPositionIsWherePlayerIs()
         {
-            return false;
-            // if (this.playerStatus == null)
-            // {
-            //     return false;
-            // }
-            //
-            // Vector3 position = transform.position;
-            // Vector2Int tile = new Vector2Int((int)position.x, (int)position.y);
-            //
-            // return this.playerStatus.PlayerLocation.Any(x => x == tile);
+            if (this.playerStatus == null)
+            {
+                return false;
+            }
+            
+            Vector3 position = transform.position;
+            Vector2Int tile = new Vector2Int((int)position.x, (int)position.y);
+            
+            return this.playerStatus.PlayerLocation.Any(x => x == tile);
         }
 
         /// <summary>
@@ -171,7 +185,7 @@ namespace FQ.GameplayElements
         {
             EnsureWorldInfoFromTilemapFinderIsNotNull();
             
-            IWorldInfoFromTilemap worldInfo = this.worldInfoFromTilemapFinder.FindWorldInfo();
+            IWorldInfoFromTilemap worldInfo = this.WorldInfoFromTilemapFinder.FindWorldInfo();
             if (worldInfo == null)
             {
                 Debug.LogWarning($"{typeof(SnakeFood)}: World info null");
@@ -185,12 +199,12 @@ namespace FQ.GameplayElements
             }
         }
 
+        /// <summary>
+        /// Ensures the <see cref="WorldInfoFromTilemapFinder"/> is never <c>null</c> by using a default if <c>null</c>.
+        /// </summary>
         private void EnsureWorldInfoFromTilemapFinderIsNotNull()
         {
-            if (this.worldInfoFromTilemapFinder == null)
-            {
-                this.worldInfoFromTilemapFinder = new SnakeWorldInfoFromTilemapFinder();
-            }
+            this.WorldInfoFromTilemapFinder ??= new SnakeWorldInfoFromTilemapFinder();
         }
     }
 }

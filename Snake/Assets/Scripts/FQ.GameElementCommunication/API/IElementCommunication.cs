@@ -6,8 +6,8 @@
     public interface IElementCommunication
     {
         /// <summary>
-        /// Basics about the Player.
+        /// Basics about the Player and the ability to control that data.
         /// </summary>
-        PlayerStatus PlayerStatus { get; }
+        IPlayerStatus PlayerStatus { get; }
     }
 }

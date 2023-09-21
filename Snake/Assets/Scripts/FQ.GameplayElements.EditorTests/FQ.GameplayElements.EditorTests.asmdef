@@ -9,7 +9,9 @@
         "FQ.GameplayInputs",
         "FQ.Libraries.Exceptions",
         "FQ.Libraries.Randomness",
-        "FQ.GameElementCommunication"
+        "FQ.GameElementCommunication",
+        "FQ.Log",
+        "FQ.OverallControllers"
     ],
     "includePlatforms": [
         "Editor"

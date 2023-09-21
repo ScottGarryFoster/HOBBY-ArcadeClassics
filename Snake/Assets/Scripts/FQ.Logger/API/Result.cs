@@ -1,7 +1,7 @@
-﻿namespace FQ.Log
+﻿namespace FQ.Logger
 {
     /// <summary>
-    /// Result of a Logger.
+    /// Result of a Log.
     /// </summary>
     public enum Result
     {

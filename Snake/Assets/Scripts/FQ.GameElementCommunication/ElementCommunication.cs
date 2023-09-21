@@ -10,7 +10,10 @@ namespace FQ.GameElementCommunication
         /// <summary>
         /// Basics about the Player.
         /// </summary>
-        public PlayerStatus PlayerStatus => playerStatus ??= new PlayerStatus();
+        public IPlayerStatus PlayerStatus
+        {
+            get { return playerStatus ??= new PlayerStatus(); }
+        }
 
         /// <summary>
         /// Stores the player status when created.

@@ -6,7 +6,7 @@ namespace FQ.GameElementCommunication
     /// <summary>
     /// Basics about the Player.
     /// </summary>
-    public class PlayerStatus : IPlayerStatus, IPlayerBroadcaster
+    public class PlayerStatus : IPlayerStatus
     {
         /// <summary>
         /// Every tile which is counted as 'player'.

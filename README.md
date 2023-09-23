@@ -1,6 +1,6 @@
 # Snake Prototype
 
-This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
+This project is an attempt to prototype programming in Unity by creating simple arcade games. This project is a playground to test out methods and disciplines such as Test Driven Development, Clean Code and Architecture in preparation for larger projects.
 
 For this project it is a prototype of the classic game Snake popularised by Nokia.
 

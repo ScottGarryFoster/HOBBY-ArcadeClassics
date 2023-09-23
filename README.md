@@ -184,6 +184,78 @@ It's an alright implementation and I like how separated the `GameElements` are h
 
 ![Gameplay without the Food spawning on Player](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/007-FoodNotSpawningOnPlayerOrBorder.gif?raw=true)
 
+### Snake Food Test Driven
+As mentioned in the previous entry, Snake Food was not written test driven. This was partially on purpose to help demonstrate what occurs when one needs to return to a class and add tests in a test driven way. This was the process and the only method I have found to do this.
+
+1. Keep a record of the class before you added tests
+2. Destroy the original
+3. Remake all the original behaviour by bringing back the behaviour but with tests
+4. Add any mocks / external interfaces as you would have when creating it when returning behaviour.
+
+PaperSnakeFood was created as a version of the Food untouched. If I were working in Perforce this could have gone into a shelf however Github is not particularly elegant with shelves so for this attempt I just wanted a location to refer to "as it was" behaviour if needed. This kept the risk low. Paper in this context refers to a term I've heard and rather like, Paper Programming, the idea that you might try an idea 'on paper' and then throw it away. PaperSnakeFood is destined for the bin.
+
+In the main SnakeFood I commented out every part of each method. The ones which returned something I returned the default or threw not implemented. Then inspected the elements I might need to create (skipped to 4) as I knew there were going to be two or three things to recreate before I even start to unpack this.
+
+My second commit in this branch was simply creating, ElementCommunicationFinder, WorldInfoFromTilemapFinder and a Random library. The first two standardised how objects in this prototype figure out where communication between elements live (and how to gain access to these), the second how they might figure out information about the world map. The last is simply an interface for random numbers which allows me to control the units behind randomness.
+
+Then I injected all these in using protected variables (rather than internals as protected is a little more secure in this context). Brought online the behaviour at first for the Update behaviour, turning on the null checks, the movements and understanding the order operations take place to ensure the tests work.
+
+The final thing I added after all the behaviour was confirmed was ensuring that the Randomness actually worked with real randomness. The term *integration test* is not one I use any more because it appears the borders between integration and unit are not useful however for this final test the real randomness (not mocked) was used. Where implementations are unlikely to actively change and the integration between systems should remain secure (you would like a promise between two implementations) it is generally a good idea to add an actual test to secure the behaviour. Unit tests which are all mocks, are useful but only when combined with implementation system/collection based tests.
+#### Unexpected addition
+During this I found that the logger threw Errors and in NUnit / Unity test framework any Errors are 'Unhandled'. I could not figure out with non-Unity tests (using [Test] not using [UnityTest]) how to expect Errors in Logs. The errors in logs are occasionally completely expected so I revisited an old idea - custom logging.
+
+I abandoned it because using a MonoSingleton the implementation looked like this:
+```csharp
+Log.Logger.Instance.Error("")
+```
+Which is quite frankly not a pretty sight. I decided to revisit the Log class I wrote. Renamed the Project to Logger, the class to Log, made it not Static, made all the Methods static and now you use it:
+```csharp
+Log.Error("")
+
+// Log class
+public class Log : MonoBehaviour
+{
+    public static void Error(string message)
+    {
+        Debug.Error(message);
+    }
+}
+```
+This appears to not throw errors in the Unity Logger (it throw errors due to using Debug in a non Unity object) and shortened the Log command. It also means I can add a silencer to logs:
+```csharp
+// Log class
+public class Log : MonoBehaviour
+{
+    private static bool testMode = false;
+    internal static void TestMode()
+    {
+        testMode = true;
+    }
+
+    public static void Error(string message)
+    {
+        if (testMode)
+        {
+            Debug.LogWarning($"{message}");
+        }
+        else
+        {
+            Debug.LogError($"{message}");
+        }
+    }
+}
+
+```
+In the Setup for tests I do not care about errors from logs I can add Test mode for and allow it to throw the error.
+
+This is important for these three reasons:
+1. Logging should generally not be included in tests as the stakes of logging are internal behaviour. You are testing the internals and the 'how' when testing logging which is leads to an over coupling of behaviour of tests to implementation.
+2. The behaviour the errors logs create should be tested - **not the logs!** If you are throwing an error, this means behaviour changed, this should be what it is tested, not the fact it logged an error. This is because in a production environment the log is unlikely to be paid attention to and the log is passive, the behaviour is active.
+3. When creating this shift in behaviour, this 'Error' state, you might want to let the user know with an error log. Altering a test to make it pass with a Warning means you are making something less severe due to unit tests. There are reasons to change implementation for unit tests, this is not a compelling one.
+#### Conclusion
+Going into this proof I had some assumptions having done this in the past via Legacy code. Generally these assumptions were proven true. Adding tests after the fact is, tedious and simply not fun. It is useful though because now when adding new features I can secure the existing functionality.
+
+Second a lot of the techniques used here were learned not just from my time in industry but the book [Working Effectively With Legacy Code By Michael Feathers](https://amzn.eu/d/8SP19dB). My full thoughts may be found on my site [here](https://scottgarryfoster.com/further.html).
 
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

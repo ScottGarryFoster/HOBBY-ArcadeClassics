@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FQ.Libraries.StandardTypes;
+using UnityEngine;
 
 namespace FQ.GameElementCommunication
 {
@@ -11,5 +12,10 @@ namespace FQ.GameElementCommunication
         /// Every tile which is counted as 'player'
         /// </summary>
         Vector2Int[] PlayerLocation { get; }
+        
+        /// <summary>
+        /// Last known player direction.
+        /// </summary>
+        MovementDirection PlayerDirection { get; }
     }
 }

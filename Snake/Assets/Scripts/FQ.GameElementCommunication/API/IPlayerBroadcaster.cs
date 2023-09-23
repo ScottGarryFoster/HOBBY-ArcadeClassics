@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FQ.Libraries.StandardTypes;
+using UnityEngine;
 
 namespace FQ.GameElementCommunication
 {
@@ -15,5 +16,11 @@ namespace FQ.GameElementCommunication
         /// location is null.
         /// </exception>
         void UpdateLocation(Vector2Int[] location);
+        
+        /// <summary>
+        /// Provide a new direction for the player head.
+        /// </summary>
+        /// <param name="direction">An updated <see cref="MovementDirection"/>. </param>
+        void UpdatePlayerHeadDirection(MovementDirection direction);
     }
 }

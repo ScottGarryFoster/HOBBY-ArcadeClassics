@@ -121,6 +121,7 @@ namespace FQ.GameplayElements
 
             IPlayerStatus playerStatus = communication.PlayerStatus;
             behaviour.UpdatePlayerLocation += playerStatus.UpdateLocation;
+            behaviour.UpdatePlayerDirection += playerStatus.UpdatePlayerHeadDirection;
         }
     }
 }

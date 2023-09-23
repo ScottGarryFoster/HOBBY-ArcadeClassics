@@ -1,4 +1,5 @@
-﻿using FQ.Libraries.StandardTypes;
+﻿using System;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 
 namespace FQ.GameElementCommunication

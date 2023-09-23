@@ -10,6 +10,11 @@ namespace FQ.GameElementCommunication
     public class PlayerStatus : IPlayerStatus
     {
         /// <summary>
+        /// Called whenever the player details are updated.
+        /// </summary>
+        public event EventHandler PlayerDetailsUpdated;
+        
+        /// <summary>
         /// Every tile which is counted as 'player'.
         /// </summary>
         public Vector2Int[] PlayerLocation { get; private set; }
@@ -40,6 +45,7 @@ namespace FQ.GameElementCommunication
             }
             
             PlayerLocation = location;
+            PlayerDetailsUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -49,6 +55,7 @@ namespace FQ.GameElementCommunication
         public void UpdatePlayerHeadDirection(MovementDirection direction)
         {
             PlayerDirection = direction;
+            PlayerDetailsUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -48,6 +48,23 @@ namespace FQ.GameElementCommunication.EditorTests
         }
         
         [Test]
+        public void UpdateLocation_CausesPlayerDetailsUpdatedToCallTest()
+        {
+            // Arrange
+            bool didCall = false;
+            this.testClass.PlayerDetailsUpdated += (sender, args) =>
+            {
+                didCall = true;
+            };
+
+            // Act
+            this.testClass.UpdateLocation(Array.Empty<Vector2Int>());
+            
+            // Assert
+            Assert.IsTrue(didCall);
+        }
+        
+        [Test]
         public void UpdateLocation_ThrowsArgumentNullException_WhenNullIsGivenTest()
         {
             // Arrange
@@ -67,7 +84,25 @@ namespace FQ.GameElementCommunication.EditorTests
             // Assert
             Assert.IsTrue(didThrow);
         }
-        
+ 
+    
+        [Test]
+        public void PlayerDirection_CausesPlayerDetailsUpdatedToBeCalledTest()
+        {
+            // Arrange
+            bool didCall = false;
+            this.testClass.PlayerDetailsUpdated += (sender, args) =>
+            {
+                didCall = true;
+            };
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(MovementDirection.Right);
+                
+            // Assert
+            Assert.IsTrue(didCall);
+        }
+    
         [Test]
         public void PlayerDirection_EqualsLeft_WhenLeftGivenTest()
         {

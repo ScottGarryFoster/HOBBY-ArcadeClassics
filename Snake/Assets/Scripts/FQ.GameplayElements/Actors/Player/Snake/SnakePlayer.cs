@@ -105,17 +105,11 @@ namespace FQ.GameplayElements
         /// <param name="behaviour">The behaviour to be broadcasting. </param>
         private void HookupStatusToCommunication(ISnakeBehaviour behaviour)
         {
-            GameObject controller = GameObject.FindGameObjectWithTag("GameController");
-            if (controller == null)
-            {
-                Debug.LogError($"{typeof(SnakePlayer)}: No Object with GameController. Cannot update player status.");
-                return;
-            }
-
-            ElementCommunication communication = controller.GetComponent<ElementCommunication>();
+            IElementCommunicationFinder elementCommunicationFinder = new ElementCommunicationFinder();
+            IElementCommunication communication = elementCommunicationFinder.FindElementCommunication();
             if (communication == null)
             {
-                Debug.LogError($"{typeof(SnakePlayer)}: No {nameof(ElementCommunication)}. Cannot update player status.");
+                Debug.LogError($"{typeof(SnakePlayer)}: No {nameof(IElementCommunication)}. Cannot update player status.");
                 return;
             }
 

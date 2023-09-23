@@ -1,4 +1,5 @@
 ﻿using System;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 
 namespace FQ.GameplayElements
@@ -47,7 +48,7 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <param name="currentDirection">Current direction to move the actor. </param>
         /// <exception cref="Exception">Throws if Setup not called successfully first. </exception>
-        public void MoveActor(Direction currentDirection)
+        public void MoveActor(MovementDirection currentDirection)
         {
             if (!haveSetup)
             {
@@ -57,16 +58,16 @@ namespace FQ.GameplayElements
             Vector3 position = this.actorTransform.position;
             switch (currentDirection)
             {
-                case Direction.Down:
+                case MovementDirection.Down:
                     position.y -= movementUnit;
                     break;
-                case Direction.Up:
+                case MovementDirection.Up:
                     position.y += movementUnit;
                     break;
-                case Direction.Left:
+                case MovementDirection.Left:
                     position.x -= movementUnit;
                     break;
-                case Direction.Right:
+                case MovementDirection.Right:
                     position.x += movementUnit;
                     break;
             }

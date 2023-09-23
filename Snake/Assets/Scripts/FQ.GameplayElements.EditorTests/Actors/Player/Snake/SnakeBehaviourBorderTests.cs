@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
@@ -71,10 +72,10 @@ namespace FQ.GameplayElements.EditorTests
             CollisionPositionAnswer answer = new()
             {
                 Answer = given,
-                NewDirection = Direction.Right,
+                NewDirection = MovementDirection.Right,
                 NewPosition = incorrect
             };
-            this.mockWorldInfo.Setup(x => x.GetLoop(oneToTheRight, Direction.Right))
+            this.mockWorldInfo.Setup(x => x.GetLoop(oneToTheRight, MovementDirection.Right))
                 .Returns(answer);
             
             this.mockGameplayInputs.Setup(
@@ -100,10 +101,10 @@ namespace FQ.GameplayElements.EditorTests
             CollisionPositionAnswer answer = new()
             {
                 Answer = ContextToPositionAnswer.NewPositionIsCorrect,
-                NewDirection = Direction.Right,
+                NewDirection = MovementDirection.Right,
                 NewPosition = expected
             };
-            this.mockWorldInfo.Setup(x => x.GetLoop(oneToTheRight, Direction.Right))
+            this.mockWorldInfo.Setup(x => x.GetLoop(oneToTheRight, MovementDirection.Right))
                 .Returns(answer);
             
             this.mockGameplayInputs.Setup(

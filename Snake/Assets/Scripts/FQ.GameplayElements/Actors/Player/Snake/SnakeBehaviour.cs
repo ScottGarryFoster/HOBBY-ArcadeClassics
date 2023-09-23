@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Object = System.Object;
@@ -38,6 +39,11 @@ namespace FQ.GameplayElements
         /// Called when the element should reset it's state to the start of the session.
         /// </summary>
         public Action ResetElement { get; set; }
+        
+        /// <summary>
+        /// Updates the direction the Player is moving to other elements in the scene.
+        /// </summary>
+        public Action<MovementDirection> UpdatePlayerDirection { get; set; }
         
         /// <summary>
         /// How fast the actor moves each time the actor moves.
@@ -93,12 +99,12 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Current direction player is moving in.
         /// </summary>
-        private Direction currentDirection;
+        private MovementDirection currentDirection;
         
         /// <summary>
         /// Next direction to move in.
         /// </summary>
-        private Direction nextDirection;
+        private MovementDirection nextDirection;
         
         /// <summary>
         /// True means input has been received.
@@ -154,7 +160,7 @@ namespace FQ.GameplayElements
             this.spawnPosition = this.parent.transform.position;
             ResetElement += OnResetElement;
             
-            this.currentDirection = Direction.Down;
+            this.currentDirection = MovementDirection.Down;
             this.receivedInput = false;
 
             this.movingActor = new MovingActor();
@@ -193,6 +199,7 @@ namespace FQ.GameplayElements
                     
                     LoopAroundTheWorld();
                     CommunicateCurrentPosition();
+                    CommunicateCurrentDirection();
                 }
             }
         }
@@ -253,7 +260,7 @@ namespace FQ.GameplayElements
         /// </summary>
         private void UpdateNewInputInAllDirections()
         {
-            foreach (Direction direction in (Direction[]) Enum.GetValues(typeof(Direction)))
+            foreach (MovementDirection direction in (MovementDirection[]) Enum.GetValues(typeof(MovementDirection)))
             {
                 if (UpdateNewInputDirectionInDirection(direction))
                 {
@@ -264,16 +271,16 @@ namespace FQ.GameplayElements
         }
 
         /// <summary>
-        /// Updates <see cref="currentDirection"/> and <see cref="receivedInput"/> if the given <see cref="Direction"/>
+        /// Updates <see cref="currentDirection"/> and <see cref="receivedInput"/> if the given <see cref="MovementDirection"/>
         /// is a correct fit for the new direction.
         /// </summary>
         /// <param name="direction">Direction to test turning in. </param>
         /// <returns>True when found a new direction. </returns>
-        private bool UpdateNewInputDirectionInDirection(Direction direction)
+        private bool UpdateNewInputDirectionInDirection(MovementDirection direction)
         {
             bool foundDirection = false;
             
-            Direction counterDirection = GetCounterDirection(direction);
+            MovementDirection counterDirection = GetCounterDirection(direction);
             if (DetermineIfDirectionShouldUpdate(direction, counterDirection))
             {
                 this.nextDirection = direction;
@@ -290,7 +297,7 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction suggested to turn. </param>
         /// <param name="counterDirection">Counter direction to the given. </param>
         /// <returns>True means the given direction is likely a good direction to move in. </returns>
-        private bool DetermineIfDirectionShouldUpdate(Direction direction, Direction counterDirection)
+        private bool DetermineIfDirectionShouldUpdate(MovementDirection direction, MovementDirection counterDirection)
         {
             bool haveNotMoved = !this.receivedInput;
             bool areNotMovingCounter = this.currentDirection != counterDirection;
@@ -306,16 +313,16 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction to test. </param>
         /// <returns>A direction opposite to given. </returns>
         /// <exception cref="NotImplementedException">
-        /// Not implemented instance of <see cref="Direction"/>.
+        /// Not implemented instance of <see cref="MovementDirection"/>.
         /// </exception>
-        private Direction GetCounterDirection(Direction direction)
+        private MovementDirection GetCounterDirection(MovementDirection direction)
         {
             switch (direction)
             {
-                case Direction.Down: return Direction.Up;
-                case Direction.Up: return Direction.Down;
-                case Direction.Left: return Direction.Right;
-                case Direction.Right: return Direction.Left;
+                case MovementDirection.Down: return MovementDirection.Up;
+                case MovementDirection.Up: return MovementDirection.Down;
+                case MovementDirection.Left: return MovementDirection.Right;
+                case MovementDirection.Right: return MovementDirection.Left;
                 default:
                     throw new NotImplementedException($"{typeof(SnakePlayer)}: " +
                                                       $"{nameof(GetCounterDirection)} requires implementation for {direction.ToString()}.");
@@ -383,8 +390,8 @@ namespace FQ.GameplayElements
             Vector3 position = this.parent.transform.position;
             Vector2Int location = new((int) position.x, (int) position.y);
             
-            Direction giveDirection = this.currentDirection;
-            if (giveDirection == Direction.Down || giveDirection == Direction.Up)
+            MovementDirection giveDirection = this.currentDirection;
+            if (giveDirection == MovementDirection.Down || giveDirection == MovementDirection.Up)
             {
                 giveDirection = GetCounterDirection(giveDirection);
             }
@@ -409,6 +416,14 @@ namespace FQ.GameplayElements
             }
             
             UpdatePlayerLocation?.Invoke(playerPosition.ToArray());
+        }
+        
+        /// <summary>
+        /// Communicates current direction to the outside scene.
+        /// </summary>
+        private void CommunicateCurrentDirection()
+        {
+            UpdatePlayerDirection?.Invoke(currentDirection);
         }
 
         /// <summary>

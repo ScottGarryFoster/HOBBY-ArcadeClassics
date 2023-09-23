@@ -9,7 +9,8 @@
         "FQ.Libraries.Exceptions",
         "FQ.TilemapTools",
         "FQ.GameElementCommunication",
-        "FQ.Libraries.Randomness"
+        "FQ.Libraries.Randomness",
+        "FQ.Libraries.StandardTypes"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FQ.Libraries.StandardTypes;
+using UnityEngine;
 
 namespace FQ.GameplayElements
 {
@@ -13,7 +14,7 @@ namespace FQ.GameplayElements
         /// <param name="location">Location to test. </param>
         /// <param name="direction">Direction the Snake is moving in. </param>
         /// <returns>Answer as to whether there are loops. </returns>
-        CollisionPositionAnswer GetLoop(Vector2Int location, Direction direction);
+        CollisionPositionAnswer GetLoop(Vector2Int location, MovementDirection direction);
 
         /// <summary>
         /// Get the area which provided the player was not there, would be travelable.

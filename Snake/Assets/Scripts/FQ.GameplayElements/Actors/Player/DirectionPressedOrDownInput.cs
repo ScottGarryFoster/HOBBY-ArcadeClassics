@@ -1,5 +1,6 @@
 ﻿using System;
 using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 
 namespace FQ.GameplayElements
 {
@@ -37,7 +38,7 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction to test. </param>
         /// <returns>True means direction is pressed. </returns>
         /// <exception cref="System.Exception">When setup is unsuccessful or not called first. </exception>
-        public bool PressingInputInDirection(Direction direction)
+        public bool PressingInputInDirection(MovementDirection direction)
         {
             if (!this.haveRunSetup)
             {
@@ -55,21 +56,21 @@ namespace FQ.GameplayElements
         }
 
         /// <summary>
-        /// Converts a <see cref="Direction"/> to a <see cref="GameplayButton"/>.
+        /// Converts a <see cref="MovementDirection"/> to a <see cref="GameplayButton"/>.
         /// </summary>
         /// <param name="direction">Direction to convert. </param>
         /// <returns>The equivalent <see cref="GameplayButton"/>. </returns>
         /// <exception cref="NotImplementedException">
-        /// Upon a <see cref="Direction"/> not having an equivalent.
+        /// Upon a <see cref="MovementDirection"/> not having an equivalent.
         /// </exception>
-        private GameplayButton GameplayButtonFromDirection(Direction direction)
+        private GameplayButton GameplayButtonFromDirection(MovementDirection direction)
         {
             switch (direction)
             {
-                case Direction.Down: return GameplayButton.DirectionDown;
-                case Direction.Up: return GameplayButton.DirectionUp;
-                case Direction.Left: return GameplayButton.DirectionLeft;
-                case Direction.Right: return GameplayButton.DirectionRight;
+                case MovementDirection.Down: return GameplayButton.DirectionDown;
+                case MovementDirection.Up: return GameplayButton.DirectionUp;
+                case MovementDirection.Left: return GameplayButton.DirectionLeft;
+                case MovementDirection.Right: return GameplayButton.DirectionRight;
                 default:
                     throw new NotImplementedException($"{typeof(DirectionPressedOrDownInput)}: " +
                         $"{nameof(GameplayButtonFromDirection)} not Implemented {direction.ToString()}.");

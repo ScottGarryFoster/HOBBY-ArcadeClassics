@@ -1,9 +1,9 @@
-﻿namespace FQ.GameplayElements
+﻿namespace FQ.Libraries.StandardTypes
 {
     /// <summary>
     /// Describes direction on the 2D Plane.
     /// </summary>
-    public enum Direction
+    public enum MovementDirection
     {
         /// <summary>
         /// Upwards.

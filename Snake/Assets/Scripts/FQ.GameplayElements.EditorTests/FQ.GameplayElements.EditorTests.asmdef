@@ -11,7 +11,8 @@
         "FQ.Libraries.Randomness",
         "FQ.GameElementCommunication",
         "FQ.Log",
-        "FQ.OverallControllers"
+        "FQ.OverallControllers",
+        "FQ.Libraries.StandardTypes"
     ],
     "includePlatforms": [
         "Editor"

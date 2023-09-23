@@ -13,13 +13,12 @@ using Object = UnityEngine.Object;
 
 namespace FQ.GameplayElements.EditorTests
 {
-    public class SnakeBehaviourCommunicationTests
+    public class SnakeBehaviourDirectionTests
     {
         private ISnakeBehaviour snakeBehaviour;
         private GameObject playerObject;
         private StubObjectCreation stubObjectCreation;
         private Mock<IGameplayInputs> mockGameplayInputs;
-        private Mock<IWorldInfoFromTilemap> mockWorldInfo;
 
         /// <summary>
         /// A tick amount to advance the update which will not advance the movement.
@@ -32,12 +31,11 @@ namespace FQ.GameplayElements.EditorTests
             this.playerObject = new GameObject();
             this.stubObjectCreation = new StubObjectCreation();
             this.mockGameplayInputs = new Mock<IGameplayInputs>();
-            this.mockWorldInfo = new Mock<IWorldInfoFromTilemap>();
             var concreteSnakeBehaviour = new SnakeBehaviour(
                 this.playerObject,
                 this.stubObjectCreation,
                 this.mockGameplayInputs.Object,
-                this.mockWorldInfo.Object)
+                worldInfoInfo: null)
             {
                 MovementSpeed = 1
             };
@@ -46,13 +44,6 @@ namespace FQ.GameplayElements.EditorTests
             concreteSnakeBehaviour.snakeTailPrefab = snakeTailPrefab;
 
             this.snakeBehaviour = concreteSnakeBehaviour;
-
-            // By default ensures no loop is found.
-            this.mockWorldInfo.Setup(x => x.GetLoop(It.IsAny<Vector2Int>(), It.IsAny<MovementDirection>()))
-                .Returns(new CollisionPositionAnswer()
-                {
-                    Answer = ContextToPositionAnswer.NoValidMovement,
-                });
             
             // All the tests for position require start to have occured.
             this.snakeBehaviour.Start();
@@ -65,10 +56,10 @@ namespace FQ.GameplayElements.EditorTests
             this.stubObjectCreation.CreatedGameObjects.Clear();
         }
         
-        #region Tests with Movement
+        #region Handles nothing attached to Direction Action
         
         [Test]
-        public void Update_DoesNotThrowException_WhenNoMethodIsGivenToUpdatePlayerLocationTest()
+        public void UpdatePlayerDirection_HandlesNothingAttached_WhenButtonPressMovesDownTest()
         {
             // Arrange
             this.mockGameplayInputs.Setup(
@@ -79,102 +70,143 @@ namespace FQ.GameplayElements.EditorTests
         }
         
         [Test]
-        public void Update_FiresUpdatePlayerLocation_WhenKeyPressIsDownTest()
+        public void UpdatePlayerDirection_HandlesNothingAttached_WhenButtonPressMovesLeftTest()
         {
             // Arrange
-            Vector2 exactPosition = this.playerObject.transform.position;
-            exactPosition.y--;
-            Vector2Int expectedPosition = new((int)exactPosition.x, (int)exactPosition.y);
-            
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
-
-            bool didSend = false;
-            Vector2Int[] actual = null;
-            this.snakeBehaviour.UpdatePlayerLocation += (Vector2Int[] input) =>
-            {
-                didSend = true;
-                actual = input;
-            };
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
 
             // Act
             RunMovementUpdateCycle();
-
-            // Assert
-            Assert.IsTrue(didSend, "Did not update.");
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(1, actual.Length, $"Expected: 1 | Actual {actual.Length}");
-            Assert.AreEqual(expectedPosition, actual[0], $"Expected: {expectedPosition} | Actual {actual[0]}");
         }
         
         [Test]
-        public void Update_PlayerKeepsMovingInDown_WhenKeyPressIsReleasedTest()
+        public void UpdatePlayerDirection_HandlesNothingAttached_WhenButtonPressMovesRightTest()
         {
             // Arrange
-            Vector2 exactPosition = CopyVector3(this.playerObject.transform.position);
-            exactPosition.y -= 2;
-            Vector2Int expectedPosition = new((int)exactPosition.x, (int)exactPosition.y);
-            
             this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
-            RunMovementUpdateCycle();
-            this.mockGameplayInputs.Setup(
-                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(false);
-            
-            bool didSend = false;
-            Vector2Int[] actual = null;
-            this.snakeBehaviour.UpdatePlayerLocation += (Vector2Int[] input) =>
-            {
-                didSend = true;
-                actual = input;
-            };
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
 
             // Act
             RunMovementUpdateCycle();
-
-            // Assert
-            Assert.IsTrue(didSend, "Did not update.");
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(1, actual.Length, $"Expected: 1 | Actual {actual.Length}");
-            Assert.AreEqual(expectedPosition, actual[0], $"Expected: {expectedPosition} | Actual {actual[0]}");
         }
         
         [Test]
-        public void CollideWithFood_CausesUpdatePlayerLocationToContainTail_WhenTailShouldBeCreatedTest()
+        public void UpdatePlayerDirection_HandlesNothingAttached_WhenButtonPressMovesUpTest()
         {
             // Arrange
-            Vector2 exactPosition = CopyVector3(this.playerObject.transform.position);
-            exactPosition.y += 2;
-            Vector2Int expectedPosition = new((int)exactPosition.x, (int)exactPosition.y);
-            Vector2Int expectedTailPosition = new((int)exactPosition.x, (int)exactPosition.y - 1);
-            
-            this.snakeBehaviour.Start();
-            EatFood(this.playerObject, this.mockGameplayInputs, this.snakeBehaviour);
-            
-            bool didSend = false;
-            Vector2Int[] actual = null;
-            this.snakeBehaviour.UpdatePlayerLocation += (Vector2Int[] input) =>
-            {
-                didSend = true;
-                actual = input;
-            };
-            
-            // Act
-            // One to eat, One to Move and Keep the tail where it is.
-            RunMovementUpdateCycle();
-            RunMovementUpdateCycle();
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
 
-            // Assert
-            Assert.IsTrue(didSend, "Did not update.");
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(2, actual.Length, $"Expected: 2 | Actual {actual.Length}");
-            Assert.AreEqual(expectedPosition, actual[0], $"Expected: {expectedPosition} | Actual {actual[0]}");
-            Assert.AreEqual(expectedTailPosition, actual[1], $"Expected: {expectedTailPosition} | Actual {actual[1]}");
+            // Act
+            RunMovementUpdateCycle();
         }
-         
+        
         #endregion
-
         
+        #region New Position is Sent
+        
+        [Test]
+        public void UpdatePlayerDirection_SendsDown_WhenButtonPressMovesDownTest()
+        {
+            // Arrange
+            MovementDirection expected = MovementDirection.Down;
+            
+            bool updatedDirection = false;
+            MovementDirection actual = MovementDirection.Up;
+            this.snakeBehaviour.UpdatePlayerDirection += direction =>
+            {
+                updatedDirection = true;
+                actual = direction;
+            };
+            
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionDown)).Returns(true);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(updatedDirection);
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void UpdatePlayerDirection_SendsLeft_WhenButtonPressMovesLeftTest()
+        {
+            // Arrange
+            MovementDirection expected = MovementDirection.Left;
+            
+            bool updatedDirection = false;
+            MovementDirection actual = MovementDirection.Up;
+            this.snakeBehaviour.UpdatePlayerDirection += direction =>
+            {
+                updatedDirection = true;
+                actual = direction;
+            };
+            
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionLeft)).Returns(true);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(updatedDirection);
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void UpdatePlayerDirection_SendsRight_WhenButtonPressMovesRightTest()
+        {
+            // Arrange
+            MovementDirection expected = MovementDirection.Right;
+            
+            bool updatedDirection = false;
+            MovementDirection actual = MovementDirection.Up;
+            this.snakeBehaviour.UpdatePlayerDirection += direction =>
+            {
+                updatedDirection = true;
+                actual = direction;
+            };
+            
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionRight)).Returns(true);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(updatedDirection);
+            Assert.AreEqual(expected, actual);
+        }
+        
+        [Test]
+        public void UpdatePlayerDirection_SendsUp_WhenButtonPressMovesUpTest()
+        {
+            // Arrange
+            MovementDirection expected = MovementDirection.Up;
+            
+            bool updatedDirection = false;
+            MovementDirection actual = MovementDirection.Up;
+            this.snakeBehaviour.UpdatePlayerDirection += direction =>
+            {
+                updatedDirection = true;
+                actual = direction;
+            };
+            
+            this.mockGameplayInputs.Setup(
+                x => x.KeyPressed(GameplayButton.DirectionUp)).Returns(true);
+
+            // Act
+            RunMovementUpdateCycle();
+
+            // Assert
+            Assert.IsTrue(updatedDirection);
+            Assert.AreEqual(expected, actual);
+        }
+        
+        #endregion
         
         #region Helper Methods
         
@@ -241,28 +273,7 @@ namespace FQ.GameplayElements.EditorTests
             ridgedBody.gravityScale = 0;
         }
         
-        private void EatFood(GameObject player, Mock<IGameplayInputs> mockGI, ISnakeBehaviour behaviour)
-        {
-            SetupSnakeToEatFood(this.playerObject, this.mockGameplayInputs, out Collider2D collider2D);
-            behaviour.OnTriggerEnter2D(collider2D);
-            behaviour.OnTriggerStay2D(collider2D);
-        }
         
-        private GameObject SetupSnakeToEatFood(
-            GameObject player, 
-            Mock<IGameplayInputs> mockGI, 
-            out Collider2D collider2D)
-        {
-            Vector3 currentPosition = CopyVector3(player.transform.position);
-            var foodGo = CreateGameObject(position: new Vector3(0, currentPosition.y + 1, 0), tag: "SnakeFood");
-            //foodGo.AddComponent<SnakeFood>();
-            collider2D = CreateTriggerBoxCollider(foodGo);
-
-            mockGI.Setup(x => x.KeyPressed(GameplayButton.DirectionUp))
-                .Returns(true);
-
-            return foodGo;
-        }
         
         #endregion
     }

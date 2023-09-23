@@ -1,5 +1,6 @@
 ﻿using System;
 using FQ.GameplayElements;
+using FQ.Libraries.StandardTypes;
 using NUnit.Framework;
 using UnityEngine;
 using Object = System.Object;
@@ -34,7 +35,7 @@ namespace FQ.GameplayElements.PlayTests
             // Act Assert
             Assert.Throws<Exception>(() =>
             {
-                this.testClass.MoveActor(Direction.Down);
+                this.testClass.MoveActor(MovementDirection.Down);
             });
         }
         
@@ -54,7 +55,7 @@ namespace FQ.GameplayElements.PlayTests
             // Act Assert
             Assert.Throws<Exception>(() =>
             {
-                this.testClass.MoveActor(Direction.Down);
+                this.testClass.MoveActor(MovementDirection.Down);
             });
         }
 
@@ -105,7 +106,7 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: 1);
             
             // Act Assert
-            this.testClass.MoveActor(Direction.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
         }
 
         [Test]
@@ -116,7 +117,7 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
             
             // Assert
             Assert.AreEqual(-unit, this.testTransform.position.y);
@@ -131,9 +132,9 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Down);
-            this.testClass.MoveActor(Direction.Down);
-            this.testClass.MoveActor(Direction.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
 
             // Assert
             Assert.AreEqual(expected, this.testTransform.position.y);
@@ -147,7 +148,7 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Up);
+            this.testClass.MoveActor(MovementDirection.Up);
             
             // Assert
             Assert.AreEqual(unit, this.testTransform.position.y);
@@ -162,9 +163,9 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Up);
-            this.testClass.MoveActor(Direction.Up);
-            this.testClass.MoveActor(Direction.Up);
+            this.testClass.MoveActor(MovementDirection.Up);
+            this.testClass.MoveActor(MovementDirection.Up);
+            this.testClass.MoveActor(MovementDirection.Up);
 
             // Assert
             Assert.AreEqual(expected, this.testTransform.position.y);
@@ -178,7 +179,7 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Left);
+            this.testClass.MoveActor(MovementDirection.Left);
             
             // Assert
             Assert.AreEqual(-unit, this.testTransform.position.x);
@@ -193,9 +194,9 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Left);
-            this.testClass.MoveActor(Direction.Left);
-            this.testClass.MoveActor(Direction.Left);
+            this.testClass.MoveActor(MovementDirection.Left);
+            this.testClass.MoveActor(MovementDirection.Left);
+            this.testClass.MoveActor(MovementDirection.Left);
 
             // Assert
             Assert.AreEqual(expected, this.testTransform.position.x);
@@ -209,7 +210,7 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Right);
+            this.testClass.MoveActor(MovementDirection.Right);
             
             // Assert
             Assert.AreEqual(unit, this.testTransform.position.x);
@@ -224,9 +225,9 @@ namespace FQ.GameplayElements.PlayTests
             this.testClass.Setup(this.testTransform, movement: unit);
             
             // Act
-            this.testClass.MoveActor(Direction.Right);
-            this.testClass.MoveActor(Direction.Right);
-            this.testClass.MoveActor(Direction.Right);
+            this.testClass.MoveActor(MovementDirection.Right);
+            this.testClass.MoveActor(MovementDirection.Right);
+            this.testClass.MoveActor(MovementDirection.Right);
 
             // Assert
             Assert.AreEqual(expected, this.testTransform.position.x);
@@ -241,13 +242,13 @@ namespace FQ.GameplayElements.PlayTests
             this.testTransform.position = new Vector3(2, 3, expectedZ);
             
             // Act
-            this.testClass.MoveActor(Direction.Up);
+            this.testClass.MoveActor(MovementDirection.Up);
             Vector3 actualUp = CopyVector3(this.testTransform.position);
-            this.testClass.MoveActor(Direction.Left);
+            this.testClass.MoveActor(MovementDirection.Left);
             Vector3 actualLeft = CopyVector3(this.testTransform.position);
-            this.testClass.MoveActor(Direction.Right);
+            this.testClass.MoveActor(MovementDirection.Right);
             Vector3 actualRight = CopyVector3(this.testTransform.position);
-            this.testClass.MoveActor(Direction.Down);
+            this.testClass.MoveActor(MovementDirection.Down);
             Vector3 actualDown = CopyVector3(this.testTransform.position);
 
             // Assert

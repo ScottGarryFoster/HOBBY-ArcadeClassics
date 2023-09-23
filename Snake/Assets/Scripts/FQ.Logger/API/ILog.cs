@@ -1,4 +1,4 @@
-﻿namespace FQ.Log
+﻿namespace FQ.Logger
 {
     /// <summary>
     /// Logging out information

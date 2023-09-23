@@ -1,15 +1,10 @@
-﻿using UnityEngine;
-
-namespace FQ.GameElementCommunication
+﻿namespace FQ.GameElementCommunication
 {
     /// <summary>
-    /// Basics about the Player.
+    /// The basics of the player and the ability to control the data.
     /// </summary>
-    public interface IPlayerStatus
+    public interface IPlayerStatus: IPlayerStatusBasics, IPlayerBroadcaster
     {
-        /// <summary>
-        /// Every tile which is counted as 'player'
-        /// </summary>
-        Vector2Int[] PlayerLocation { get; }
+        
     }
 }

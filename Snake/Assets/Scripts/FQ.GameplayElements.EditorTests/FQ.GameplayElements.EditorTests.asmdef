@@ -7,7 +7,11 @@
         "FQ.GameplayElements",
         "FQ.GameObjectPromises",
         "FQ.GameplayInputs",
-        "FQ.Libraries.Exceptions"
+        "FQ.Libraries.Exceptions",
+        "FQ.Libraries.Randomness",
+        "FQ.GameElementCommunication",
+        "FQ.Log",
+        "FQ.OverallControllers"
     ],
     "includePlatforms": [
         "Editor"

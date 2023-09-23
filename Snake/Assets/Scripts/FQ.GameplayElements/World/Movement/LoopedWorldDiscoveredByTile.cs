@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FQ.Libraries;
+using FQ.Logger;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -151,7 +152,7 @@ namespace FQ.GameplayElements
             bool isValid = true;
             if (tilemap == null)
             {
-                Log.Logger.Instance.Error($"{typeof(LoopedWorldDiscoveredByTile)}: " +
+                Log.Error($"{typeof(LoopedWorldDiscoveredByTile)}: " +
                                           $"{nameof(tilemap)} is null and therefore cannot calculate loops.");
                 isValid = false;
             }

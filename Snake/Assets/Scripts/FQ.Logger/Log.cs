@@ -1,18 +1,43 @@
 ﻿using FQ.Libraries.MonoSingleton;
 using UnityEngine;
 
-namespace FQ.Log
+namespace FQ.Logger
 {
     /// <summary>
     /// Logging out information
     /// </summary>
-    public class Logger : MonoBehaviourSingleton<Logger>, ILog
+    /// <remarks>
+    /// Cannot make this static but the methods we can.
+    /// This is due to Unity, if we want to interact with Unity Debugging this is the way.
+    /// </remarks>
+    public class Log : MonoBehaviour
     {
+        /// <summary>
+        /// Turns errors into warning to ensure tests do not fail.
+        /// </summary>
+        private static bool testMode = false;
+        
+        /// <summary>
+        /// Enables test mode meaning Errors are not called.
+        /// </summary>
+        internal static void TestMode()
+        {
+            testMode = true;
+        }
+
+        /// <summary>
+        /// Resets Logs back to production level.
+        /// </summary>
+        internal static void ResetTestMode()
+        {
+            testMode = false;
+        }
+        
         /// <summary>
         /// Logs info.
         /// </summary>
         /// <param name="message">Message to log. </param>
-        public void Info(string message)
+        public static void Info(string message)
         {
             Debug.Log(message);
         }
@@ -22,7 +47,7 @@ namespace FQ.Log
         /// </summary>
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
-        public void Info(string message, string origin)
+        public static void Info(string message, string origin)
         {
             Debug.Log($"{origin}: {message}");
         }
@@ -33,7 +58,7 @@ namespace FQ.Log
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
         /// <param name="subject">Subject which caused the log. </param>
-        public void Info(string message, string origin, string subject)
+        public static void Info(string message, string origin, string subject)
         {
             Debug.Log($"{origin}[{subject}]: {message}");
         }
@@ -42,7 +67,7 @@ namespace FQ.Log
         /// Logs warning.
         /// </summary>
         /// <param name="message">Message to log. </param>
-        public void Warning(string message)
+        public static void Warning(string message)
         {
             Debug.LogWarning($"{message}");
         }
@@ -52,7 +77,7 @@ namespace FQ.Log
         /// </summary>
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
-        public void Warning(string message, string origin)
+        public static void Warning(string message, string origin)
         {
             Debug.LogWarning($"{origin}: {message}");
         }
@@ -63,7 +88,7 @@ namespace FQ.Log
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
         /// <param name="subject">Subject which caused the log. </param>
-        public void Warning(string message, string origin, string subject)
+        public static void Warning(string message, string origin, string subject)
         {
             Debug.LogWarning($"{origin}[{subject}]: {message}");
         }
@@ -72,9 +97,16 @@ namespace FQ.Log
         /// Logs error.
         /// </summary>
         /// <param name="message">Message to log. </param>
-        public void Error(string message)
+        public static void Error(string message)
         {
-            Debug.LogWarning($"{message}");
+            if (testMode)
+            {
+                Debug.LogWarning($"{message}");
+            }
+            else
+            {
+                Debug.LogError($"{message}");
+            }
         }
 
         /// <summary>
@@ -82,9 +114,16 @@ namespace FQ.Log
         /// </summary>
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
-        public void Error(string message, string origin)
+        public static void Error(string message, string origin)
         {
-            Debug.LogWarning($"{origin}: {message}");
+            if (testMode)
+            {
+                Debug.LogWarning($"{origin}: {message}");
+            }
+            else
+            {
+                Debug.LogError($"{origin}: {message}");
+            }
         }
 
         /// <summary>
@@ -93,9 +132,16 @@ namespace FQ.Log
         /// <param name="message">Message to log. </param>
         /// <param name="origin">Origin of the log. </param>
         /// <param name="subject">Subject which caused the log. </param>
-        public void Error(string message, string origin, string subject)
+        public static void Error(string message, string origin, string subject)
         {
-            Debug.LogError($"{origin}[{subject}]: {message}");
+            if (testMode)
+            {
+                Debug.LogWarning($"{origin}[{subject}]: {message}");
+            }
+            else
+            {
+                Debug.LogError($"{origin}[{subject}]: {message}");
+            }
         }
     }
 }

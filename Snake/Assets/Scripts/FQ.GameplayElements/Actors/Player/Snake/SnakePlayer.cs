@@ -119,7 +119,7 @@ namespace FQ.GameplayElements
                 return;
             }
 
-            PlayerStatus playerStatus = communication.PlayerStatus;
+            IPlayerStatus playerStatus = communication.PlayerStatus;
             behaviour.UpdatePlayerLocation += playerStatus.UpdateLocation;
         }
     }

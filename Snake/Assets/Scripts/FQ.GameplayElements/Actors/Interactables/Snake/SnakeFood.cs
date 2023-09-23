@@ -48,7 +48,8 @@ namespace FQ.GameplayElements
         protected override void BaseStart()
         {
             this.areActive = true;
-
+            RandomGenerator ??= new FQ.Libraries.Randomness.Random();
+            
             SetupAndAcquireSafeArea();
             AcquirePlayerStatus();
             MoveToRandomValidLocation();
@@ -79,16 +80,8 @@ namespace FQ.GameplayElements
         /// </summary>
         private void AcquirePlayerStatus()
         {
-            IElementCommunication communication = null;
-            if (this.ElementCommunicationFinder == null)
-            {
-                communication = TryToFindElementCommunication();
-            }
-            else
-            { 
-                communication = this.ElementCommunicationFinder.FindElementCommunication();
-                
-            }
+            IElementCommunicationFinder finder = this.ElementCommunicationFinder ?? new ElementCommunicationFinder();
+            IElementCommunication communication = finder.FindElementCommunication();
             
             if (communication == null)
             {

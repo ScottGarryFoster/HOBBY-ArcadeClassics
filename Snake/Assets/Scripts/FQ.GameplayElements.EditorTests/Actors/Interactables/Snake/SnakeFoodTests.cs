@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FQ.GameElementCommunication;
 using FQ.Libraries.Randomness;
 using FQ.Logger;
@@ -83,6 +84,23 @@ namespace FQ.GameplayElements.EditorTests
         }
         
         #region Handles Bad Input
+        
+        [Test, Timeout(1000)]
+        public void PublicUpdate_HandlesUpdate_WhenRandomIsNullTest()
+        {
+            // Arrange
+            this.testClass.SetRandomGenerator(null);
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+        }
         
         [Test, Timeout(1000)]
         public void PublicUpdate_HandlesUpdate_WhenWorldInfoFromTilemapFinderIsNullTest()
@@ -485,6 +503,60 @@ namespace FQ.GameplayElements.EditorTests
             Assert.AreEqual(expected.y, actual.y);
         }
         
+        #endregion
+
+        #region Random Location
+        
+        [Test, Timeout(1000)]
+        [Description("The method of testing Random is via the protected Randomness, not ideal." +
+                     "We can test random movement though provided we run the update enough times.")]
+        public void Movement_RandomlyMoves_WhenNotGivenRandomMovementViaTestMocksTest()
+        {
+            // Arrange
+            this.testClass.SetRandomGenerator(null);
+            
+            Vector3Int[] area = new List<Vector3Int>()
+            {
+                new(1, 2, 3), new(4, 5, 6), new(7, 8, 9),  new(10, 11, 12),
+                new(13, 14, 15), new(16, 17, 18), new(19, 20, 21),  new(22, 23, 24),
+                new(25, 26, 27), new(28, 29, 30), new(31, 32, 33),  new(34, 35, 36),
+                new(37, 38, 39), new(40, 41, 42), new(43, 44, 45),  new(46, 47, 48),
+            }.ToArray();
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            
+            this.testClass.PublicStart();
+            
+            // Act
+            
+            // Run a snake move 30 times - See if the snake moves to a unique location at least once!
+            
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+            this.testClass.PublicUpdate();
+            
+            Vector3 last = CopyVector(this.testClass.gameObject.transform.position);
+            Vector3 current = CopyVector(this.testClass.gameObject.transform.position);
+            
+            for (int i = 0; i < 29; ++i)
+            {
+                // Simulate player colliding
+                this.testClass.PublicOnTriggerEnter2D(collider);
+                this.testClass.PublicUpdate();
+
+                current = CopyVector(this.testClass.gameObject.transform.position);
+                if (current != last)
+                {
+                    break;
+                }
+            }
+
+            // Assert
+            Assert.AreNotEqual(current, last);
+        }
+
         #endregion
 
         private Vector3 CopyVector(Vector3 transformPosition)

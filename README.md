@@ -257,5 +257,14 @@ Going into this proof I had some assumptions having done this in the past via Le
 
 Second a lot of the techniques used here were learned not just from my time in industry but the book [Working Effectively With Legacy Code By Michael Feathers](https://amzn.eu/d/8SP19dB). My full thoughts may be found on my site [here](https://scottgarryfoster.com/further.html).
 
+### Updating the Visuals
+It was about time to update the overall look of the game and address the prototype look of the game. The original idea was not to actually copy the visuals from the version which inspired the project, the version on the Nokia 3210 however when researching the visuals fascinating depth was discovered.
+
+![Nokia Snake with an overlay for the grid (not perfect)](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-NokiaSnakeBreakdown-1.PNG?raw=true)
+The visuals in the version of Snake I played in early 2000s were not as simple as the appeared. Breaking down the matrix and tiles it appears as though there is a direction system within the game. A direction system is the only way I can make sense of the inconsistent nature of Snake body and it occasionally containing L shapes flipped from one another as in the image above.
+
+![Directions added for each piece](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-NokiaSnakeBreakdown-2.PNG?raw=true)
+Broken down into compass directions it makes sense and the mystery slots together. The bigger piece of food likely slots in any orientation given the pattern. The rest however appears to follow this compass direction.
+
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

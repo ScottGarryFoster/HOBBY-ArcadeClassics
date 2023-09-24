@@ -11,16 +11,19 @@ namespace FQ.GameplayElements.EditorTests
     {
         private Mock<IPlayerStatusBasics> mockPlayerStatusBasics;
         private Mock<IWorldInfoFromTilemap> mockWorldInfoFromTilemap;
+        private Mock<ICollectableStatusBasics> mockCollectableStatusBasics;
         private ISnakeHeadAnimationBehaviour testClass;
         
         [SetUp]
         public void Setup()
         {
             this.mockPlayerStatusBasics = new Mock<IPlayerStatusBasics>();
+            this.mockCollectableStatusBasics = new Mock<ICollectableStatusBasics>();
             this.mockWorldInfoFromTilemap = new Mock<IWorldInfoFromTilemap>();
             this.testClass = new SnakeHeadAnimationBehaviour(
                 mockPlayerStatusBasics.Object, 
-                mockWorldInfoFromTilemap.Object);
+                mockWorldInfoFromTilemap.Object,
+                mockCollectableStatusBasics.Object);
         }
 
         #region Construction
@@ -37,7 +40,8 @@ namespace FQ.GameplayElements.EditorTests
             {
                 new SnakeHeadAnimationBehaviour(
                     playerCommunication: given, 
-                    this.mockWorldInfoFromTilemap.Object);
+                    this.mockWorldInfoFromTilemap.Object,
+                    this.mockCollectableStatusBasics.Object);
             }
             catch (ArgumentNullException)
             {
@@ -60,7 +64,32 @@ namespace FQ.GameplayElements.EditorTests
             {
                 new SnakeHeadAnimationBehaviour(
                     this.mockPlayerStatusBasics.Object,
-                    worldInfo: given);
+                    worldInfo: given,
+                    this.mockCollectableStatusBasics.Object);
+            }
+            catch (ArgumentNullException)
+            {
+                didThrow = true;
+            }
+            
+            // Assert
+            Assert.IsTrue(didThrow);
+        }
+        
+        [Test]
+        public void OnConstruction_ArgumentNullExceptionIsThrown_WhenCollectableStatusBasicsIsNullTest()
+        {
+            // Arrange
+            ICollectableStatusBasics given = null;
+            
+            // Act
+            bool didThrow = false;
+            try
+            {
+                new SnakeHeadAnimationBehaviour(
+                    this.mockPlayerStatusBasics.Object,
+                    this.mockWorldInfoFromTilemap.Object,
+                    given);
             }
             catch (ArgumentNullException)
             {

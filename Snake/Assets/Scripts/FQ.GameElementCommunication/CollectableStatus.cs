@@ -30,6 +30,7 @@ namespace FQ.GameElementCommunication
             }
         }
         
+        // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// Updates where collectables within the given bucket exist.
         /// This overrides any previous provided information.

@@ -18,6 +18,19 @@ namespace FQ.GameElementCommunication
         /// <summary>
         /// Stores the player status when created.
         /// </summary>
-        private PlayerStatus playerStatus;
+        private IPlayerStatus playerStatus;
+
+        /// <summary>
+        /// Locations and information on Collectable items.
+        /// </summary>
+        public ICollectableStatus CollectableStatus
+        {
+            get { return collectableStatus ??= new CollectableStatus(); }
+        }
+        
+        /// <summary>
+        /// Stores the Collectable Status status when created.
+        /// </summary>
+        private ICollectableStatus collectableStatus;
     }
 }

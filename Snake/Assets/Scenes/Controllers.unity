@@ -237,10 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd527d652d44b16902ff97c3b58f6bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brain:
-    h: 
-  SpaceBetweenEyes: 0
-  Speech: 
 --- !u!4 &1620456711
 Transform:
   m_ObjectHideFlags: 0

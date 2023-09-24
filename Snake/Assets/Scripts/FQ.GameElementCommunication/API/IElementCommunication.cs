@@ -9,5 +9,10 @@
         /// Basics about the Player and the ability to control that data.
         /// </summary>
         IPlayerStatus PlayerStatus { get; }
+        
+        /// <summary>
+        /// Locations and information on Collectable items.
+        /// </summary>
+        ICollectableStatus CollectableStatus { get; }
     }
 }

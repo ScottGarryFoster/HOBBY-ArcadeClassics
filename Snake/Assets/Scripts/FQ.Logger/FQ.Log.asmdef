@@ -2,7 +2,7 @@
     "name": "FQ.Log",
     "rootNamespace": "",
     "references": [
-        "GUID:1b192f4e398bccf45b181037e4409bf5"
+        "FQ.Libraries.MonoSingleton"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

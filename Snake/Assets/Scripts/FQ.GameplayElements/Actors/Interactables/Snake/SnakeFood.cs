@@ -44,6 +44,11 @@ namespace FQ.GameplayElements
         /// Basics about the Player this session.
         /// </summary>
         private IPlayerStatusBasics playerStatus;
+
+        /// <summary>
+        /// The methods a collectable (or controller) will broadcast their status with.
+        /// </summary>
+        private ICollectableStatusBroadcaster collectableStatus;
         
         protected override void BaseStart()
         {
@@ -92,6 +97,15 @@ namespace FQ.GameplayElements
             }
 
             this.playerStatus = communication.PlayerStatus;
+
+            if (communication.CollectableStatus == null)
+            {
+                Log.Error("Collectable Status may not be found. This means the Food location may not be broadcast.",
+                    typeof(SnakeFood).ToString(), nameof(AcquirePlayerStatus));
+                return;
+            }
+
+            this.collectableStatus = communication.CollectableStatus;
         }
         
         /// <summary>
@@ -134,6 +148,7 @@ namespace FQ.GameplayElements
                 }
             }
 
+            BroadcastNewLocationToOtherElements();
         }
 
         /// <summary>
@@ -198,6 +213,21 @@ namespace FQ.GameplayElements
         private void EnsureWorldInfoFromTilemapFinderIsNotNull()
         {
             this.WorldInfoFromTilemapFinder ??= new SnakeWorldInfoFromTilemapFinder();
+        }
+        
+        /// <summary>
+        /// Broadcasts new location to other elements in the scene.
+        /// Provided that is we can.
+        /// </summary>
+        private void BroadcastNewLocationToOtherElements()
+        {
+            if (this.collectableStatus != null)
+            {
+                Vector3 position = transform.position;
+                Vector2Int tile = new((int)position.x, (int)position.y);
+                this.collectableStatus.UpdateCollectableLocation(
+                    CollectableBucket.BasicValue, new[] {tile});
+            }
         }
     }
 }

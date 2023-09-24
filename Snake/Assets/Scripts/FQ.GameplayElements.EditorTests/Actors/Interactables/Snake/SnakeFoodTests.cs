@@ -27,6 +27,7 @@ namespace FQ.GameplayElements.EditorTests
         private Mock<IElementCommunicationFinder> mockElementCommunicationFinder;
         private Mock<IElementCommunication> mockElementCommunication;
         private Mock<IPlayerStatus> mockPlayerStatus;
+        private Mock<ICollectableStatus> mockCollectableStatus;
 
         /// <summary>
         /// Random by default works like this:
@@ -71,6 +72,9 @@ namespace FQ.GameplayElements.EditorTests
 
             this.mockPlayerStatus = new Mock<IPlayerStatus>();
             this.mockElementCommunication.Setup(x => x.PlayerStatus).Returns(this.mockPlayerStatus.Object);
+            
+            this.mockCollectableStatus = new Mock<ICollectableStatus>();
+            this.mockElementCommunication.Setup(x => x.CollectableStatus).Returns(this.mockCollectableStatus.Object);
 
             var locationNotIntersecting = Array.Empty<Vector2Int>();
             this.mockPlayerStatus.Setup(x => x.PlayerLocation).Returns(locationNotIntersecting);
@@ -222,6 +226,24 @@ namespace FQ.GameplayElements.EditorTests
             Vector3 actual = this.testClass.gameObject.transform.position;
             Assert.AreEqual(expectedPosition.x, actual.x);
             Assert.AreEqual(expectedPosition.y, actual.y);
+        }
+        
+        [Test, Timeout(1000)]
+        public void PublicUpdate_HandlesUpdate_WhenCollectableStatusIsNullTest()
+        {
+            // Arrange
+            ICollectableStatus collectableStatus = null;
+            this.mockElementCommunication.Setup(x => x.CollectableStatus).Returns(collectableStatus);
+            this.testClass.PublicStart();
+
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
         }
 
         #endregion
@@ -559,6 +581,63 @@ namespace FQ.GameplayElements.EditorTests
 
         #endregion
 
+        #region Broadcasts Location
+        
+        [Test]
+        public void BaseFixedUpdateToMovePlayer_BroadcastsLocation_WhenOnTriggerEnter2DIsCalledWithPlayerTest()
+        {
+            // Arrange
+            
+            // Note Area is cached so it runs here
+            Vector3Int expectedPositionInt = new Vector3Int(10, 40);
+            Vector3Int[] area = {expectedPositionInt};
+            this.mockRandomNumbers.Setup(x => x.Range(0, 1)).Returns(0);
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            
+            this.testClass.PublicStart();
+
+            // Ensure we test update
+            Vector2Int[] expected = {new(expectedPositionInt.x, expectedPositionInt.y)};
+            int occurs = 0;
+            this.mockCollectableStatus.Setup(x => x.UpdateCollectableLocation(CollectableBucket.BasicValue, expected))
+                .Callback(() => { ++occurs; });
+            
+            // Simulate player colliding
+            GameObject player = new("Player");
+            player.tag = ValidPlayerTag;
+            Collider2D collider = player.AddComponent<BoxCollider2D>();
+            this.testClass.PublicOnTriggerEnter2D(collider);
+
+            // Act
+            this.testClass.PublicUpdate();
+
+            // Assert
+            Assert.AreEqual(1, occurs);
+        }
+        
+        [Test]
+        public void Start_BroadcastsLocation_WhenCalledWithPositionsTest()
+        {
+            // Arrange
+            Vector3Int expectedPositionInt = new Vector3Int(10, 40);
+            Vector3Int[] area = new[] {expectedPositionInt};
+            this.mockRandomNumbers.Setup(x => x.Range(0, 1)).Returns(0);
+            this.mockWorldInfoFromTilemap.Setup(x => x.GetTravelableArea()).Returns(area);
+            
+            Vector2Int[] expected = {new((int)expectedPositionInt.x, (int)expectedPositionInt.y)};
+            int occurs = 0;
+            this.mockCollectableStatus.Setup(x => x.UpdateCollectableLocation(CollectableBucket.BasicValue, expected))
+                .Callback(() => { ++occurs; });
+            
+            // Act
+            this.testClass.PublicStart();
+
+            // Assert
+            Assert.AreEqual(1, occurs);
+        }
+        
+        #endregion
+        
         private Vector3 CopyVector(Vector3 transformPosition)
         {
             return new Vector3(transformPosition.x, transformPosition.y, transformPosition.z);

@@ -26,10 +26,26 @@ namespace FQ.GameplayElements
         /// </summary>
         private readonly IPlayerStatusBasics playerCommunication;
 
-        public SnakeHeadAnimationBehaviour(IPlayerStatusBasics playerCommunication)
+        /// <summary>
+        /// Provides information about the world based on tilemaps.
+        /// </summary>
+        private readonly IWorldInfoFromTilemap worldInfo;
+
+        private ICollectableStatusBasics collectableStatus;
+
+        public SnakeHeadAnimationBehaviour(
+            IPlayerStatusBasics playerCommunication,
+            IWorldInfoFromTilemap worldInfo,
+            ICollectableStatusBasics collectableStatus)
         {
             this.playerCommunication = playerCommunication ?? throw new ArgumentNullException(
                 $"{typeof(SnakeHeadAnimationBehaviour)}: {nameof(playerCommunication)} must not be null.");
+            
+            this.worldInfo = worldInfo ?? throw new ArgumentNullException(
+                $"{typeof(SnakeHeadAnimationBehaviour)}: {nameof(worldInfo)} must not be null.");
+            
+            this.collectableStatus = collectableStatus ?? throw new ArgumentNullException(
+                $"{typeof(SnakeHeadAnimationBehaviour)}: {nameof(collectableStatus)} must not be null.");
 
             this.playerCommunication.PlayerDetailsUpdated += OnPlayerDetailsUpdated;
         }

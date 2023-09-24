@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "FQ.GameplayElements",
-        "FQ.Libraries.Exceptions"
+        "FQ.Libraries.Exceptions",
+        "FQ.Libraries.StandardTypes"
     ],
     "includePlatforms": [
         "Editor"

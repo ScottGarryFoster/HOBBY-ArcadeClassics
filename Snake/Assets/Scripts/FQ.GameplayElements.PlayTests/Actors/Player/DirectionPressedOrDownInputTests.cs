@@ -1,5 +1,6 @@
 ﻿using System;
 using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 using Moq;
 using NUnit.Framework;
 
@@ -48,7 +49,7 @@ namespace FQ.GameplayElements.PlayTests
             // Act Assert
             Assert.Throws<Exception>(() =>
             {
-                this.testClass.PressingInputInDirection(Direction.Down);
+                this.testClass.PressingInputInDirection(MovementDirection.Down);
             });
         }
         
@@ -70,13 +71,13 @@ namespace FQ.GameplayElements.PlayTests
             // Act Assert
             Assert.Throws<Exception>(() =>
             {
-                testClass.PressingInputInDirection(Direction.Down);
+                testClass.PressingInputInDirection(MovementDirection.Down);
             });
         }
 
         [Test]
         public void PressingInputInDirection_ReturnsFalse_WhenDirectionButtonIsNotPressedTest(
-            [Values(Direction.Down, Direction.Right, Direction.Left, Direction.Up)] Direction direction)
+            [Values(MovementDirection.Down, MovementDirection.Right, MovementDirection.Left, MovementDirection.Up)] MovementDirection direction)
         {
             // Arrange
             this.testClass.Setup(this.mockGameplayInput.Object);
@@ -90,7 +91,7 @@ namespace FQ.GameplayElements.PlayTests
         
         [Test]
         public void PressingInputInDirection_ReturnsTrue_WhenDirectionButtonPressedTest(
-            [Values(Direction.Down, Direction.Right, Direction.Left, Direction.Up)] Direction direction)
+            [Values(MovementDirection.Down, MovementDirection.Right, MovementDirection.Left, MovementDirection.Up)] MovementDirection direction)
         {
             // Arrange
             this.testClass.Setup(this.mockGameplayInput.Object);
@@ -108,15 +109,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndPressedIsDownTest()
         {
             // Arrange
-            var givenDirection = Direction.Down;
+            var givenDirection = MovementDirection.Down;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyPressed(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Right);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Right);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -128,15 +129,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndPressedIsLeftTest()
         {
             // Arrange
-            var givenDirection = Direction.Left;
+            var givenDirection = MovementDirection.Left;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyPressed(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Right);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Right);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -148,15 +149,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndPressedIsRightTest()
         {
             // Arrange
-            var givenDirection = Direction.Right;
+            var givenDirection = MovementDirection.Right;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyPressed(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -168,15 +169,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndPressedIsUpTest()
         {
             // Arrange
-            var givenDirection = Direction.Up;
+            var givenDirection = MovementDirection.Up;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyPressed(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Right);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Right);
 
             // Assert
             Assert.IsFalse(actual);
@@ -186,7 +187,7 @@ namespace FQ.GameplayElements.PlayTests
         
         [Test]
         public void PressingInputInDirection_ReturnsTrue_WhenDirectionButtonDownTest(
-            [Values(Direction.Down, Direction.Right, Direction.Left, Direction.Up)] Direction direction)
+            [Values(MovementDirection.Down, MovementDirection.Right, MovementDirection.Left, MovementDirection.Up)] MovementDirection direction)
         {
             // Arrange
             this.testClass.Setup(this.mockGameplayInput.Object);
@@ -204,15 +205,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionDownIsNotGivenAndPressedIsDownTest()
         {
             // Arrange
-            var givenDirection = Direction.Down;
+            var givenDirection = MovementDirection.Down;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyDown(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Right);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Right);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -224,15 +225,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndDownIsLeftTest()
         {
             // Arrange
-            var givenDirection = Direction.Left;
+            var givenDirection = MovementDirection.Left;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyDown(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Right);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Right);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -244,15 +245,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndDownIsRightTest()
         {
             // Arrange
-            var givenDirection = Direction.Right;
+            var givenDirection = MovementDirection.Right;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyDown(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Up);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Up);
 
             // Assert
             Assert.IsFalse(actual);
@@ -264,15 +265,15 @@ namespace FQ.GameplayElements.PlayTests
         public void PressingInputInDirection_ReturnFalse_WhenDirectionPressedIsNotGivenAndDownIsUpTest()
         {
             // Arrange
-            var givenDirection = Direction.Up;
+            var givenDirection = MovementDirection.Up;
             this.testClass.Setup(this.mockGameplayInput.Object);
             this.mockGameplayInput.Setup(x => 
                 x.KeyDown(GameplayButtonFromDirection(givenDirection))).Returns(true);
 
             // Act
-            bool actual = this.testClass.PressingInputInDirection(Direction.Down);
-            bool actual2 = this.testClass.PressingInputInDirection(Direction.Left);
-            bool actual3 = this.testClass.PressingInputInDirection(Direction.Right);
+            bool actual = this.testClass.PressingInputInDirection(MovementDirection.Down);
+            bool actual2 = this.testClass.PressingInputInDirection(MovementDirection.Left);
+            bool actual3 = this.testClass.PressingInputInDirection(MovementDirection.Right);
 
             // Assert
             Assert.IsFalse(actual);
@@ -280,14 +281,14 @@ namespace FQ.GameplayElements.PlayTests
             Assert.IsFalse(actual3);
         }
 
-        GameplayButton GameplayButtonFromDirection(Direction direction)
+        GameplayButton GameplayButtonFromDirection(MovementDirection direction)
         {
             switch (direction)
             {
-                case Direction.Down: return GameplayButton.DirectionDown;
-                case Direction.Left: return GameplayButton.DirectionLeft;
-                case Direction.Right: return GameplayButton.DirectionRight;
-                case Direction.Up: return GameplayButton.DirectionUp;
+                case MovementDirection.Down: return GameplayButton.DirectionDown;
+                case MovementDirection.Left: return GameplayButton.DirectionLeft;
+                case MovementDirection.Right: return GameplayButton.DirectionRight;
+                case MovementDirection.Up: return GameplayButton.DirectionUp;
                 default:
                     return GameplayButton.None;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FQ.Libraries.StandardTypes;
 using FQ.TilemapTools;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -26,7 +27,7 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Loops to lookup.
         /// </summary>
-        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loops;
+        private Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loops;
         
         /// <summary>
         /// Cached information about where the player can move.
@@ -47,14 +48,14 @@ namespace FQ.GameplayElements
         /// <param name="location">Location to test. </param>
         /// <param name="direction">Direction the Snake is moving in. </param>
         /// <returns>Answer as to whether there are loops. </returns>
-        public CollisionPositionAnswer GetLoop(Vector2Int location, Direction direction)
+        public CollisionPositionAnswer GetLoop(Vector2Int location, MovementDirection direction)
         {
             CollisionPositionAnswer answer = new()
             {
                 Answer = ContextToPositionAnswer.NoValidMovement,
             };
             
-            if (loops.TryGetValue(location, out Dictionary<Direction, CollisionPositionAnswer> locationValue))
+            if (loops.TryGetValue(location, out Dictionary<MovementDirection, CollisionPositionAnswer> locationValue))
             {
                 if (locationValue.TryGetValue(direction, out CollisionPositionAnswer value))
                 {

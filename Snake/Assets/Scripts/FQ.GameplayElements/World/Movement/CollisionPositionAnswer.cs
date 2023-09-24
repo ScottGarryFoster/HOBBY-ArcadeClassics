@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FQ.Libraries.StandardTypes;
+using UnityEngine;
 
 namespace FQ.GameplayElements
 {
@@ -20,6 +21,6 @@ namespace FQ.GameplayElements
         /// <summary>
         /// The new direction they should be in.
         /// </summary>
-        public Direction NewDirection;
+        public MovementDirection NewDirection;
     }
 }

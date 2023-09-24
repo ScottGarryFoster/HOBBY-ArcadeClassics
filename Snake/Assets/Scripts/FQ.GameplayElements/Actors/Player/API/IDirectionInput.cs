@@ -1,4 +1,5 @@
 ﻿using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 
 namespace FQ.GameplayElements
 {
@@ -20,6 +21,6 @@ namespace FQ.GameplayElements
         /// <param name="direction">Direction to test. </param>
         /// <returns>True means direction is pressed. </returns>
         /// <exception cref="System.Exception">When setup is unsuccessful or not called first. </exception>
-        bool PressingInputInDirection(Direction direction);
+        bool PressingInputInDirection(MovementDirection direction);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using FQ.GameObjectPromises;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 
 namespace FQ.GameplayElements
@@ -33,5 +34,10 @@ namespace FQ.GameplayElements
         /// Update where the player is considered to be.
         /// </summary>
         public Action<Vector2Int[]> UpdatePlayerLocation { get; set; }
+        
+        /// <summary>
+        /// Updates the direction the Player is moving to other elements in the scene.
+        /// </summary>
+        public Action<MovementDirection> UpdatePlayerDirection { get; set; }
     }
 }

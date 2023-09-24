@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using FQ.GameObjectPromises;
 using FQ.GameplayInputs;
+using FQ.Libraries.StandardTypes;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
@@ -47,7 +48,7 @@ namespace FQ.GameplayElements.EditorTests
             this.snakeBehaviour = concreteSnakeBehaviour;
 
             // By default ensures no loop is found.
-            this.mockWorldInfo.Setup(x => x.GetLoop(It.IsAny<Vector2Int>(), It.IsAny<Direction>()))
+            this.mockWorldInfo.Setup(x => x.GetLoop(It.IsAny<Vector2Int>(), It.IsAny<MovementDirection>()))
                 .Returns(new CollisionPositionAnswer()
                 {
                     Answer = ContextToPositionAnswer.NoValidMovement,

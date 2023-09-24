@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FQ.Libraries;
+using FQ.Libraries.StandardTypes;
 using FQ.Logger;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,7 +17,7 @@ namespace FQ.GameplayElements
         /// <summary>
         /// Values calculated last time loops were calculated.
         /// </summary>
-        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> lastCalculatedLoops;
+        private Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> lastCalculatedLoops;
         
         /// <summary>
         /// Calculates the looped positions based on the tilemap.
@@ -28,10 +29,10 @@ namespace FQ.GameplayElements
         public bool CalculateLoops(
             Tilemap tilemap,
             Tile borderTile,
-            out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer
+            out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer
         )
         {
-            loopAnswer = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>();
+            loopAnswer = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>();
             if (!ParametersAreValidForCalculation(tilemap))
             {
                 return false;
@@ -52,7 +53,7 @@ namespace FQ.GameplayElements
         /// </returns>
         public override CollisionPositionAnswer FindNewPositionForPlayer(
             Vector2Int currentPosition,
-            Direction currentDirection)
+            MovementDirection currentDirection)
         {
             if (this.lastCalculatedLoops == null)
             {
@@ -62,7 +63,7 @@ namespace FQ.GameplayElements
 
             var returnAnswer = new CollisionPositionAnswer() { Answer = ContextToPositionAnswer.NoValidMovement };
             if (this.lastCalculatedLoops.TryGetValue(
-                    currentPosition, out Dictionary<Direction, CollisionPositionAnswer> directionsAtLocation))
+                    currentPosition, out Dictionary<MovementDirection, CollisionPositionAnswer> directionsAtLocation))
             {
                 if (directionsAtLocation.TryGetValue(currentDirection, out CollisionPositionAnswer answer))
                 {
@@ -79,10 +80,10 @@ namespace FQ.GameplayElements
         /// <param name="tilemap">Tilemap to search. </param>
         /// <param name="borderTile">Border tile to use for loops. </param>
         /// <returns>All the border tiles and loops. </returns>
-        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> CalculateLoopsForGivenTilemap(
+        private Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> CalculateLoopsForGivenTilemap(
             Tilemap tilemap, Tile borderTile)
         {
-            var loopAnswer = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>();
+            var loopAnswer = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>();
             Bounds searchArea = ExtractWorldArea(tilemap);
             for (int x = (int) searchArea.min.x; x < (int) searchArea.max.x; ++x)
             {
@@ -90,7 +91,7 @@ namespace FQ.GameplayElements
                 {
                     if (CalculateLoopsAtGivenTile(tilemap, borderTile,
                             new Vector3Int(x, y, (int) tilemap.origin.z), searchArea,
-                        out Dictionary<Direction, CollisionPositionAnswer> tileAnswer))
+                        out Dictionary<MovementDirection, CollisionPositionAnswer> tileAnswer))
                     {
                         loopAnswer.Add(new Vector2Int(x,y), tileAnswer);
                     }
@@ -114,9 +115,9 @@ namespace FQ.GameplayElements
             Tile borderTile,
             Vector3Int location, 
             Bounds searchArea, 
-            out Dictionary<Direction, CollisionPositionAnswer> loopAnswer)
+            out Dictionary<MovementDirection, CollisionPositionAnswer> loopAnswer)
         {
-            loopAnswer = new Dictionary<Direction, CollisionPositionAnswer>();
+            loopAnswer = new Dictionary<MovementDirection, CollisionPositionAnswer>();
 
             TileBase tile = tilemap.GetTile(location);
             if (tile != borderTile)
@@ -124,9 +125,9 @@ namespace FQ.GameplayElements
                 return false;
             }
             
-            foreach (int i in Enum.GetValues(typeof(Direction)))
+            foreach (int i in Enum.GetValues(typeof(MovementDirection)))
             {
-                var direction = (Direction) i;
+                var direction = (MovementDirection) i;
                 if (CalculateLoopsAtGivenTileInDirection(
                         direction,
                         location,
@@ -195,7 +196,7 @@ namespace FQ.GameplayElements
         /// <param name="collisionPositionAnswer">Answer if successful. </param>
         /// <returns>True means there was a loop. </returns>
         private bool CalculateLoopsAtGivenTileInDirection(
-            Direction direction, 
+            MovementDirection direction, 
             Vector3Int position,
             Tilemap tilemap,
             TileBase borderTile,
@@ -245,23 +246,23 @@ namespace FQ.GameplayElements
         /// <param name="loopPosition">Position searching currently. </param>
         /// <returns>True means are still searching. </returns>
         /// <exception cref="NotImplementedException">
-        /// Not implemented <see cref="Direction"/>.
+        /// Not implemented <see cref="MovementDirection"/>.
         /// </exception>
-        private bool FindLoopLoopSearchArea(Direction direction, Bounds searchArea, ref Vector3Int loopPosition)
+        private bool FindLoopLoopSearchArea(MovementDirection direction, Bounds searchArea, ref Vector3Int loopPosition)
         {
             // Keep in mind we search in the opposite direction, search left when given right, up given down.
             switch (direction)
             {
-                case Direction.Right:
+                case MovementDirection.Right:
                     --loopPosition.x;
                     return loopPosition.x > searchArea.min.x;
-                case Direction.Left:
+                case MovementDirection.Left:
                     ++loopPosition.x;
                     return loopPosition.x < searchArea.max.x;
-                case Direction.Down:
+                case MovementDirection.Down:
                     --loopPosition.y;
                     return loopPosition.y > searchArea.min.y;
-                case Direction.Up:
+                case MovementDirection.Up:
                     ++loopPosition.y;
                     return loopPosition.y < searchArea.max.y;
                 default:
@@ -287,7 +288,7 @@ namespace FQ.GameplayElements
             Vector3Int previousPosition, 
             Tilemap tilemap, 
             TileBase borderTile,
-            Direction currentDirection,
+            MovementDirection currentDirection,
             out CollisionPositionAnswer collisionPositionAnswer)
         {
             bool isLoop = false;

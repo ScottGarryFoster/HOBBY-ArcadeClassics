@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -16,7 +17,7 @@ namespace FQ.GameplayElements
         bool CalculateLoops(
             Tilemap tilemap,
             Tile borderTile,
-            out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer
+            out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer
             );
     }
 }

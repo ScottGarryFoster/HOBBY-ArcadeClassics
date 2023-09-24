@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FQ.GameplayElements;
+using FQ.Libraries.StandardTypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Object = UnityEngine.Object;
@@ -37,7 +38,7 @@ namespace FQ.Editors
                 return null;
             }
             
-            Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loops =
+            Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loops =
                 CalculateLoops(scanTilemap, borderTile);
             IdentifyAllEntrancesAndExitsInTilemap(
                 loops, 
@@ -55,13 +56,13 @@ namespace FQ.Editors
         /// <param name="scanTilemap">Tilemap to scan. </param>
         /// <param name="borderTile">Border tile to use for entrances and exits. </param>
         /// <returns>All the information for loops. </returns>
-        private Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> CalculateLoops(Tilemap scanTilemap, Tile borderTile)
+        private Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> CalculateLoops(Tilemap scanTilemap, Tile borderTile)
         {
             ILoopedWorldDiscoveredByTile loopingAnswers = new LoopedWorldDiscoveredByTile();
             loopingAnswers.CalculateLoops(
                 scanTilemap,
                 borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer);
 
             return loopAnswer;
         }
@@ -129,7 +130,7 @@ namespace FQ.Editors
         /// <param name="entrances">Extracted entrances. </param>
         /// <param name="exits">Extracted exits. </param>
         private void IdentifyAllEntrancesAndExitsInTilemap(
-            Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
+            Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer,
             out Dictionary<Vector2Int, ArrowDirection> entrances,
             out Dictionary<Vector2Int, ArrowDirection> exits)
         {
@@ -150,11 +151,11 @@ namespace FQ.Editors
         /// <param name="entrances">Entrances answers to add to. </param>
         /// <param name="exits">Exit answers to add to. </param>
         private void DiscoverEntrancesAndExitsOnTile(Vector2Int location, Dictionary<Vector2Int,
-                                                         Dictionary<Direction, CollisionPositionAnswer>> loopAnswer,
+                                                         Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer,
                                                      Dictionary<Vector2Int, ArrowDirection> entrances,
                                                      Dictionary<Vector2Int, ArrowDirection> exits)
         {
-            if (loopAnswer.TryGetValue(location, out Dictionary<Direction, CollisionPositionAnswer> loopValue))
+            if (loopAnswer.TryGetValue(location, out Dictionary<MovementDirection, CollisionPositionAnswer> loopValue))
             {
                 foreach (var currentDirection in loopValue)
                 {
@@ -172,7 +173,7 @@ namespace FQ.Editors
         }
 
         /// <summary>
-        /// Adds or updates the given <see cref="Direction"/> arrow in the the output given.
+        /// Adds or updates the given <see cref="MovementDirection"/> arrow in the the output given.
         /// </summary>
         /// <param name="arrowOutput">The list of locations and <see cref="ArrowDirection"/> to update. </param>
         /// <param name="location">Location to update. </param>
@@ -180,7 +181,7 @@ namespace FQ.Editors
         private void AddOrUpdateNewArrow(
                 Dictionary<Vector2Int, ArrowDirection> arrowOutput, 
                 Vector2Int location,
-                Direction direction)
+                MovementDirection direction)
         {
             ArrowDirection exitDirection = ConvertDirectionToArrowDirection(direction);
             if (arrowOutput.ContainsKey(location))
@@ -215,21 +216,21 @@ namespace FQ.Editors
         }
 
         /// <summary>
-        /// Converts a <see cref="Direction"/> to an <see cref="ArrowDirection"/>.
+        /// Converts a <see cref="MovementDirection"/> to an <see cref="ArrowDirection"/>.
         /// </summary>
-        /// <param name="direction"><see cref="Direction"/> to convert. </param>
+        /// <param name="direction"><see cref="MovementDirection"/> to convert. </param>
         /// <returns><see cref="ArrowDirection"/> converted. </returns>
         /// <exception cref="NotImplementedException">
         /// Thrown if there is no equivalent.
         /// </exception>
-        private ArrowDirection ConvertDirectionToArrowDirection(Direction direction)
+        private ArrowDirection ConvertDirectionToArrowDirection(MovementDirection direction)
         {
             switch (direction)
             {
-                case Direction.Down: return ArrowDirection.Down;
-                case Direction.Left: return ArrowDirection.Left;
-                case Direction.Right: return ArrowDirection.Right;
-                case Direction.Up: return ArrowDirection.Up;
+                case MovementDirection.Down: return ArrowDirection.Down;
+                case MovementDirection.Left: return ArrowDirection.Left;
+                case MovementDirection.Right: return ArrowDirection.Right;
+                case MovementDirection.Up: return ArrowDirection.Up;
                 default:
                     throw new NotImplementedException($"{nameof(ConvertDirectionToArrowDirection)}: " +
                                                   $"{nameof(direction)} does not have a " +

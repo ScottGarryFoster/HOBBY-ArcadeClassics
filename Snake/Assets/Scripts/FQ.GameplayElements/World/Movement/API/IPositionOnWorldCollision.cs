@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FQ.Libraries.StandardTypes;
+using UnityEngine;
 
 namespace FQ.GameplayElements
 {
@@ -17,6 +18,6 @@ namespace FQ.GameplayElements
         /// </returns>
         CollisionPositionAnswer FindNewPositionForPlayer(
             Vector2Int currentPosition,
-            Direction currentDirection);
+            MovementDirection currentDirection);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FQ.Libraries.StandardTypes;
 using Transform = UnityEngine.Transform;
 
 namespace FQ.GameplayElements
@@ -23,6 +24,6 @@ namespace FQ.GameplayElements
         /// </summary>
         /// <param name="currentDirection">Current direction to move the actor. </param>
         /// <exception cref="System.Exception">Throws if Setup not called successfully first. </exception>
-        void MoveActor(Direction currentDirection);
+        void MoveActor(MovementDirection currentDirection);
     }
 }

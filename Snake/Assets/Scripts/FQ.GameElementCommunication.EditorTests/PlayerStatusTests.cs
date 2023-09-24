@@ -1,4 +1,5 @@
 ﻿using System;
+using FQ.Libraries.StandardTypes;
 using NUnit.Framework;
 using UnityEngine;
 using Assert = UnityEngine.Assertions.Assert;
@@ -47,6 +48,23 @@ namespace FQ.GameElementCommunication.EditorTests
         }
         
         [Test]
+        public void UpdateLocation_CausesPlayerDetailsUpdatedToCallTest()
+        {
+            // Arrange
+            bool didCall = false;
+            this.testClass.PlayerDetailsUpdated += (sender, args) =>
+            {
+                didCall = true;
+            };
+
+            // Act
+            this.testClass.UpdateLocation(Array.Empty<Vector2Int>());
+            
+            // Assert
+            Assert.IsTrue(didCall);
+        }
+        
+        [Test]
         public void UpdateLocation_ThrowsArgumentNullException_WhenNullIsGivenTest()
         {
             // Arrange
@@ -65,6 +83,76 @@ namespace FQ.GameElementCommunication.EditorTests
             
             // Assert
             Assert.IsTrue(didThrow);
+        }
+ 
+    
+        [Test]
+        public void PlayerDirection_CausesPlayerDetailsUpdatedToBeCalledTest()
+        {
+            // Arrange
+            bool didCall = false;
+            this.testClass.PlayerDetailsUpdated += (sender, args) =>
+            {
+                didCall = true;
+            };
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(MovementDirection.Right);
+                
+            // Assert
+            Assert.IsTrue(didCall);
+        }
+    
+        [Test]
+        public void PlayerDirection_EqualsLeft_WhenLeftGivenTest()
+        {
+            // Arrange
+            var expected = MovementDirection.Left;
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(expected);
+            
+            // Assert
+            Assert.AreEqual(expected, this.testClass.PlayerDirection);
+        }
+        
+        [Test]
+        public void PlayerDirection_EqualsRight_WhenRightGivenTest()
+        {
+            // Arrange
+            var expected = MovementDirection.Right;
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(expected);
+            
+            // Assert
+            Assert.AreEqual(expected, this.testClass.PlayerDirection);
+        }
+        
+        [Test]
+        public void PlayerDirection_EqualsDown_WhenDownGivenTest()
+        {
+            // Arrange
+            var expected = MovementDirection.Down;
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(expected);
+            
+            // Assert
+            Assert.AreEqual(expected, this.testClass.PlayerDirection);
+        }
+        
+        [Test]
+        public void PlayerDirection_EqualsUp_WhenUpGivenTest()
+        {
+            // Arrange
+            var expected = MovementDirection.Up;
+
+            // Act
+            this.testClass.UpdatePlayerHeadDirection(expected);
+            
+            // Assert
+            Assert.AreEqual(expected, this.testClass.PlayerDirection);
         }
     }
 }

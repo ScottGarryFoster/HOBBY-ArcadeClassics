@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FQ.Libraries;
+using FQ.Libraries.StandardTypes;
 using FQ.Logger;
 using NUnit.Framework;
 using UnityEngine;
@@ -72,7 +73,7 @@ namespace FQ.GameplayElements.EditorTests
             
             // Act
             this.testClass.CalculateLoops(testTilemap, borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> actual);
             
             // Assert
             List<Vector2Int> actualCompare = actual.Keys.ToList();
@@ -85,40 +86,40 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             Tilemap testTilemap = GetTestBorderTileMap(TestGridLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
-            var expectedLocations = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            var expectedLocations = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>
             {
                 // Left side
-                {new Vector2Int(-3, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-3, -2), MakeSimpleLoopAnswer(Direction.Left, 1, -2)},
-                {new Vector2Int(-3, -1), MakeSimpleLoopAnswer(Direction.Left, 1, -1)},
-                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(Direction.Left, 1, 0)},
-                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(Direction.Left, 1, 1)},
-                {new Vector2Int(-3, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, -3), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, -2), MakeSimpleLoopAnswer(MovementDirection.Left, 1, -2)},
+                {new Vector2Int(-3, -1), MakeSimpleLoopAnswer(MovementDirection.Left, 1, -1)},
+                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(MovementDirection.Left, 1, 0)},
+                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(MovementDirection.Left, 1, 1)},
+                {new Vector2Int(-3, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Right side
-                {new Vector2Int(2, -3), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(2, -2), MakeSimpleLoopAnswer(Direction.Right, -2, -2)},
-                {new Vector2Int(2, -1), MakeSimpleLoopAnswer(Direction.Right, -2, -1)},
-                {new Vector2Int(2, 0), MakeSimpleLoopAnswer(Direction.Right, -2, 0)},
-                {new Vector2Int(2, 1), MakeSimpleLoopAnswer(Direction.Right, -2, 1)},
-                {new Vector2Int(2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(2, -3), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(2, -2), MakeSimpleLoopAnswer(MovementDirection.Right, -2, -2)},
+                {new Vector2Int(2, -1), MakeSimpleLoopAnswer(MovementDirection.Right, -2, -1)},
+                {new Vector2Int(2, 0), MakeSimpleLoopAnswer(MovementDirection.Right, -2, 0)},
+                {new Vector2Int(2, 1), MakeSimpleLoopAnswer(MovementDirection.Right, -2, 1)},
+                {new Vector2Int(2, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Top side
-                {new Vector2Int(-2, -3), MakeSimpleLoopAnswer(Direction.Up, -2, 1)},
-                {new Vector2Int(-1, -3), MakeSimpleLoopAnswer(Direction.Up, -1, 1)},
-                {new Vector2Int(0, -3), MakeSimpleLoopAnswer(Direction.Up, 0, 1)},
-                {new Vector2Int(1, -3), MakeSimpleLoopAnswer(Direction.Up, 1, 1)},
+                {new Vector2Int(-2, -3), MakeSimpleLoopAnswer(MovementDirection.Up, -2, 1)},
+                {new Vector2Int(-1, -3), MakeSimpleLoopAnswer(MovementDirection.Up, -1, 1)},
+                {new Vector2Int(0, -3), MakeSimpleLoopAnswer(MovementDirection.Up, 0, 1)},
+                {new Vector2Int(1, -3), MakeSimpleLoopAnswer(MovementDirection.Up, 1, 1)},
                 
                 // Bottom side
-                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(Direction.Down, -2, -2)},
-                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(Direction.Down, -1, -2)},
-                {new Vector2Int(0, 2), MakeSimpleLoopAnswer(Direction.Down, 0, -2)},
-                {new Vector2Int(1, 2), MakeSimpleLoopAnswer(Direction.Down, 1, -2)}
+                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(MovementDirection.Down, -2, -2)},
+                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(MovementDirection.Down, -1, -2)},
+                {new Vector2Int(0, 2), MakeSimpleLoopAnswer(MovementDirection.Down, 0, -2)},
+                {new Vector2Int(1, 2), MakeSimpleLoopAnswer(MovementDirection.Down, 1, -2)}
             };
             
             // Act
             this.testClass.CalculateLoops(testTilemap, borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> actual);
             
             // Assert
             Assert.AreEqual(expectedLocations.Keys.Count, actual.Keys.Count);
@@ -127,7 +128,7 @@ namespace FQ.GameplayElements.EditorTests
                 // Check the keys in the first dictionary
                 Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
                 actual.TryGetValue(expectedLocation.Key, 
-                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                    out Dictionary<MovementDirection, CollisionPositionAnswer> actualLocationValue);
                 Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
                 Assert.AreEqual(expectedLocation.Value.Keys.Count, actualLocationValue.Keys.Count,
                     $"Direction dictionary incorrectly sized for {expectedLocation.Key}");
@@ -165,32 +166,32 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTiles2BordersApartLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
 
-            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            var expected = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>
             {
                 // Left side
-                {new Vector2Int(-3, -1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(Direction.Left, -3, 0)},
-                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(Direction.Left, -3, 1)},
-                {new Vector2Int(-3, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, -1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-3, 0), MakeSimpleLoopAnswer(MovementDirection.Left, -3, 0)},
+                {new Vector2Int(-3, 1), MakeSimpleLoopAnswer(MovementDirection.Left, -3, 1)},
+                {new Vector2Int(-3, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Right side
-                {new Vector2Int(0, -1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(0, 0), MakeSimpleLoopAnswer(Direction.Right, 0, 0)},
-                {new Vector2Int(0, 1), MakeSimpleLoopAnswer(Direction.Right, 0, 1)},
-                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, -1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 0), MakeSimpleLoopAnswer(MovementDirection.Right, 0, 0)},
+                {new Vector2Int(0, 1), MakeSimpleLoopAnswer(MovementDirection.Right, 0, 1)},
+                {new Vector2Int(0, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Top side
-                {new Vector2Int(-2, -1), MakeSimpleLoopAnswer(Direction.Up, -2, -1)},
-                {new Vector2Int(-1, -1), MakeSimpleLoopAnswer(Direction.Up, -1, -1)},
+                {new Vector2Int(-2, -1), MakeSimpleLoopAnswer(MovementDirection.Up, -2, -1)},
+                {new Vector2Int(-1, -1), MakeSimpleLoopAnswer(MovementDirection.Up, -1, -1)},
 
                 // Bottom side
-                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(Direction.Down, -2, 2)},
-                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(Direction.Down, -1, 2)},
+                {new Vector2Int(-2, 2), MakeSimpleLoopAnswer(MovementDirection.Down, -2, 2)},
+                {new Vector2Int(-1, 2), MakeSimpleLoopAnswer(MovementDirection.Down, -1, 2)},
             };
             
             // Act
             this.testClass.CalculateLoops(testTilemap, borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> actual);
             
             // Assert
             Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
@@ -199,7 +200,7 @@ namespace FQ.GameplayElements.EditorTests
                 // Check the keys in the first dictionary
                 Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
                 actual.TryGetValue(expectedLocation.Key, 
-                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                    out Dictionary<MovementDirection, CollisionPositionAnswer> actualLocationValue);
                 Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
                 Assert.AreEqual(expectedLocation.Value.Keys.Count, actualLocationValue.Keys.Count,
                     $"Direction dictionary incorrectly sized for {expectedLocation.Key}");
@@ -237,28 +238,28 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTiles1BorderApartLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
 
-            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            var expected = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>
             {
                 // Right side
-                {new Vector2Int(-2, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-2, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Left side
-                {new Vector2Int(0, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(0, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
 
                 // Top side
-                {new Vector2Int(-1, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-1, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
 
                 // Bottom side
-                {new Vector2Int(-1, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-1, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
             };
             
             // Act
             this.testClass.CalculateLoops(testTilemap, borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> actual);
             
             // Assert
             Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
@@ -267,7 +268,7 @@ namespace FQ.GameplayElements.EditorTests
                 // Check the keys in the first dictionary
                 Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
                 actual.TryGetValue(expectedLocation.Key, 
-                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                    out Dictionary<MovementDirection, CollisionPositionAnswer> actualLocationValue);
                 Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
                 Assert.AreEqual(expectedLocation.Value.Keys.Count, actualLocationValue.Keys.Count,
                     $"Direction dictionary incorrectly sized for {expectedLocation.Key}");
@@ -283,31 +284,31 @@ namespace FQ.GameplayElements.EditorTests
             Tilemap testTilemap = GetTestBorderTileMap(TestGridWithTilesTouchingLocation);
             var borderTile = Resources.Load<Tile>(BorderTileLocation);
 
-            var expected = new Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>>
+            var expected = new Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>>
             {
                 // Right side
-                {new Vector2Int(-2, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-2, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(-2, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(-2, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Left side
-                {new Vector2Int(0, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(0, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
-                {new Vector2Int(0, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
+                {new Vector2Int(0, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
 
                 // Top side
-                {new Vector2Int(-1, 0), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-1, 0), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
 
                 // Bottom side
-                {new Vector2Int(-1, 2), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-1, 2), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
                 
                 // Center
-                {new Vector2Int(-1, 1), new Dictionary<Direction, CollisionPositionAnswer>()},
+                {new Vector2Int(-1, 1), new Dictionary<MovementDirection, CollisionPositionAnswer>()},
             };
             
             // Act
             this.testClass.CalculateLoops(testTilemap, borderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> actual);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> actual);
             
             // Assert
             Assert.AreEqual(expected.Keys.Count, actual.Keys.Count);
@@ -316,7 +317,7 @@ namespace FQ.GameplayElements.EditorTests
                 // Check the keys in the first dictionary
                 Assert.IsTrue(actual.ContainsKey(expectedLocation.Key), $"Does not contain {expectedLocation.Key}");
                 actual.TryGetValue(expectedLocation.Key, 
-                    out Dictionary<Direction, CollisionPositionAnswer> actualLocationValue);
+                    out Dictionary<MovementDirection, CollisionPositionAnswer> actualLocationValue);
                 Assert.NotNull(actualLocationValue, $"actualValue is null. {actualLocationValue}");
                 Assert.AreEqual(expectedLocation.Value.Keys.Count, actualLocationValue.Keys.Count,
                     $"Direction dictionary incorrectly sized for {expectedLocation.Key}");
@@ -337,7 +338,7 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<InvalidCallOrder>(() =>
             {
-                this.testClass.FindNewPositionForPlayer(new Vector2Int(), Direction.Down);
+                this.testClass.FindNewPositionForPlayer(new Vector2Int(), MovementDirection.Down);
             });
         }
         
@@ -350,7 +351,7 @@ namespace FQ.GameplayElements.EditorTests
             // Act Assert
             Assert.Throws<InvalidCallOrder>(() =>
             {
-                this.testClass.FindNewPositionForPlayer(new Vector2Int(), Direction.Down);
+                this.testClass.FindNewPositionForPlayer(new Vector2Int(), MovementDirection.Down);
             });
         }
         
@@ -363,7 +364,7 @@ namespace FQ.GameplayElements.EditorTests
             this.testClass.CalculateLoops(testTilemap, new Tile(), out _);
             
             // Act
-            CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(new Vector2Int(), Direction.Down);
+            CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(new Vector2Int(), MovementDirection.Down);
             
             // Assert
             Assert.AreEqual(expected, actual.Answer);
@@ -375,15 +376,15 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             var expectedAnswer = ContextToPositionAnswer.NewPositionIsCorrect;
             var expectedLocation = new Vector2Int(1, -1);
-            var expectedDirection = Direction.Left;
+            var expectedDirection = MovementDirection.Left;
             
             var givenLocation = new Vector2Int(-3, -1);
-            var givenDirection = Direction.Left;
+            var givenDirection = MovementDirection.Left;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
             this.testClass.CalculateLoops(givenTileMap, givenBorderTile,
-                out Dictionary<Vector2Int, Dictionary<Direction, CollisionPositionAnswer>> loopAnswer);
+                out Dictionary<Vector2Int, Dictionary<MovementDirection, CollisionPositionAnswer>> loopAnswer);
 
             // Act
             CollisionPositionAnswer actual = this.testClass.FindNewPositionForPlayer(givenLocation, givenDirection);
@@ -401,7 +402,7 @@ namespace FQ.GameplayElements.EditorTests
             var expectedAnswer = ContextToPositionAnswer.NoValidMovement;
             
             var givenLocation = new Vector2Int(-3, -1);
-            var givenDirection = Direction.Right;
+            var givenDirection = MovementDirection.Right;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -420,10 +421,10 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             var expectedAnswer = ContextToPositionAnswer.NewPositionIsCorrect;
             var expectedLocation = new Vector2Int(-2, -1);
-            var expectedDirection = Direction.Right;
+            var expectedDirection = MovementDirection.Right;
             
             var givenLocation = new Vector2Int(2, -1);
-            var givenDirection = Direction.Right;
+            var givenDirection = MovementDirection.Right;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -445,7 +446,7 @@ namespace FQ.GameplayElements.EditorTests
             var expectedAnswer = ContextToPositionAnswer.NoValidMovement;
             
             var givenLocation = new Vector2Int(2, 0);
-            var givenDirection = Direction.Down;
+            var givenDirection = MovementDirection.Down;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -464,10 +465,10 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             var expectedAnswer = ContextToPositionAnswer.NewPositionIsCorrect;
             var expectedLocation = new Vector2Int(0, 1);
-            var expectedDirection = Direction.Up;
+            var expectedDirection = MovementDirection.Up;
             
             var givenLocation = new Vector2Int(0, -3);
-            var givenDirection = Direction.Up;
+            var givenDirection = MovementDirection.Up;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -489,7 +490,7 @@ namespace FQ.GameplayElements.EditorTests
             var expectedAnswer = ContextToPositionAnswer.NoValidMovement;
             
             var givenLocation = new Vector2Int(-1, -3);
-            var givenDirection = Direction.Left;
+            var givenDirection = MovementDirection.Left;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -508,10 +509,10 @@ namespace FQ.GameplayElements.EditorTests
             // Arrange
             var expectedAnswer = ContextToPositionAnswer.NewPositionIsCorrect;
             var expectedLocation = new Vector2Int(-1, -2);
-            var expectedDirection = Direction.Down;
+            var expectedDirection = MovementDirection.Down;
             
             var givenLocation = new Vector2Int(-1, 2);
-            var givenDirection = Direction.Down;
+            var givenDirection = MovementDirection.Down;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -533,7 +534,7 @@ namespace FQ.GameplayElements.EditorTests
             var expectedAnswer = ContextToPositionAnswer.NoValidMovement;
             
             var givenLocation = new Vector2Int(0, 2);
-            var givenDirection = Direction.Right;
+            var givenDirection = MovementDirection.Right;
             Tilemap givenTileMap = GetTestBorderTileMap(TestGridLocation);
             var givenBorderTile = Resources.Load<Tile>(BorderTileLocation);
             
@@ -610,10 +611,10 @@ namespace FQ.GameplayElements.EditorTests
             return testLocations;
         }
 
-        private Dictionary<Direction, CollisionPositionAnswer> MakeSimpleLoopAnswer(
-            Direction direction, int x, int y)
+        private Dictionary<MovementDirection, CollisionPositionAnswer> MakeSimpleLoopAnswer(
+            MovementDirection direction, int x, int y)
         {
-            var answer = new Dictionary<Direction, CollisionPositionAnswer>();
+            var answer = new Dictionary<MovementDirection, CollisionPositionAnswer>();
             var collision = new CollisionPositionAnswer()
             {
                 Answer = ContextToPositionAnswer.NoValidMovement, 

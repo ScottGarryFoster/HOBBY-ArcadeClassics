@@ -266,5 +266,15 @@ The visuals in the version of Snake I played in early 2000s were not as simple a
 ![Directions added for each piece](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-NokiaSnakeBreakdown-2.PNG?raw=true)
 Broken down into compass directions it makes sense and the mystery slots together. The bigger piece of food likely slots in any orientation given the pattern. The rest however appears to follow this compass direction.
 
+#### Snake Eating
+When figuring out how to make the Snake open their mouth a problem occurred. The animation side is fine but the logic is a little more complex due to previous decisions. The system I would like to implement is that the snake opens their mouth with two spaces of air in front and the food on the other side. 
+
+[![Snake Eating Scenarios](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeEatingScenarios.png?raw=true)](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeEatingScenarios.png?raw=true)
+Breaking it down there are all the general scenarios which just involve what would likely become a loop inspecting the tiles in front of the Snake player. These are the 'Basic Scenarios' as upon each movement they inspect the tile in front for validity and move on (or not). The complication comes with combining this with the Advanced scenarios. Upon coming across a World border a loop should be looked for and then the 'real' inspection should occur on the tile on the other side of the loop. The same inspection rules apply but with loops in the mix.
+
+[![Snake Eating Scenarios](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeHeadFlow.png?raw=true)](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeHeadFlow.png?raw=true)
+This is the breakdown of the loop likely with Tile Counter as an Index rather than a while loop as it look like above (however this is more implementation detail). The rest of the scenarios are all within this flow with early outs.
+
+This breakdown has allowed me to understand that the animator (code to decide when to open the mouth) needs access to not only the player and food but also border which contains the loops. 
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

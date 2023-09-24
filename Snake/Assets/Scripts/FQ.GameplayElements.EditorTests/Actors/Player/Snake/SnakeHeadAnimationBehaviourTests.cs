@@ -10,15 +10,21 @@ namespace FQ.GameplayElements.EditorTests
     public class SnakeHeadAnimationBehaviourTests
     {
         private Mock<IPlayerStatusBasics> mockPlayerStatusBasics;
+        private Mock<IWorldInfoFromTilemap> mockWorldInfoFromTilemap;
         private ISnakeHeadAnimationBehaviour testClass;
         
         [SetUp]
         public void Setup()
         {
             this.mockPlayerStatusBasics = new Mock<IPlayerStatusBasics>();
-            this.testClass = new SnakeHeadAnimationBehaviour(mockPlayerStatusBasics.Object);
+            this.mockWorldInfoFromTilemap = new Mock<IWorldInfoFromTilemap>();
+            this.testClass = new SnakeHeadAnimationBehaviour(
+                mockPlayerStatusBasics.Object, 
+                mockWorldInfoFromTilemap.Object);
         }
 
+        #region Construction
+        
         [Test]
         public void OnConstruction_ArgumentNullExceptionIsThrown_WhenElementCommunicationIsNullTest()
         {
@@ -29,7 +35,9 @@ namespace FQ.GameplayElements.EditorTests
             bool didThrow = false;
             try
             {
-                new SnakeHeadAnimationBehaviour(given);
+                new SnakeHeadAnimationBehaviour(
+                    playerCommunication: given, 
+                    this.mockWorldInfoFromTilemap.Object);
             }
             catch (ArgumentNullException)
             {
@@ -39,6 +47,33 @@ namespace FQ.GameplayElements.EditorTests
             // Assert
             Assert.IsTrue(didThrow);
         }
+        
+        [Test]
+        public void OnConstruction_ArgumentNullExceptionIsThrown_WhenWorldInfoFromTilemapIsNullTest()
+        {
+            // Arrange
+            IWorldInfoFromTilemap given = null;
+            
+            // Act
+            bool didThrow = false;
+            try
+            {
+                new SnakeHeadAnimationBehaviour(
+                    this.mockPlayerStatusBasics.Object,
+                    worldInfo: given);
+            }
+            catch (ArgumentNullException)
+            {
+                didThrow = true;
+            }
+            
+            // Assert
+            Assert.IsTrue(didThrow);
+        }
+        
+        #endregion
+        
+        #region DirectionParam
 
         [Test]
         public void OnPlayerDetailsUpdated_CallsParamDirectionWith2_WhenPlayerDirectionIsDownTest()
@@ -115,5 +150,7 @@ namespace FQ.GameplayElements.EditorTests
             // Assert
             Assert.AreEqual(expected, actual);
         }
+        
+        #endregion
     }
 }

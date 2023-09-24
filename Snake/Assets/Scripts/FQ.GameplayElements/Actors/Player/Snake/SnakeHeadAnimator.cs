@@ -41,9 +41,17 @@ namespace FQ.GameplayElements
                 return;
             }
 
+            IWorldInfoFromTilemap worldInfo = AcquireWorldInfo();
+            if (worldInfo == null)
+            {
+                Log.Error($"{typeof(SnakePlayer)}: Unable to find {nameof(worldInfo)}." +
+                          $"Animations on the player will no longer occur.");
+                return;
+            }
+
             this.animator = GetComponent<Animator>();
             
-            this.behaviour = new SnakeHeadAnimationBehaviour(playerStatus);
+            this.behaviour = new SnakeHeadAnimationBehaviour(playerStatus, worldInfo);
             this.behaviour.ParamDirection += OnUpdateDirectionParameter;
         }
 
@@ -71,6 +79,16 @@ namespace FQ.GameplayElements
             }
 
             return communication.PlayerStatus;
+        }
+        
+        /// <summary>
+        /// Finds and returns information on the world map if in the scene.
+        /// </summary>
+        /// <returns><see cref="IWorldInfoFromTilemap"/> if in the scene or null if not.</returns>
+        private IWorldInfoFromTilemap AcquireWorldInfo()
+        {
+            IWorldInfoFromTilemapFinder finder = new SnakeWorldInfoFromTilemapFinder();
+            return finder.FindWorldInfo();
         }
     }
 }

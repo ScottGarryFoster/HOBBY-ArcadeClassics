@@ -1,4 +1,4 @@
 ﻿{
   "name": "FQ.GameElementCommunication",
-  "references":[ "GUID:7fd643038ef64a2db704c6ece1159739" ]
+  "references":[ "GUID:7fd643038ef64a2db704c6ece1159739", "GUID:c527f6d8a2b8d194f9340cffb05def06" ]
 }

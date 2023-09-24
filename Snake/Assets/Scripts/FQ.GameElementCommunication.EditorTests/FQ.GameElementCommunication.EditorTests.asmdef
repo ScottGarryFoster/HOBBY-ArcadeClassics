@@ -5,7 +5,8 @@
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner",
     "FQ.GameElementCommunication",
-    "FQ.Libraries.StandardTypes"
+    "FQ.Libraries.StandardTypes",
+    "FQ.Log"
   ],
   "includePlatforms": [
     "Editor"

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using FQ.GameElementCommunication;
 using FQ.GameObjectPromises;
+using FQ.Libraries.StandardTypes;
 using FQ.Logger;
 using UnityEngine;
 
@@ -13,6 +14,29 @@ namespace FQ.GameplayElements
     public class SnakeHeadAnimator : GameElement, ISnakeHeadAnimator
     {
         /// <summary>
+        /// The name of the direction parameter.
+        /// </summary>
+        [SerializeField]
+        [Header("Animator Attributes")]
+        [Tooltip("The name of the direction parameter.")]
+        private string directionParam = "Direction";
+        
+        /// <summary>
+        /// The name of the open mouth parameter.
+        /// </summary>
+        [SerializeField]
+        [Tooltip("The name of the open mouth parameter.")]
+        private string openParam = "Open";
+
+        /// <summary>
+        /// The distance to open the mouth from in tiles.
+        /// </summary>
+        [SerializeField]
+        [Tooltip("The distance to open the mouth from in tiles.")]
+        [Min(0)]
+        private int distanceToEat = 3;
+        
+        /// <summary>
         /// Provides the correct details and methods to control the animator.
         /// </summary>
         private ISnakeHeadAnimationBehaviour behaviour;
@@ -24,9 +48,9 @@ namespace FQ.GameplayElements
         private Animator animator;
 
         /// <summary>
-        /// The name of the direction parameter.
+        /// The items given at runtime to the behaviour from the developer.
         /// </summary>
-        private const string DirectionParam = "Direction";
+        private SnakeHeadAnimationUserCustomisation userCustomisation;
         
         /// <summary>
         /// Start is called on the frame when a script is enabled just
@@ -60,9 +84,18 @@ namespace FQ.GameplayElements
             }
 
             this.animator = GetComponent<Animator>();
+
+            this.userCustomisation = new SnakeHeadAnimationUserCustomisation();
+            this.userCustomisation.EatDistance = this.distanceToEat;
             
-            this.behaviour = new SnakeHeadAnimationBehaviour(playerStatus, worldInfo, collectableStatus);
+            this.behaviour = new SnakeHeadAnimationBehaviour(
+                playerStatus, 
+                worldInfo, 
+                collectableStatus, 
+                new TilePositionFromTransform(transform, new Vector3(0.5f,0.5f, 0)),
+                this.userCustomisation);
             this.behaviour.ParamDirection += OnUpdateDirectionParameter;
+            this.behaviour.ParamMouth += OnUpdateMouthOpenParameter;
         }
 
         /// <summary>
@@ -71,8 +104,18 @@ namespace FQ.GameplayElements
         /// <param name="newDirection">The new direction to set in the Animator</param>
         private void OnUpdateDirectionParameter(int newDirection)
         {
-            var parameter = this.animator.parameters.First(x => x.name == DirectionParam);
+            var parameter = this.animator.parameters.First(x => x.name == this.directionParam);
             this.animator.SetInteger(parameter.nameHash, newDirection);
+        }
+        
+        /// <summary>
+        /// Occurs when the behaviour has a new direction to push.
+        /// </summary>
+        /// <param name="newValue">The new mouth value to set in the Animator</param>
+        private void OnUpdateMouthOpenParameter(bool newValue)
+        {
+            var parameter = this.animator.parameters.First(x => x.name == this.openParam);
+            this.animator.SetBool(parameter.nameHash, newValue);
         }
 
         /// <summary>

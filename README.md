@@ -5,8 +5,15 @@ This project is an attempt to prototype programming in Unity by creating simple 
 For this project it is a prototype of the classic game Snake popularised by Nokia.
 
 ## Progress
-Snake Game 50%
+Snake Game 100%
+(with some features which would be nice logged)
 
+# Final Game
+Gameplay
+[![Final Visuals](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeNewVisuals.gif?raw=true)
+
+The loop visualiser tool (visualises where the game generates the loops for the designer). See below for full explanation.
+![Visualisers](https://github.com/ScottGarryFoster/PROJECT-ArcadeClassics/blob/main/Progress/Milestones/006-FurtherVisualiser.gif?raw=true)
 ## Milestones / History
 This is a record of notable times in the project a snapshot was taken.
 ### Snake Movement
@@ -275,6 +282,25 @@ Breaking it down there are all the general scenarios which just involve what wou
 [![Snake Eating Scenarios](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeHeadFlow.png?raw=true)](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeHeadFlow.png?raw=true)
 This is the breakdown of the loop likely with Tile Counter as an Index rather than a while loop as it look like above (however this is more implementation detail). The rest of the scenarios are all within this flow with early outs.
 
-This breakdown has allowed me to understand that the animator (code to decide when to open the mouth) needs access to not only the player and food but also border which contains the loops. 
+This breakdown has allowed me to understand that the animator (code to decide when to open the mouth) needs access to not only the player and food but also border which contains the loops.
+
+#### Actualisation and Feature creep
+Adding in the mouth opening animation was difficult but possible. It required looking at the tiles, making assessments and using test driven development. This took some time but I managed to create something which looked as I'd expect.
+
+When it came to the tail pieces however there was a different story. The issue I came across was that directionality is an issue, they are described by where they have gone and where they have been. For this reason the Player needed to add more information for the Tail, the tail needed to know what the previous tile was and what the next tile was if there was any. Also if any of these were loops that to would need to be known because the directionality of the tail piece would need to be flipped in most cases (if you go right through a portal the piece ends up on the left side but the direction is still to the right of the previous piece). To make this a little more complicated to figure out the direction of a given Snake tail piece is to start at the Player Head and work backwards, or to keep this information and pass this information backwards which is only true unless the player turns (only works NESW not for corners which you need to assess).
+
+It is for these reasons Snake 2 based graphics have moved over to an extra feature as the purpose of this project is to seek answers as to how to build the next project. What I learned from this is:
+1. Player Communication, which in this project is rather removed, requires either a version which is very game centric or we should create more data structures in a Library form (standard types).
+2. Bespoke implementations might actually be better in some cases. I would like to live in a world where the entire implementation could work for anything, but to do that maybe I would need to lean into a Data approach with implementation more generic and the data more bespoke.
+3. Plan everything on a technical level. Under planning can lead to this.
+
+Snake Head was actually complete and looks like this:
+[![Snake Head Animation](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeHeadWorking.gif?raw=true)
+
+#### The Final answer to 'Better visuals'
+The Final answer for now on the better visuals is to just give a coat of paint and to address it as a Snake 2 upgrade when revisiting the project.
+
+[![Final Visuals](https://github.com/ScottGarryFoster/PROTOTYPE-Snake/blob/main/Progress/Milestones/008-SnakeNewVisuals.gif?raw=true)
+
 # Standards and Research
 This project exists as a prelude to the 'Snake' project found here: [Project-Snake](https://github.com/ScottGarryFoster/PROJECT-Snake) which contains the coding standards for this project and during the course of the Arcade Classics project will be prepared for development.

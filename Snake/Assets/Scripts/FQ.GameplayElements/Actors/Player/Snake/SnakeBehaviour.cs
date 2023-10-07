@@ -132,6 +132,11 @@ namespace FQ.GameplayElements
         /// </summary>
         private Vector3 spawnPosition;
 
+        /// <summary>
+        /// The last loop answer of the player.
+        /// </summary>
+        private CollisionPositionAnswer lastPlayerBorderAnswer;
+
         public SnakeBehaviour(
             GameObject gameObject, 
             IObjectCreation objectCreation, 
@@ -168,6 +173,8 @@ namespace FQ.GameplayElements
 
             this.directionInput = new DirectionPressedOrDownInput();
             this.directionInput.Setup(this.gameplayInputs);
+
+            this.lastPlayerBorderAnswer.Answer = ContextToPositionAnswer.NoMovementNeeded;
             
             SetupTail();
         }
@@ -364,10 +371,13 @@ namespace FQ.GameplayElements
                     SnakeTailPieces[i].gameObject.SetActive(true);
                     SnakeTailPieces[i].gameObject.transform.position =
                         SnakeTailPieces[i - 1].gameObject.transform.position;
+                    
+                    UpdateTailWithBorder(SnakeTailPieces[i], SnakeTailPieces[i - 1].BorderLoopAnswer);
                 }
 
                 SnakeTailPieces[0].gameObject.SetActive(true);
                 SnakeTailPieces[0].gameObject.transform.position = this.parent.transform.position;
+                UpdateBorderInfoToPlayers(SnakeTailPieces[0]);
             }
 
             if (this.growingLag)
@@ -375,6 +385,28 @@ namespace FQ.GameplayElements
                 ++snakeTailLength;
                 this.growingLag = false;
             }
+        }
+
+        /// <summary>
+        /// Updates a single piece with the given border info.
+        /// </summary>
+        /// <param name="piece">Piece to update. </param>
+        /// <param name="answer">New border info. </param>
+        private void UpdateTailWithBorder(SnakeTail piece, CollisionPositionAnswer answer)
+        {
+            piece.ResetMetaInfo();
+            piece.GiveNewBorderInfo(answer);
+        }
+
+        /// <summary>
+        /// Updates a single piece with the player info.
+        /// </summary>
+        /// <param name="piece">Piece to update.</param>
+        private void UpdateBorderInfoToPlayers(SnakeTail piece)
+        {
+            piece.ResetMetaInfo();
+            piece.GiveNewBorderInfo(this.lastPlayerBorderAnswer);
+            this.lastPlayerBorderAnswer.Answer = ContextToPositionAnswer.NoMovementNeeded;
         }
         
         /// <summary>
@@ -400,6 +432,7 @@ namespace FQ.GameplayElements
             if (answer.Answer == ContextToPositionAnswer.NewPositionIsCorrect)
             {
                 this.parent.transform.position = new Vector3(answer.NewPosition.x, answer.NewPosition.y);
+                this.lastPlayerBorderAnswer = answer;
             }
         }
         

@@ -11,7 +11,7 @@ namespace FQ.GameplayElements
     /// Manages animation for the Snake Player Head.
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    public class SnakeHeadAnimator : GameElement, ISnakeHeadAnimator
+    public class SnakeHeadAnimator : GameElement
     {
         /// <summary>
         /// The name of the direction parameter.
